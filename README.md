@@ -10,7 +10,7 @@
 ## Iniciando
 
 - Clonar este repositório  
-`http://tools.ages.pucrs.br/cine-clube/backend.git`
+`git clone http://tools.ages.pucrs.br/cine-clube/backend.git`
 
 - Entrar no diretório do projeto  
 `cd backend`
