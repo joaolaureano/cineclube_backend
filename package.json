@@ -1,7 +1,8 @@
 {
-  "name": "backend",
+  "name": "cine-clube-backend",
   "version": "1.0.0",
   "description": "Backend",
+  "author": "Time AGES 2021/1 - Cine Clube",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -12,7 +13,6 @@
     "url": "http://tools.ages.pucrs.br/cine-clube/backend.git"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
