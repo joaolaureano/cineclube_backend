@@ -2,9 +2,6 @@ import express from "express"
 
 const router = express.Router();
 
-
-// router.use("caminho/", "filmesRouter.ts") -> ONLY FOR EXAMPLE
-
-
+router.get('/', (req, res) => {res.status(200).json({ message: 'Status: Ok' })}); // TEST ONLY
 
 export default router;
