@@ -1,0 +1,8 @@
+version: '3' # version of docker-composeservices: # defining service/s
+services:  
+  node-api: # name of the service
+    build: .  # directory what to build, here it is root directory
+    ports:
+      - "5000:5000" # defining port for our app
+  redis:
+    image: "node:8.12-alpine"
