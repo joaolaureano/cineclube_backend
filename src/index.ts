@@ -1,13 +1,13 @@
-import server from "./config/express";
+import "reflect-metadata";
 
-server.get("/", (_, res) =>
-  res.send({ message: "Server is running", status: "Status: Ok" })
-);
+import connectDatabase from "./database";
+import server from "./server";
 
-const serverPort = 5000;
-
-server.listen(serverPort, () => {
-  console.log(`Server listening on port ${serverPort}`);
-});
-
-export default server;
+connectDatabase()
+  .then(() => {
+    console.log("Connected successfully to database.");
+    server.init();
+  })
+  .catch((err) => {
+    console.log(`Error connecting to database!\n${err.message}`);
+  });

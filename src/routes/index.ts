@@ -1,7 +1,13 @@
-import express from "express";
+import { Router } from "express";
 
-const router = express.Router();
+import UserRouter from "./UserRouter";
 
-router.get('/', (req, res) => {res.status(200).json({ message: 'Status: Ok' })}); // TEST ONLY
+const router = Router();
+
+router.get("/", (req, res) => {
+  res.status(200).json({ message: "Server is running", status: "OK" });
+});
+
+router.use("/users", UserRouter);
 
 export default router;
