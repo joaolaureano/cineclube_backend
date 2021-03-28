@@ -12,7 +12,7 @@ const init = () => {
   // Init routes
   server.use(routes);
 
-  const PORT = variables.port || 5000;
+  const PORT = variables.PORT || 5000;
 
   server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);

@@ -1,7 +1,21 @@
 import "./dotenv";
 
+const {
+  PORT,
+  DB_HOST,
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_DATABASE,
+  DB_PORT,
+} = process.env;
+
 const variables = {
-  port: process.env.PORT,
+  PORT: Number(PORT),
+  DB_HOST,
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_DATABASE,
+  DB_PORT: Number(DB_PORT),
 };
 
 export default variables;
