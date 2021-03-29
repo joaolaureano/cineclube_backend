@@ -18,6 +18,13 @@
 - Instalar as dependências  
 `npm install`
 
+Execute o seguinte comando:
+`cp .env.example .env`  
+
+A seguir, altere os valores de **DB_USERNAME** e **DB_USERNAME** do arquivo .env, substituindo-os pelo usuário e senha do banco de dados.
+
+_OBS: Se ainda não instalou o banco de dados, veja como na [página de configuração](https://tools.ages.pucrs.br/cine-clube/cineclube-wiki/wikis/configuracao)._
+
 - Iniciar a aplicação  
 `npm run dev`
 
