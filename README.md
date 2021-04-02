@@ -2,6 +2,10 @@
 
 > Descrição do projeto
 
+## **Links**
+- Documentação do TypeORM: [Link](https://github.com/typeorm/typeorm/tree/master/docs)
+- Tutorial de TypeORM: [Link](https://www.youtube.com/playlist?list=PLDqnSpzNKDvn-3cpMf3yPn7gTnb3ooy4b)
+
 ## Pré-requesitos
 
 - Node.js
