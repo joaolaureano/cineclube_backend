@@ -3,18 +3,23 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 @Entity({ name: "users" })
 export class User {
-  @PrimaryGeneratedColumn()
-  id: Number;
+  @PrimaryColumn()
+  id: string;
 
-  @Index("idx-email", { unique: true })
   @Column()
-  email: string;
+  name: string;
+
+  @Column()
+  photoPath: string;
+
+  @Column()
+  randomness: number;
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;
