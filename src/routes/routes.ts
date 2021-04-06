@@ -12,6 +12,8 @@ import {
 } from "@tsoa/runtime";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { HelloWorldController } from "./../controllers/HelloWorldController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UserController } from "./../controllers/UserController";
 import { expressAuthentication } from "./../middlewares/authentication";
 import * as express from "express";
 
@@ -116,6 +118,35 @@ export function RegisterRoutes(app: express.Router) {
         controller,
         validatedArgs as any
       );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.post(
+    "/api/v1/User",
+    authenticateMiddleware([{ firebase: [] }]),
+    function UserController_create(request: any, response: any, next: any) {
+      const args = {
+        request: {
+          in: "request",
+          name: "request",
+          required: true,
+          dataType: "object",
+        },
+      };
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+      const promise = controller.create.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, undefined, next);
     }
   );
