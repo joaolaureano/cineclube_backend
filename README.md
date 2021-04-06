@@ -30,8 +30,20 @@ A seguir, altere os valores de **DB_USERNAME** e **DB_USERNAME** do arquivo .env
 
 _OBS: Se ainda não instalou o banco de dados, veja como na [página de configuração](https://tools.ages.pucrs.br/cine-clube/cineclube-wiki/wikis/configuracao)._
 
+Também deve se inserir o endereço do arquivo de configuração do Firebase em **GOOGLE_APPLICATION_CREDENTIALS**  
+O arquivo deve ser obtido no [console do Firebase](https://console.firebase.google.com). Acesse as configurações > Usuários e permissões > Contas de serviço > Gerar nova chave privada.
+
+Onde o valor final deve ser como o abaixo:
+
+```
+GOOGLE_APPLICATION_CREDENTIALS = "C:\Users\username\Documents\AGES\backend\cineclube-1d284-firebase-adminsdk-u84yv-a9b06884c0.json"
+```
+
 - Rodar as migrações do banco  
   `npm run typeorm -- migration:run`
+
+- Fazer a geração das rotas  
+  `npm run tsoa:gen`
 
 - Iniciar a aplicação  
   `npm run dev`
