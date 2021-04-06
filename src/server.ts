@@ -1,10 +1,10 @@
 import express from "express";
 import { json } from "body-parser";
 
-import routes from "./routes/";
 import variables from "./config/enviromentVariables";
 import swaggerConfig from "./config/swaggerConfig";
 import { RegisterRoutes } from "./routes/routes";
+import { errorhandler } from "./utils/errorHandler";
 
 const init = () => {
   const server = express();
@@ -16,6 +16,7 @@ const init = () => {
   RegisterRoutes(server); // New router version
 
   server.use(swaggerConfig);
+  server.use(errorhandler);
 
   const PORT = variables.PORT || 5000;
 
