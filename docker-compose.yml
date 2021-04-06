@@ -2,7 +2,28 @@ version: '3' # version of docker-composeservices: # defining service/s
 services:  
   node-api: # name of the service
     build: .  # directory what to build, here it is root directory
+    
+    image: nodejs
+    container_name : api
+    restart: always
     ports:
       - "5000:5000" # defining port for our app
+    depends_on:
+      - cinedb
+      - redis 
   redis:
     image: "node:8.12-alpine"
+  
+  cinedb:
+    image: mysql:latest
+    container_name: cinedb
+    restart: always
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    environment:
+      MYSQL_DATABASE: 'cinedb'
+      MYSQL_ROOT_PASSWORD: 'cinedb'
+      MYSQL_USER: 'cineclube'
+      MYSQL_PASSWORD: '1234'
