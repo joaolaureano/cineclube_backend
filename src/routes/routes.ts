@@ -28,29 +28,6 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UserDetails: {
-    dataType: "refAlias",
-    type: {
-      dataType: "nestedObjectLiteral",
-      nestedProperties: {
-        photoPath: { dataType: "string" },
-        email: { dataType: "string" },
-        name: { dataType: "string", required: true },
-        id: { dataType: "string", required: true },
-      },
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  HelloWorldResponse: {
-    dataType: "refObject",
-    properties: {
-      success: { dataType: "boolean", required: true },
-      user: { ref: "UserDetails" },
-    },
-    additionalProperties: true,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -82,42 +59,6 @@ export function RegisterRoutes(app: express.Router) {
       const controller = new HelloWorldController();
 
       const promise = controller.hello.apply(controller, validatedArgs as any);
-      promiseHandler(controller, promise, response, undefined, next);
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  app.post(
-    "/api/v1/HelloWorld",
-    authenticateMiddleware([{ firebase: [] }]),
-    function HelloWorldController_middlewareTest(
-      request: any,
-      response: any,
-      next: any
-    ) {
-      const args = {
-        request: {
-          in: "request",
-          name: "request",
-          required: true,
-          dataType: "object",
-        },
-      };
-
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = getValidatedArgs(args, request, response);
-      } catch (err) {
-        return next(err);
-      }
-
-      const controller = new HelloWorldController();
-
-      const promise = controller.middlewareTest.apply(
-        controller,
-        validatedArgs as any
-      );
       promiseHandler(controller, promise, response, undefined, next);
     }
   );

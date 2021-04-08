@@ -12,13 +12,15 @@ import {
   SuccessResponse,
 } from "tsoa";
 import { User } from "../models/User";
+import createUser from "../services/UserService";
 
 @Route("User")
 @Tags("UserController")
 export class UserController extends Controller {
   @Post()
+  @SuccessResponse("201", "created")
   @Security("firebase")
-  create(@Request() request: express.Request): any {
+  create(@Request() request: express.Request) {
     try {
       const { user } = request;
       if (user !== undefined) {
@@ -27,7 +29,17 @@ export class UserController extends Controller {
         userEntity.id = user.id as string;
         userEntity.name = user.name as string;
         userEntity.randomness = 0;
+        if (createUser(userEntity)) {
+          this.setStatus(201);
+          return { success: true, message: "New user successfully created." };
+        } else {
+          this.setStatus(500);
+          return { success: false, message: "Could not create new user." };
+        }
       }
-    } catch (err) {}
+    } catch (error) {
+      this.setStatus(400);
+      return { success: false, message: "Could not create new user." };
+    }
   }
 }

@@ -11,7 +11,7 @@ import {
   SuccessResponse,
 } from "tsoa";
 
-import { UserDetails } from "../services/UserService";
+import { User } from "../models/User";
 
 @Route("HelloWorld") // route name => localhost:xxx/helloWorld
 @Tags("HelloWorldController") // => Under HelloWorldController tag
@@ -21,17 +21,17 @@ export class HelloWorldController extends Controller {
     return { message: "Hello World!" };
   }
 
-  @Security("firebase")
-  @SuccessResponse("201", "created")
-  @Post() //specify the request type
-  middlewareTest(@Request() request: express.Request): HelloWorldResponse {
-    const { user } = request;
-    if (user) {
-      this.setStatus(201);
-      return { success: true, user };
-    }
-    return { success: false };
-  }
+  //   @Security("firebase")
+  //   @SuccessResponse("201", "created")
+  //   @Post() //specify the request type
+  //   middlewareTest(@Request() request: express.Request): HelloWorldResponse {
+  //     const { user } = request;
+  //     if (user) {
+  //       this.setStatus(201);
+  //       return { success: true, user };
+  //     }
+  //     return { success: false };
+  //   }
 }
 
 export interface HelloWorldInterface {
@@ -40,5 +40,5 @@ export interface HelloWorldInterface {
 
 export interface HelloWorldResponse {
   success: boolean;
-  user?: UserDetails;
+  user?: User;
 }
