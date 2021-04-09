@@ -2,16 +2,32 @@ import { getCustomRepository } from "typeorm";
 import { User } from "../models/User";
 import { UserRepository } from "../repositories";
 
-const createUser = async (userDetails: User) => {
-  try {
-    const userRepository = getCustomRepository(UserRepository);
+export interface userDetails {
+  id: string;
+  name: string;
+  email?: string;
+  photoPath?: string;
+}
 
-    const result = await userRepository.insert(userDetails);
+const createUser = async (userDetails: userDetails): Promise<User> => {
+  const userRepository = getCustomRepository(UserRepository);
 
-    return true;
-  } catch (error) {
-    throw "Could not create new user. Check database connection.";
-  }
+  const newUser = new User();
+  Object.assign(newUser, userDetails);
+
+  newUser.randomness = 0;
+
+  const result = await userRepository.save(newUser);
+
+  return result;
 };
 
-export default createUser;
+const findUserById = async (id: string): Promise<User | undefined> => {
+  const userRepository = getCustomRepository(UserRepository);
+
+  const user = await userRepository.findOne(id);
+
+  return user;
+};
+
+export default { createUser, findUserById };

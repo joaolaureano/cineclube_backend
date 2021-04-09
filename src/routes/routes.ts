@@ -28,6 +28,30 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserAuthenticationResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          user: {
+            dataType: "nestedObjectLiteral",
+            nestedProperties: {
+              randomness: { dataType: "double", required: true },
+              name: { dataType: "string", required: true },
+              id: { dataType: "string", required: true },
+              photoPath: { dataType: "string" },
+            },
+          },
+        },
+      },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -64,9 +88,13 @@ export function RegisterRoutes(app: express.Router) {
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post(
-    "/api/v1/User",
+    "/api/v1/user/auth",
     authenticateMiddleware([{ firebase: [] }]),
-    function UserController_create(request: any, response: any, next: any) {
+    function UserController_authenticate(
+      request: any,
+      response: any,
+      next: any
+    ) {
       const args = {
         request: {
           in: "request",
@@ -87,7 +115,10 @@ export function RegisterRoutes(app: express.Router) {
 
       const controller = new UserController();
 
-      const promise = controller.create.apply(controller, validatedArgs as any);
+      const promise = controller.authenticate.apply(
+        controller,
+        validatedArgs as any
+      );
       promiseHandler(controller, promise, response, undefined, next);
     }
   );
