@@ -1,29 +1,33 @@
 import { getCustomRepository } from "typeorm";
 import { User } from "../models/User";
-
 import { UserRepository } from "../repositories";
 
-export type UserDetails = {
+export interface userDetails {
   id: string;
   name: string;
   email?: string;
   photoPath?: string;
-};
+}
 
-const createUserExample = async (userDetails: UserDetails): Promise<User> => {
+const createUser = async (userDetails: userDetails): Promise<User> => {
   const userRepository = getCustomRepository(UserRepository);
 
-  const newUser = userRepository.create();
-
-  //Validate fields
-
+  const newUser = new User();
   Object.assign(newUser, userDetails);
 
-  // await userRepository.save(newUser);
+  newUser.randomness = 0;
 
-  return newUser;
+  const result = await userRepository.save(newUser);
+
+  return result;
 };
 
-export default {
-  createUserExample,
+const findUserById = async (id: string): Promise<User | undefined> => {
+  const userRepository = getCustomRepository(UserRepository);
+
+  const user = await userRepository.findOne(id);
+
+  return user;
 };
+
+export default { createUser, findUserById };

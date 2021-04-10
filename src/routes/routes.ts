@@ -12,6 +12,8 @@ import {
 } from "@tsoa/runtime";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { HelloWorldController } from "./../controllers/HelloWorldController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UserController } from "./../controllers/UserController";
 import { expressAuthentication } from "./../middlewares/authentication";
 import * as express from "express";
 
@@ -26,25 +28,26 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UserDetails: {
-    dataType: "refAlias",
-    type: {
-      dataType: "nestedObjectLiteral",
-      nestedProperties: {
-        photoPath: { dataType: "string" },
-        email: { dataType: "string" },
-        name: { dataType: "string", required: true },
-        id: { dataType: "string", required: true },
-      },
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  HelloWorldResponse: {
+  UserAuthenticationResponse: {
     dataType: "refObject",
     properties: {
       success: { dataType: "boolean", required: true },
-      user: { ref: "UserDetails" },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          user: {
+            dataType: "nestedObjectLiteral",
+            nestedProperties: {
+              randomness: { dataType: "double", required: true },
+              name: { dataType: "string", required: true },
+              id: { dataType: "string", required: true },
+              photoPath: { dataType: "string" },
+            },
+          },
+        },
+      },
+      details: { dataType: "string" },
     },
     additionalProperties: true,
   },
@@ -85,9 +88,9 @@ export function RegisterRoutes(app: express.Router) {
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post(
-    "/api/v1/HelloWorld",
+    "/api/v1/user/auth",
     authenticateMiddleware([{ firebase: [] }]),
-    function HelloWorldController_middlewareTest(
+    function UserController_authenticate(
       request: any,
       response: any,
       next: any
@@ -110,9 +113,9 @@ export function RegisterRoutes(app: express.Router) {
         return next(err);
       }
 
-      const controller = new HelloWorldController();
+      const controller = new UserController();
 
-      const promise = controller.middlewareTest.apply(
+      const promise = controller.authenticate.apply(
         controller,
         validatedArgs as any
       );
