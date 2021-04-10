@@ -6,6 +6,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  PrimaryColumn,
 } from "typeorm";
 import { Movie } from ".";
 
@@ -30,6 +31,26 @@ export class Tag {
     },
   })
   movies: Movie[];
+
+  @CreateDateColumn({ name: "created_At" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updated_At" })
+  updatedAt: Date;
+}
+@Entity({ name: "movie_tag" })
+export class MovieTag {
+  @PrimaryColumn()
+  tag: number;
+
+  @PrimaryColumn()
+  movie: number;
+
+  @Column()
+  super: boolean;
+
+  @Column()
+  weight: number;
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;

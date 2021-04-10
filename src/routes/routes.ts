@@ -13,6 +13,8 @@ import {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { HelloWorldController } from "./../controllers/HelloWorldController";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { MovieController } from "./../controllers/MovieController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from "./../controllers/UserController";
 import { expressAuthentication } from "./../middlewares/authentication";
 import * as express from "express";
@@ -24,6 +26,94 @@ const models: TsoaRoute.Models = {
     dataType: "refObject",
     properties: {
       message: { dataType: "string", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Movie: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "double", required: true },
+      title: { dataType: "string", required: true },
+      originalTitle: { dataType: "string", required: true },
+      synopsis: { dataType: "string", required: true },
+      critic: { dataType: "string", required: true },
+      curator: { dataType: "string", required: true },
+      year: { dataType: "double", required: true },
+      pathBanner: { dataType: "string", required: true },
+      platforms: {
+        dataType: "array",
+        array: { ref: "Platform" },
+        required: true,
+      },
+      tags: { dataType: "array", array: { ref: "Tag" }, required: true },
+      usersToWatch: {
+        dataType: "array",
+        array: { ref: "User" },
+        required: true,
+      },
+      usersWatched: {
+        dataType: "array",
+        array: { ref: "User" },
+        required: true,
+      },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Platform: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "double", required: true },
+      name: { dataType: "string", required: true },
+      movies: { dataType: "array", array: { ref: "Movie" }, required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Tag: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "double", required: true },
+      name: { dataType: "string", required: true },
+      movies: { dataType: "array", array: { ref: "Movie" }, required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  User: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "string", required: true },
+      name: { dataType: "string", required: true },
+      photoPath: { dataType: "string", required: true },
+      randomness: { dataType: "double", required: true },
+      toWatch: { dataType: "array", array: { ref: "Movie" }, required: true },
+      watched: { dataType: "array", array: { ref: "Movie" }, required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  MovieResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          movies: { dataType: "array", array: { ref: "Movie" } },
+        },
+      },
+      details: { dataType: "string" },
     },
     additionalProperties: true,
   },
@@ -83,6 +173,27 @@ export function RegisterRoutes(app: express.Router) {
       const controller = new HelloWorldController();
 
       const promise = controller.hello.apply(controller, validatedArgs as any);
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.get(
+    "/api/v1/movies",
+    function MovieController_getAll(request: any, response: any, next: any) {
+      const args = {};
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new MovieController();
+
+      const promise = controller.getAll.apply(controller, validatedArgs as any);
       promiseHandler(controller, promise, response, undefined, next);
     }
   );
