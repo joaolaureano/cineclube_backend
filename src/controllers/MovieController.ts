@@ -18,7 +18,7 @@ export class MovieController extends Controller {
         this.setStatus(200);
         return {
           success: true,
-          message: "Movies found",
+          message: `Found ${movies.length} movies.`,
           body: {
             movies,
           },

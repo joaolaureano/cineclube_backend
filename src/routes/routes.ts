@@ -46,7 +46,6 @@ const models: TsoaRoute.Models = {
         array: { ref: "Platform" },
         required: true,
       },
-      tags: { dataType: "array", array: { ref: "Tag" }, required: true },
       usersToWatch: {
         dataType: "array",
         array: { ref: "User" },
@@ -54,7 +53,12 @@ const models: TsoaRoute.Models = {
       },
       usersWatched: {
         dataType: "array",
-        array: { ref: "User" },
+        array: { ref: "Watched" },
+        required: true,
+      },
+      moviesTags: {
+        dataType: "array",
+        array: { ref: "MovieTag" },
         required: true,
       },
       createdAt: { dataType: "datetime", required: true },
@@ -75,18 +79,6 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  Tag: {
-    dataType: "refObject",
-    properties: {
-      id: { dataType: "double", required: true },
-      name: { dataType: "string", required: true },
-      movies: { dataType: "array", array: { ref: "Movie" }, required: true },
-      createdAt: { dataType: "datetime", required: true },
-      updatedAt: { dataType: "datetime", required: true },
-    },
-    additionalProperties: true,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   User: {
     dataType: "refObject",
     properties: {
@@ -95,7 +87,52 @@ const models: TsoaRoute.Models = {
       photoPath: { dataType: "string", required: true },
       randomness: { dataType: "double", required: true },
       toWatch: { dataType: "array", array: { ref: "Movie" }, required: true },
-      watched: { dataType: "array", array: { ref: "Movie" }, required: true },
+      watched: { dataType: "array", array: { ref: "Watched" }, required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Watched: {
+    dataType: "refObject",
+    properties: {
+      userId: { dataType: "double", required: true },
+      movieId: { dataType: "double", required: true },
+      liked: { dataType: "boolean", required: true },
+      user: { ref: "User", required: true },
+      movie: { ref: "Movie", required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  MovieTag: {
+    dataType: "refObject",
+    properties: {
+      tagId: { dataType: "double", required: true },
+      movieId: { dataType: "double", required: true },
+      super: { dataType: "boolean", required: true },
+      weight: { dataType: "double", required: true },
+      tag: { ref: "Tag", required: true },
+      movie: { ref: "Movie", required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Tag: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "double", required: true },
+      name: { dataType: "string", required: true },
+      moviesTags: {
+        dataType: "array",
+        array: { ref: "MovieTag" },
+        required: true,
+      },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },

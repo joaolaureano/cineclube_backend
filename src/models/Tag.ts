@@ -2,13 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  PrimaryColumn,
+  OneToMany,
+  JoinColumn,
 } from "typeorm";
-import { Movie } from ".";
+import { MovieTag } from ".";
 
 @Entity({ name: "tag" })
 export class Tag {
@@ -18,39 +17,11 @@ export class Tag {
   @Column()
   name: string;
 
-  @ManyToMany(() => Movie, (movie) => movie.tags)
-  @JoinTable({
-    name: "movie_tag",
-    joinColumn: {
-      name: "movie",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "tag",
-      referencedColumnName: "id",
-    },
+  @OneToMany(() => MovieTag, (movieTag) => movieTag.tag)
+  @JoinColumn({
+    name: "tagId",
   })
-  movies: Movie[];
-
-  @CreateDateColumn({ name: "created_At" })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: "updated_At" })
-  updatedAt: Date;
-}
-@Entity({ name: "movie_tag" })
-export class MovieTag {
-  @PrimaryColumn()
-  tag: number;
-
-  @PrimaryColumn()
-  movie: number;
-
-  @Column()
-  super: boolean;
-
-  @Column()
-  weight: number;
+  moviesTags: MovieTag[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;
