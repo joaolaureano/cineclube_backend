@@ -18,7 +18,7 @@ export class Tag {
   @Column()
   name: string;
 
-  @ManyToMany((type) => Movie, (movie) => movie.tags)
+  @ManyToMany(() => Movie, (movie) => movie.tags)
   @JoinTable({
     name: "movie_tag",
     joinColumn: {

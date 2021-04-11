@@ -17,7 +17,7 @@ export class Platform {
   @Column()
   name: string;
 
-  @ManyToMany((type) => Movie, (movie) => movie.platforms)
+  @ManyToMany(() => Movie, (movie) => movie.platforms)
   @JoinTable({
     name: "movie_platform",
     joinColumn: {
