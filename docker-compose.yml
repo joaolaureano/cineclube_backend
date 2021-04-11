@@ -2,7 +2,36 @@ version: '3' # version of docker-composeservices: # defining service/s
 services:  
   node-api: # name of the service
     build: .  # directory what to build, here it is root directory
+    image: nodejs
+    container_name : api
+    restart: always
     ports:
-      - "5000:5000" # defining port for our app
-  redis:
-    image: "node:8.12-alpine"
+      - $PORT:$PORT # defining port for our app
+    depends_on:
+      - cinedb
+    networks:
+      - app-network
+    command: ["./wait-for-it.sh", "-t", "0", "cinedb:3306", "--", "npm","start", ]
+  cinedb:
+    image: mysql:latest
+    restart: always
+    container_name: cinedb
+    env_file: ./.env
+    ports:
+      - $DB_PORT:$DB_PORT
+    expose:
+      - $DB_PORT
+    environment:
+      MYSQL_DATABASE: $DB_DATABASE
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      MYSQL_USER: $DB_USERNAME
+      MYSQL_PASSWORD: $DB_PASSWORD
+    volumes:
+      - cinedb:/var/lib/mysql
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  cinedb:

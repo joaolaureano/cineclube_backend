@@ -9,5 +9,6 @@ connectDatabase()
     server.init();
   })
   .catch((err) => {
+    console.log(err);
     console.log(`Error connecting to database!\n${err.message}`);
   });
