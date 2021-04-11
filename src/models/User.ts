@@ -2,13 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Movie } from ".";
+import { Movie, Watched } from ".";
 
 @Entity({ name: "user" })
 export class User {
@@ -24,7 +25,7 @@ export class User {
   @Column()
   randomness: number;
 
-  @ManyToMany((type) => Movie, (movie) => movie.usersToWatch)
+  @ManyToMany(() => Movie, (movie) => movie.usersToWatch)
   @JoinTable({
     name: "toWatch",
     joinColumn: {
@@ -38,37 +39,11 @@ export class User {
   })
   toWatch: Movie[];
 
-  @ManyToMany((type) => Movie, (movie) => movie.usersWatched)
-  @JoinTable({
-    name: "watched",
-    joinColumn: {
-      name: "user",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "movie",
-      referencedColumnName: "id",
-    },
+  @OneToMany(() => Watched, (watched) => watched.user)
+  @JoinColumn({
+    name: "userId",
   })
-  watched: Movie[];
-
-  @CreateDateColumn({ name: "created_At" })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: "updated_At" })
-  updatedAt: Date;
-}
-
-@Entity("watched")
-export class Watched {
-  @PrimaryColumn()
-  user: number;
-
-  @PrimaryColumn()
-  movie: number;
-
-  @Column()
-  liked: boolean;
+  watched: Watched[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;

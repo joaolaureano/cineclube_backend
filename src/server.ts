@@ -18,6 +18,13 @@ const init = () => {
   server.use(swaggerConfig);
   server.use(errorhandler);
 
+  server.get("/", (_, res: express.Response) => {
+    res.send({
+      status: "Api is running",
+      docs: `Go to /docs to see the routes documentation.`,
+    });
+  });
+
   const PORT = variables.PORT || 5000;
 
   server.listen(PORT, () => {

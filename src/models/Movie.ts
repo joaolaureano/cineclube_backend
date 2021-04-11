@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Platform, Tag, User } from ".";
+import { Platform, Tag, User, Watched } from ".";
 
 @Entity({ name: "movie" })
 export class Movie {
@@ -37,19 +39,22 @@ export class Movie {
   @Column()
   pathBanner: string;
 
-  @ManyToMany((type) => Platform, (platform) => platform.movies, {
+  @ManyToMany(() => Platform, (platform) => platform.movies, {
     cascade: true,
   })
   platforms: Platform[];
 
-  @ManyToMany((type) => Tag, (tag) => tag.movies)
+  @ManyToMany(() => Tag, (tag) => tag.movies)
   tags: Tag[];
 
-  @ManyToMany((type) => User, (user) => user.toWatch)
+  @ManyToMany(() => User, (user) => user.toWatch)
   usersToWatch: User[];
 
-  @ManyToMany((type) => User, (user) => user.watched)
-  usersWatched: User[];
+  @OneToMany(() => Watched, (watched) => watched.movie)
+  @JoinColumn({
+    name: "movieId",
+  })
+  usersWatched: Watched[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;
