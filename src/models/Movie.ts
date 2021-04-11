@@ -21,10 +21,14 @@ export class Movie {
   @Column()
   originalTitle: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   synopsis: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   critic: string;
 
   @Column()
