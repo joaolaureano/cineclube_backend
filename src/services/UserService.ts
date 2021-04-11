@@ -3,13 +3,14 @@ import { User } from "../models/User";
 
 import { UserRepository } from "../repositories";
 
-export type UserCreationDetails = {
-  email: string;
+export type UserDetails = {
+  id: string;
+  name: string;
+  email?: string;
+  photoPath?: string;
 };
 
-const createUserExample = async (
-  userDetails: UserCreationDetails
-): Promise<User> => {
+const createUserExample = async (userDetails: UserDetails): Promise<User> => {
   const userRepository = getCustomRepository(UserRepository);
 
   const newUser = userRepository.create();
