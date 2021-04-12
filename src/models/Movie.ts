@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Platform, Tag, User, Watched } from ".";
+import { MovieTag, Platform, Tag, User, Watched } from ".";
 
 @Entity({ name: "movie" })
 export class Movie {
@@ -21,10 +21,14 @@ export class Movie {
   @Column()
   originalTitle: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   synopsis: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   critic: string;
 
   @Column()
@@ -44,9 +48,6 @@ export class Movie {
   })
   platforms: Platform[];
 
-  @ManyToMany(() => Tag, (tag) => tag.movies)
-  tags: Tag[];
-
   @ManyToMany(() => User, (user) => user.toWatch)
   usersToWatch: User[];
 
@@ -55,6 +56,12 @@ export class Movie {
     name: "movieId",
   })
   usersWatched: Watched[];
+
+  @OneToMany(() => MovieTag, (movieTag) => movieTag.movie)
+  @JoinColumn({
+    name: "movieId",
+  })
+  moviesTags: MovieTag[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;
