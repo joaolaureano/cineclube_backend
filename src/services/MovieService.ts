@@ -19,4 +19,12 @@ const getAll = async (): Promise<Movie[] | undefined> => {
   return movies;
 };
 
-export default { getAll };
+const getById = async (id: number) => {
+  const movieRepository = getCustomRepository(MovieRepository);
+
+  const movie = await movieRepository.findOne(id);
+
+  return movie;
+};
+
+export default { getAll, getById };

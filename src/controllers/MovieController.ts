@@ -1,5 +1,5 @@
 import express from "express";
-import { Controller, Route, Get, Tags, SuccessResponse } from "tsoa";
+import { Controller, Route, Get, Tags, SuccessResponse, Path } from "tsoa";
 
 import { HttpResponse } from "../utils/httpResponse";
 import MovieService from "../services/MovieService";
@@ -26,6 +26,39 @@ export class MovieController extends Controller {
       }
 
       throw new Error();
+    } catch (error) {
+      this.setStatus(500);
+
+      return {
+        success: false,
+        message: "Internal server error.",
+        details: error.message,
+      };
+    }
+  }
+
+  @Get("/{movieId}")
+  @SuccessResponse("200")
+  async getById(@Path() movieId: number): Promise<MovieResponse> {
+    try {
+      const movie = await MovieService.getById(movieId);
+
+      if (movie) {
+        this.setStatus(200);
+        return {
+          success: true,
+          message: `Movie found`,
+          body: {
+            movies: [movie],
+          },
+        };
+      }
+
+      this.setStatus(404);
+      return {
+        success: false,
+        message: `Movie not found`,
+      };
     } catch (error) {
       this.setStatus(500);
 
