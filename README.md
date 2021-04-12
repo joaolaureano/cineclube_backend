@@ -43,7 +43,7 @@ GOOGLE_APPLICATION_CREDENTIALS = "C:\Users\username\Documents\AGES\backend\fireb
 - Rodar as migrações do banco  
   `npm run typeorm -- migration:run`
 
-- Popular o banco de dados
+- Popular o banco de dados  
   `npm run db:seed`
 
 - Fazer a geração das rotas  
