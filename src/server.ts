@@ -1,5 +1,6 @@
 import express from "express";
 import { json } from "body-parser";
+import cors from "cors";
 
 import variables from "./config/enviromentVariables";
 import swaggerConfig from "./config/swaggerConfig";
@@ -10,6 +11,7 @@ const init = () => {
   const server = express();
 
   server.use(json());
+  server.use(cors());
 
   // Init routes
   // server.use(routes);
