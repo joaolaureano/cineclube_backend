@@ -30,4 +30,12 @@ const findUserById = async (id: string): Promise<User | undefined> => {
   return user;
 };
 
-export default { createUser, findUserById };
+const setMovieStatusWatched = async (
+  idMovie: string,
+  idUser: string,
+  status: string
+): Promise<void> => {
+  return;
+};
+
+export default { createUser, findUserById, setMovieStatusWatched };
