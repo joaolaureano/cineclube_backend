@@ -89,9 +89,11 @@ export class UserController extends Controller {
       console.log(movieId);
       console.log(status);
       console.log(userId);
-      switch (true) {
+
+      switch (status) {
         case true:
           UserService.setMovieStatusWatched(movieId, userId, status);
+          break;
       }
       /*
                 Aqui no TRY coloca uma lógica, tipo um SWITCH CASE 
