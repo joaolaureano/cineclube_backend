@@ -16,6 +16,8 @@ import { HelloWorldController } from "./../controllers/HelloWorldController";
 import { MovieController } from "./../controllers/MovieController";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from "./../controllers/UserController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { UserMovieStatusController } from "./../controllers/UserMovieStatusController";
 import { expressAuthentication } from "./../middlewares/authentication";
 import * as express from "express";
 
@@ -179,6 +181,23 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserMovieStatusResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          message: { dataType: "string" },
+          status: { dataType: "string" },
+        },
+      },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -293,6 +312,41 @@ export function RegisterRoutes(app: express.Router) {
       }
 
       const controller = new UserController();
+
+      const promise = controller.authenticate.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.post(
+    "/api/v1/userMovieStatus",
+    function UserMovieStatusController_authenticate(
+      request: any,
+      response: any,
+      next: any
+    ) {
+      const args = {
+        request: {
+          in: "request",
+          name: "request",
+          required: true,
+          dataType: "object",
+        },
+      };
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserMovieStatusController();
 
       const promise = controller.authenticate.apply(
         controller,

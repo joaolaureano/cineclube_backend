@@ -1,0 +1,9 @@
+PORT=5000
+
+DB_HOST=cinedb
+DB_USERNAME=admin
+DB_PASSWORD=admin
+DB_DATABASE=cine_clube
+DB_PORT=3306
+
+GOOGLE_APPLICATION_CREDENTIALS="firebase-config.json"
