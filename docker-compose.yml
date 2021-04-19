@@ -1,5 +1,5 @@
 version: '3' # version of docker-composeservices: # defining service/s
-services:  
+services:
   node-api: # name of the service
     build: .  # directory what to build, here it is root directory
     image: nodejs
@@ -11,7 +11,7 @@ services:
       - cinedb
     networks:
       - app-network
-    command: ["./wait-for-it.sh", "-t", "0", "cinedb:3306", "--", "npm","start", ]
+    command: sh -c "chmod +x ./wait-for-it.sh && ./wait-for-it.sh -t 0 cinedb:3306 && npm run typeorm -- migration:run && npm run tsoa:gen && npm start"
   cinedb:
     image: mysql:latest
     restart: always
