@@ -4,14 +4,14 @@ import {
   Entity,
   JoinColumn,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Cast } from ".";
 
 @Entity({ name: "actor" })
 export class Actor {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column()

@@ -3,8 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
@@ -24,20 +22,6 @@ export class User {
 
   @Column()
   randomness: number;
-
-  @ManyToMany(() => Movie, (movie) => movie.usersToWatch)
-  @JoinTable({
-    name: "toWatch",
-    joinColumn: {
-      name: "user",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "movie",
-      referencedColumnName: "id",
-    },
-  })
-  toWatch: Movie[];
 
   @OneToMany(() => UserMovie, (userMovie) => userMovie.user)
   @JoinColumn({

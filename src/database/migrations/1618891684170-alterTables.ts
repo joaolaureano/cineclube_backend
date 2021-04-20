@@ -1,17 +1,17 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class alterTables1618878794618 implements MigrationInterface {
-  name = "alterTables1618878794618";
+export class alterTables1618891684170 implements MigrationInterface {
+  name = "alterTables1618891684170";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       "CREATE TABLE `user_movie` (`userId` varchar(255) NOT NULL, `movieId` int NOT NULL, `status` varchar(255) NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`userId`, `movieId`)) ENGINE=InnoDB"
     );
     await queryRunner.query(
-      "CREATE TABLE `cast` (`actorId` varchar(255) NOT NULL, `movieId` int NOT NULL, `director` tinyint NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`actorId`, `movieId`)) ENGINE=InnoDB"
+      "CREATE TABLE `cast` (`actorId` int NOT NULL, `movieId` int NOT NULL, `director` tinyint NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`actorId`, `movieId`)) ENGINE=InnoDB"
     );
     await queryRunner.query(
-      "CREATE TABLE `actor` (`id` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`id`)) ENGINE=InnoDB"
+      "CREATE TABLE `actor` (`id` int NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`id`)) ENGINE=InnoDB"
     );
     await queryRunner.query("ALTER TABLE `movie` ADD `duration` int NOT NULL");
     await queryRunner.query(
@@ -44,8 +44,6 @@ export class alterTables1618878794618 implements MigrationInterface {
     await queryRunner.query(
       "DROP INDEX `IDX_1ea3e912fd7c4a355177175431` ON `toWatch`"
     );
-    await queryRunner.query("DROP TABLE `toWatch`");
-    await queryRunner.query("DROP TABLE `watched`");
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

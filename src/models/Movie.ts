@@ -51,9 +51,6 @@ export class Movie {
   })
   platforms: Platform[];
 
-  @ManyToMany(() => User, (user) => user.toWatch)
-  usersToWatch: User[];
-
   @OneToMany(() => UserMovie, (userMovie) => userMovie.movie)
   @JoinColumn({
     name: "movieId",
