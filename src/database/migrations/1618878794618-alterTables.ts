@@ -26,6 +26,26 @@ export class alterTables1618878794618 implements MigrationInterface {
     await queryRunner.query(
       "ALTER TABLE `cast` ADD CONSTRAINT `FK_dcacf1ce3d9cc81bc6427f0f6b3` FOREIGN KEY (`movieId`) REFERENCES `movie`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION"
     );
+    await queryRunner.query(
+      "ALTER TABLE `toWatch` DROP FOREIGN KEY `FK_66000ea16533b57d7a9b7801254`"
+    );
+    await queryRunner.query(
+      "ALTER TABLE `toWatch` DROP FOREIGN KEY `FK_1ea3e912fd7c4a3551771754319`"
+    );
+    await queryRunner.query(
+      "ALTER TABLE `watched` DROP FOREIGN KEY `FK_40659918cd465a5cab93ef2deab`"
+    );
+    await queryRunner.query(
+      "ALTER TABLE `watched` DROP FOREIGN KEY `FK_375b7a802c1041202b6f27c0f43`"
+    );
+    await queryRunner.query(
+      "DROP INDEX `IDX_66000ea16533b57d7a9b780125` ON `toWatch`"
+    );
+    await queryRunner.query(
+      "DROP INDEX `IDX_1ea3e912fd7c4a355177175431` ON `toWatch`"
+    );
+    await queryRunner.query("DROP TABLE `toWatch`");
+    await queryRunner.query("DROP TABLE `watched`");
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -40,6 +60,24 @@ export class alterTables1618878794618 implements MigrationInterface {
     );
     await queryRunner.query(
       "ALTER TABLE `user_movie` DROP FOREIGN KEY `FK_13836cd6ae56580075e1bd33967`"
+    );
+    await queryRunner.query(
+      "CREATE TABLE `watched` (`userId` varchar(255) NOT NULL, `movieId` int NOT NULL, `liked` tinyint NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`userId`, `movieId`)) ENGINE=InnoDB"
+    );
+    await queryRunner.query(
+      "CREATE TABLE `toWatch` (`user` varchar(255) NOT NULL, `movie` int NOT NULL, INDEX `IDX_1ea3e912fd7c4a355177175431` (`user`), INDEX `IDX_66000ea16533b57d7a9b780125` (`movie`), PRIMARY KEY (`user`, `movie`)) ENGINE=InnoDB"
+    );
+    await queryRunner.query(
+      "ALTER TABLE `watched` ADD CONSTRAINT `FK_375b7a802c1041202b6f27c0f43` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION"
+    );
+    await queryRunner.query(
+      "ALTER TABLE `watched` ADD CONSTRAINT `FK_40659918cd465a5cab93ef2deab` FOREIGN KEY (`movieId`) REFERENCES `movie`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION"
+    );
+    await queryRunner.query(
+      "ALTER TABLE `toWatch` ADD CONSTRAINT `FK_1ea3e912fd7c4a3551771754319` FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+    );
+    await queryRunner.query(
+      "ALTER TABLE `toWatch` ADD CONSTRAINT `FK_66000ea16533b57d7a9b7801254` FOREIGN KEY (`movie`) REFERENCES `movie`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
     );
     await queryRunner.query("ALTER TABLE `movie` DROP COLUMN `duration`");
     await queryRunner.query("DROP TABLE `actor`");
