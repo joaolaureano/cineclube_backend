@@ -41,6 +41,7 @@ const models: TsoaRoute.Models = {
       curator: { dataType: "string", required: true },
       year: { dataType: "double", required: true },
       pathBanner: { dataType: "string", required: true },
+      duration: { dataType: "double", required: true },
       platforms: {
         dataType: "array",
         array: { ref: "Platform" },
@@ -51,16 +52,13 @@ const models: TsoaRoute.Models = {
         array: { ref: "User" },
         required: true,
       },
-      usersWatched: {
-        dataType: "array",
-        array: { ref: "Watched" },
-        required: true,
-      },
+      users: { dataType: "array", array: { ref: "UserMovie" }, required: true },
       moviesTags: {
         dataType: "array",
         array: { ref: "MovieTag" },
         required: true,
       },
+      cast: { dataType: "array", array: { ref: "Cast" }, required: true },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },
@@ -87,19 +85,23 @@ const models: TsoaRoute.Models = {
       photoPath: { dataType: "string", required: true },
       randomness: { dataType: "double", required: true },
       toWatch: { dataType: "array", array: { ref: "Movie" }, required: true },
-      watched: { dataType: "array", array: { ref: "Watched" }, required: true },
+      movies: {
+        dataType: "array",
+        array: { ref: "UserMovie" },
+        required: true,
+      },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  Watched: {
+  UserMovie: {
     dataType: "refObject",
     properties: {
       userId: { dataType: "double", required: true },
       movieId: { dataType: "double", required: true },
-      liked: { dataType: "boolean", required: true },
+      status: { dataType: "string", required: true },
       user: { ref: "User", required: true },
       movie: { ref: "Movie", required: true },
       createdAt: { dataType: "datetime", required: true },
@@ -133,6 +135,32 @@ const models: TsoaRoute.Models = {
         array: { ref: "MovieTag" },
         required: true,
       },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Cast: {
+    dataType: "refObject",
+    properties: {
+      actorId: { dataType: "double", required: true },
+      movieId: { dataType: "double", required: true },
+      director: { dataType: "boolean", required: true },
+      actor: { ref: "Actor", required: true },
+      movie: { ref: "Movie", required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Actor: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "string", required: true },
+      name: { dataType: "string", required: true },
+      cast: { dataType: "array", array: { ref: "Cast" }, required: true },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },

@@ -9,7 +9,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Movie, Watched } from ".";
+import { Movie, UserMovie } from ".";
 
 @Entity({ name: "user" })
 export class User {
@@ -39,11 +39,11 @@ export class User {
   })
   toWatch: Movie[];
 
-  @OneToMany(() => Watched, (watched) => watched.user)
+  @OneToMany(() => UserMovie, (userMovie) => userMovie.user)
   @JoinColumn({
     name: "userId",
   })
-  watched: Watched[];
+  movies: UserMovie[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;

@@ -2,7 +2,9 @@ import { User } from "./User";
 import { Movie } from "./Movie";
 import { Platform } from "./Platform";
 import { Tag } from "./Tag";
-import { Watched } from "./Watched";
+import { UserMovie } from "./UserMovie";
 import { MovieTag } from "./MovieTag";
+import { Actor } from "./Actor";
+import { Cast } from "./Cast";
 
-export { User, Movie, Platform, Tag, Watched, MovieTag };
+export { User, Movie, Platform, Tag, UserMovie, MovieTag, Actor, Cast };
