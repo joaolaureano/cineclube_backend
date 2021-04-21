@@ -73,6 +73,56 @@ export class UserController extends Controller {
       };
     }
   }
+
+  @Post("/movie")
+  @SuccessResponse("200")
+  // @Security("firebase") For test purposes!
+  async setUserMovieStatus(
+    @Request() request: express.Request
+  ): Promise<UserMovieStatusResponse> {
+    const { movieId, status, userId } = request.body;
+    if (!movieId || status || userId) {
+      this.setStatus(400);
+      return { success: false, message: "Could not associate user and movie" };
+    }
+    try {
+      console.log(movieId);
+      console.log(status);
+      console.log(userId);
+
+      switch (status) {
+        case true:
+          UserService.setMovieStatusWatched(movieId, userId, status);
+          break;
+      }
+      /*
+                Aqui no TRY coloca uma lógica, tipo um SWITCH CASE 
+                pra selecionar o tipo de status pro filme selecionado
+                e juntar com o usuário na tabela USER_MOVIE.
+                Cada task poderia realizar a sua função em separado
+                Sugeri nomes de funções, mas fiquem livre para trocar
+                O que eu pensei era isso aqui
+                Ex de code final
+                    switch (ENUM) {
+                        case ENUM.javi:
+                          UserService.FUNCTION();
+                            break;
+                    ....
+                        default:
+                            break;
+                    }
+        */
+      throw new Error("Not implemented yet.");
+    } catch (error) {
+      this.setStatus(500);
+
+      return {
+        success: false,
+        message: "Internal server error.",
+        details: error.message,
+      };
+    }
+  }
 }
 
 interface UserAuthenticationResponse extends HttpResponse {
@@ -83,5 +133,11 @@ interface UserAuthenticationResponse extends HttpResponse {
       name: string;
       randomness: number;
     };
+  };
+}
+interface UserMovieStatusResponse extends HttpResponse {
+  body?: {
+    status?: string;
+    message?: string;
   };
 }
