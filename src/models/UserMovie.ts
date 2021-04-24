@@ -12,7 +12,7 @@ import { Movie, User } from ".";
 @Entity("user_movie")
 export class UserMovie {
   @PrimaryColumn()
-  userId: number;
+  userId: string;
 
   @PrimaryColumn()
   movieId: number;
