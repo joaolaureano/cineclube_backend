@@ -86,19 +86,34 @@ export class UserController extends Controller {
     const { user } = request;
     if (!(movieId || status)) {
       this.setStatus(400);
-      throw new Error("Could not associate user and movie");
+      throw new Error("Não foi possivel associar esse filme e usuário");
     }
     try {
       if (user) {
         const userId = user?.id;
-        console.log("a");
         switch (status) {
-          case "watched_and_liked": // PLACEHOLDER!
-            UserService.setMovieStatusWatched(movieId, userId, status);
-            break;
+          case MovieUserStatus.WATCHED_AND_LIKED:
+            UserService.setMovieStatusWatchedLiked(movieId, userId, status);
+            this.setStatus(200);
+            return {
+              message: "User and movie associated",
+              success: true,
+            };
+          case MovieUserStatus.WATCHED_AND_DISLIKED:
+            UserService.setMovieStatusWatchedDisliked(movieId, userId, status);
+            this.setStatus(200);
+            return {
+              message: "User and movie associated",
+              success: true,
+            };
+          default:
+            return {
+              message: "Status does not exists",
+              success: false,
+            };
         }
       }
-      throw new Error("Not implemented yet.");
+      throw new Error();
     } catch (error) {
       this.setStatus(500);
 
@@ -121,9 +136,4 @@ interface UserAuthenticationResponse extends HttpResponse {
     };
   };
 }
-interface UserMovieStatusResponse extends HttpResponse {
-  body?: {
-    status?: string;
-    message?: string;
-  };
-}
+interface UserMovieStatusResponse extends HttpResponse {}

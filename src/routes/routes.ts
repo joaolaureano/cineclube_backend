@@ -206,13 +206,7 @@ const models: TsoaRoute.Models = {
     properties: {
       success: { dataType: "boolean", required: true },
       message: { dataType: "string", required: true },
-      body: {
-        dataType: "nestedObjectLiteral",
-        nestedProperties: {
-          message: { dataType: "string" },
-          status: { dataType: "string" },
-        },
-      },
+      body: { dataType: "any" },
       details: { dataType: "string" },
     },
     additionalProperties: true,
