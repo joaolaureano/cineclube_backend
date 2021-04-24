@@ -1,6 +1,8 @@
 import { getCustomRepository } from "typeorm";
+import { UserMovie } from "../models";
 import { User } from "../models/User";
 import { UserRepository } from "../repositories";
+import { UserMovieRepository } from "../repositories";
 
 export interface userDetails {
   id: string;
@@ -34,8 +36,25 @@ const setMovieStatusWatched = async (
   idMovie: string,
   idUser: string,
   status: string
-): Promise<void> => {
-  return;
+): Promise<UserMovie> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const exists = userMovieRepository.findOne({
+    where: { movieId: idMovie, userId: idUser },
+  });
+
+  if (exists === undefined) {
+    const newUserMovieStatus = new UserMovie();
+    newUserMovieStatus.movieId = parseInt(idMovie);
+    newUserMovieStatus.userId = idUser;
+    newUserMovieStatus.status = status;
+
+    const result = await userMovieRepository.save(newUserMovieStatus);
+
+    return result;
+  }
+
+  throw new Error("Esse usuário já está associado a esse filme!");
 };
 
 export default { createUser, findUserById, setMovieStatusWatched };

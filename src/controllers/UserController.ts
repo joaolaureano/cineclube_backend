@@ -7,10 +7,12 @@ import {
   Request,
   Security,
   SuccessResponse,
+  Body,
 } from "tsoa";
 
 import { HttpResponse } from "../utils/httpResponse";
 import UserService from "../services/UserService";
+import { MovieUserStatus } from "../enum/MovieUserStatus";
 
 @Route("user")
 @Tags("UserController")
@@ -22,7 +24,6 @@ export class UserController extends Controller {
     @Request() request: express.Request
   ): Promise<UserAuthenticationResponse> {
     const { user } = request;
-
     if (!user) {
       this.setStatus(400);
       return { success: false, message: "Could not authenticate" };
@@ -76,42 +77,27 @@ export class UserController extends Controller {
 
   @Post("/movie")
   @SuccessResponse("200")
-  // @Security("firebase") For test purposes!
+  @Security("firebase")
   async setUserMovieStatus(
+    @Body() requestBody: { movieId: string; status: MovieUserStatus },
     @Request() request: express.Request
   ): Promise<UserMovieStatusResponse> {
-    const { movieId, status, userId } = request.body;
-    if (!movieId || status || userId) {
+    const { movieId, status } = requestBody;
+    const { user } = request;
+    if (!(movieId || status)) {
       this.setStatus(400);
-      return { success: false, message: "Could not associate user and movie" };
+      throw new Error("Could not associate user and movie");
     }
     try {
-      console.log(movieId);
-      console.log(status);
-      console.log(userId);
-
-      switch (status) {
-        case true:
-          UserService.setMovieStatusWatched(movieId, userId, status);
-          break;
+      if (user) {
+        const userId = user?.id;
+        console.log("a");
+        switch (status) {
+          case "watched_and_liked": // PLACEHOLDER!
+            UserService.setMovieStatusWatched(movieId, userId, status);
+            break;
+        }
       }
-      /*
-                Aqui no TRY coloca uma lógica, tipo um SWITCH CASE 
-                pra selecionar o tipo de status pro filme selecionado
-                e juntar com o usuário na tabela USER_MOVIE.
-                Cada task poderia realizar a sua função em separado
-                Sugeri nomes de funções, mas fiquem livre para trocar
-                O que eu pensei era isso aqui
-                Ex de code final
-                    switch (ENUM) {
-                        case ENUM.javi:
-                          UserService.FUNCTION();
-                            break;
-                    ....
-                        default:
-                            break;
-                    }
-        */
       throw new Error("Not implemented yet.");
     } catch (error) {
       this.setStatus(500);
