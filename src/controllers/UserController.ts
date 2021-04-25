@@ -109,6 +109,13 @@ export class UserController extends Controller {
               message: "User and movie associated",
               success: true,
             };
+          case MovieUserStatus.DONT_WANT_TO_WATCH:
+            UserService.setMovieStatusDontWantWatch(movieId, userId, status);
+            this.setStatus(200);
+            return {
+              message: "User and movie associated",
+              success: true,
+            };
           default:
             return {
               message: "Status does not exists",
