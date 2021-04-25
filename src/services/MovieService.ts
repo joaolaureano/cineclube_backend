@@ -13,7 +13,13 @@ const getAll = async (): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
 
   const movies = await movieRepository.find({
-    relations: ["moviesTags", "moviesTags.tag", "platforms"],
+    relations: [
+      "moviesTags",
+      "moviesTags.tag",
+      "platforms",
+      "cast",
+      "cast.actor",
+    ],
   });
 
   return movies;
