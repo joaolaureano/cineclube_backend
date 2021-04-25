@@ -1,8 +1,7 @@
 import { getCustomRepository } from "typeorm";
 import { UserMovie } from "../models";
 import { User } from "../models/User";
-import { UserRepository } from "../repositories";
-import { UserMovieRepository } from "../repositories";
+import { UserRepository, UserMovieRepository } from "../repositories";
 
 export interface userDetails {
   id: string;
@@ -32,6 +31,25 @@ const findUserById = async (id: string): Promise<User | undefined> => {
   return user;
 };
 
+const getUserMoviesByStatus = async (
+  status: string,
+  userId: string
+): Promise<UserMovie[]> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const movies = await userMovieRepository.find({
+    where: { userId, status },
+    relations: ["movie"],
+  });
+
+  const moviesWithoutId = movies.map((movie) => {
+    movie.userId = "";
+    return movie;
+  });
+
+  return moviesWithoutId;
+};
+
 const setMovieStatusWatchedLiked = async (
   idMovie: string,
   idUser: string,
@@ -59,6 +77,7 @@ const setMovieStatusWatchedLiked = async (
     return result;
   }
 };
+
 const setMovieStatusWatchedDisliked = async (
   idMovie: string,
   idUser: string,
@@ -92,4 +111,5 @@ export default {
   findUserById,
   setMovieStatusWatchedLiked,
   setMovieStatusWatchedDisliked,
+  getUserMoviesByStatus,
 };

@@ -7,11 +7,14 @@ import {
   Request,
   Security,
   SuccessResponse,
+  Get,
+  Path,
   Body,
 } from "tsoa";
 
 import { HttpResponse } from "../utils/httpResponse";
 import UserService from "../services/UserService";
+import { UserMovie } from "../models";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
 
 @Route("user")
@@ -81,7 +84,7 @@ export class UserController extends Controller {
   async setUserMovieStatus(
     @Body() requestBody: { movieId: string; status: MovieUserStatus },
     @Request() request: express.Request
-  ): Promise<UserMovieStatusResponse> {
+  ): Promise<HttpResponse> {
     const { movieId, status } = requestBody;
     const { user } = request;
     if (!(movieId || status)) {
@@ -124,6 +127,50 @@ export class UserController extends Controller {
       };
     }
   }
+  @Get("/movie/{status}")
+  @SuccessResponse("200")
+  @Security("firebase")
+  async getUserMoviesByStatus(
+    @Request() request: express.Request,
+    @Path() status: string
+  ): Promise<UserMoviesStatusListResponse> {
+    const { user } = request;
+    if (!status) {
+      this.setStatus(400);
+      return { success: false, message: "Status is required." };
+    }
+    try {
+      if (user) {
+        const userMovies = await UserService.getUserMoviesByStatus(
+          status,
+          user.id
+        );
+
+        return {
+          success: true,
+          message: `Found ${userMovies.length} movies.`,
+          body: {
+            userMovies,
+          },
+        };
+      }
+      throw new Error("User not found;");
+    } catch (error) {
+      this.setStatus(500);
+
+      return {
+        success: false,
+        message: "Internal server error.",
+        details: error.message,
+      };
+    }
+  }
+}
+
+interface UserMoviesStatusListResponse extends HttpResponse {
+  body?: {
+    userMovies?: UserMovie[];
+  };
 }
 
 interface UserAuthenticationResponse extends HttpResponse {
@@ -136,4 +183,3 @@ interface UserAuthenticationResponse extends HttpResponse {
     };
   };
 }
-interface UserMovieStatusResponse extends HttpResponse {}
