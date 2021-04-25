@@ -9,11 +9,13 @@ import {
   SuccessResponse,
   Get,
   Path,
+  Body,
 } from "tsoa";
 
 import { HttpResponse } from "../utils/httpResponse";
 import UserService from "../services/UserService";
 import { UserMovie } from "../models";
+import { MovieUserStatus } from "../enum/MovieUserStatus";
 
 @Route("user")
 @Tags("UserController")
@@ -25,7 +27,6 @@ export class UserController extends Controller {
     @Request() request: express.Request
   ): Promise<UserAuthenticationResponse> {
     const { user } = request;
-
     if (!user) {
       this.setStatus(400);
       return { success: false, message: "Could not authenticate" };
@@ -79,43 +80,43 @@ export class UserController extends Controller {
 
   @Post("/movie")
   @SuccessResponse("200")
-  // @Security("firebase") For test purposes!
+  @Security("firebase")
   async setUserMovieStatus(
+    @Body() requestBody: { movieId: string; status: MovieUserStatus },
     @Request() request: express.Request
-  ): Promise<UserMovieStatusResponse> {
-    const { movieId, status, userId } = request.body;
-    if (!movieId || status || userId) {
+  ): Promise<HttpResponse> {
+    const { movieId, status } = requestBody;
+    const { user } = request;
+    if (!(movieId || status)) {
       this.setStatus(400);
-      return { success: false, message: "Could not associate user and movie" };
+      throw new Error("Não foi possivel associar esse filme e usuário");
     }
     try {
-      console.log(movieId);
-      console.log(status);
-      console.log(userId);
-
-      switch (status) {
-        case true:
-          UserService.setMovieStatusWatched(movieId, userId, status);
-          break;
+      if (user) {
+        const userId = user?.id;
+        switch (status) {
+          case MovieUserStatus.WATCHED_AND_LIKED:
+            UserService.setMovieStatusWatchedLiked(movieId, userId, status);
+            this.setStatus(200);
+            return {
+              message: "User and movie associated",
+              success: true,
+            };
+          case MovieUserStatus.WATCHED_AND_DISLIKED:
+            UserService.setMovieStatusWatchedDisliked(movieId, userId, status);
+            this.setStatus(200);
+            return {
+              message: "User and movie associated",
+              success: true,
+            };
+          default:
+            return {
+              message: "Status does not exists",
+              success: false,
+            };
+        }
       }
-      /*
-                Aqui no TRY coloca uma lógica, tipo um SWITCH CASE 
-                pra selecionar o tipo de status pro filme selecionado
-                e juntar com o usuário na tabela USER_MOVIE.
-                Cada task poderia realizar a sua função em separado
-                Sugeri nomes de funções, mas fiquem livre para trocar
-                O que eu pensei era isso aqui
-                Ex de code final
-                    switch (ENUM) {
-                        case ENUM.javi:
-                          UserService.FUNCTION();
-                            break;
-                    ....
-                        default:
-                            break;
-                    }
-        */
-      throw new Error("Not implemented yet.");
+      throw new Error();
     } catch (error) {
       this.setStatus(500);
 
@@ -180,11 +181,5 @@ interface UserAuthenticationResponse extends HttpResponse {
       name: string;
       randomness: number;
     };
-  };
-}
-interface UserMovieStatusResponse extends HttpResponse {
-  body?: {
-    status?: string;
-    message?: string;
   };
 }

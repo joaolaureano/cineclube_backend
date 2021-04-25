@@ -201,21 +201,26 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UserMovieStatusResponse: {
+  HttpResponse: {
     dataType: "refObject",
     properties: {
       success: { dataType: "boolean", required: true },
       message: { dataType: "string", required: true },
-      body: {
-        dataType: "nestedObjectLiteral",
-        nestedProperties: {
-          message: { dataType: "string" },
-          status: { dataType: "string" },
-        },
-      },
+      body: { dataType: "any" },
       details: { dataType: "string" },
     },
     additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  MovieUserStatus: {
+    dataType: "refEnum",
+    enums: [
+      "already_watched",
+      "want_to_watch",
+      "dont_want_to_watch",
+      "watched_and_liked",
+      "watched_and_disliked",
+    ],
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   UserMoviesStatusListResponse: {
@@ -359,12 +364,23 @@ export function RegisterRoutes(app: express.Router) {
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post(
     "/api/v1/user/movie",
+    authenticateMiddleware([{ firebase: [] }]),
     function UserController_setUserMovieStatus(
       request: any,
       response: any,
       next: any
     ) {
       const args = {
+        requestBody: {
+          in: "body",
+          name: "requestBody",
+          required: true,
+          dataType: "nestedObjectLiteral",
+          nestedProperties: {
+            status: { ref: "MovieUserStatus", required: true },
+            movieId: { dataType: "string", required: true },
+          },
+        },
         request: {
           in: "request",
           name: "request",
