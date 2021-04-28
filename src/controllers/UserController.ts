@@ -14,7 +14,7 @@ import {
 
 import { HttpResponse } from "../utils/httpResponse";
 import UserService from "../services/UserService";
-import { UserMovie } from "../models";
+import { Movie, UserMovie } from "../models";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
 
 @Route("user")
@@ -111,6 +111,13 @@ export class UserController extends Controller {
             };
           case MovieUserStatus.DONT_WANT_TO_WATCH:
             UserService.setMovieStatusDontWantWatch(movieId, userId, status);
+            this.setStatus(200);
+            return {
+              message: "User and movie associated",
+              success: true,
+            };
+          case MovieUserStatus.WANT_TO_WATCH:
+            UserService.setMovieStatusWantToWatch(movieId, userId, status);
             this.setStatus(200);
             return {
               message: "User and movie associated",
