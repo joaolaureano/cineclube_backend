@@ -135,6 +135,13 @@ export class UserController extends Controller {
               message: "Status reset successfully",
               success: true,
             };
+          case MovieUserStatus.WANT_TO_WATCH:
+            UserService.setMovieStatusWantToWatch(movieId, userId, status);
+            this.setStatus(200);
+            return {
+              message: "User and movie associated",
+              success: true,
+            };
           default:
             return {
               message: "Status does not exists",
