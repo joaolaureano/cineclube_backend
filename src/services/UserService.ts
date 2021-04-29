@@ -1,7 +1,11 @@
 import { getCustomRepository } from "typeorm";
 import { UserMovie } from "../models";
 import { User } from "../models/User";
-import { UserRepository, UserMovieRepository } from "../repositories";
+import {
+  UserRepository,
+  UserMovieRepository,
+  PlatformRepository,
+} from "../repositories";
 
 export interface userDetails {
   id: string;
@@ -36,10 +40,11 @@ const getUserMoviesByStatus = async (
   userId: string
 ): Promise<UserMovie[]> => {
   const userMovieRepository = getCustomRepository(UserMovieRepository);
+  const platformRepository = getCustomRepository(PlatformRepository);
 
   const movies = await userMovieRepository.find({
     where: { userId, status },
-    relations: ["movie"],
+    relations: ["movie", "movie.platforms"],
   });
 
   if (movies.length === 0) return [];
