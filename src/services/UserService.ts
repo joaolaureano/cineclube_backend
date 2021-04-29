@@ -42,6 +42,8 @@ const getUserMoviesByStatus = async (
     relations: ["movie"],
   });
 
+  if (movies.length === 0) return [];
+
   const moviesWithoutId = movies.map((movie) => {
     movie.userId = "";
     return movie;

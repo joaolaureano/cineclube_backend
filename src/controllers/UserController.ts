@@ -159,7 +159,7 @@ export class UserController extends Controller {
           status,
           user.id
         );
-
+        console.log(userMovies);
         return {
           success: true,
           message: `Found ${userMovies.length} movies.`,
