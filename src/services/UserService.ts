@@ -40,7 +40,6 @@ const getUserMoviesByStatus = async (
   userId: string
 ): Promise<UserMovie[]> => {
   const userMovieRepository = getCustomRepository(UserMovieRepository);
-  const platformRepository = getCustomRepository(PlatformRepository);
 
   const movies = await userMovieRepository.find({
     where: { userId, status },
