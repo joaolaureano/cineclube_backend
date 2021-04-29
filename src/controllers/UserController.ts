@@ -14,7 +14,7 @@ import {
 
 import { HttpResponse } from "../utils/httpResponse";
 import UserService from "../services/UserService";
-import { Movie, UserMovie } from "../models";
+import { UserMovie } from "../models";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
 
 @Route("user")
@@ -96,24 +96,43 @@ export class UserController extends Controller {
         const userId = user?.id;
         switch (status) {
           case MovieUserStatus.WATCHED_AND_LIKED:
-            UserService.setMovieStatusWatchedLiked(movieId, userId, status);
+            await UserService.setMovieStatusWatchedLiked(
+              movieId,
+              userId,
+              status
+            );
             this.setStatus(200);
             return {
               message: "User and movie associated",
               success: true,
             };
           case MovieUserStatus.WATCHED_AND_DISLIKED:
-            UserService.setMovieStatusWatchedDisliked(movieId, userId, status);
+            await UserService.setMovieStatusWatchedDisliked(
+              movieId,
+              userId,
+              status
+            );
             this.setStatus(200);
             return {
               message: "User and movie associated",
               success: true,
             };
           case MovieUserStatus.DONT_WANT_TO_WATCH:
-            UserService.setMovieStatusDontWantWatch(movieId, userId, status);
+            await UserService.setMovieStatusDontWantWatch(
+              movieId,
+              userId,
+              status
+            );
             this.setStatus(200);
             return {
               message: "User and movie associated",
+              success: true,
+            };
+          case MovieUserStatus.NONE:
+            await UserService.deleteUserMovie(movieId, userId);
+            this.setStatus(200);
+            return {
+              message: "Status reset successfully",
               success: true,
             };
           case MovieUserStatus.WANT_TO_WATCH:

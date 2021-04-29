@@ -134,6 +134,20 @@ const setMovieStatusDontWantWatch = async (
   }
 };
 
+const deleteUserMovie = async (
+  idMovie: string,
+  idUser: string
+): Promise<UserMovie | undefined> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const exists = await userMovieRepository.findOne({
+    where: { movieId: idMovie, userId: idUser },
+  });
+  if (exists) {
+    const removed = await userMovieRepository.remove(exists);
+    return removed;
+  }
+};
 const setMovieStatusWantToWatch = async (
   idMovie: string,
   idUser: string,
@@ -161,7 +175,6 @@ const setMovieStatusWantToWatch = async (
     return result;
   }
 };
-
 export default {
   createUser,
   findUserById,
@@ -170,4 +183,5 @@ export default {
   getUserMoviesByStatus,
   setMovieStatusDontWantWatch,
   setMovieStatusWantToWatch,
+  deleteUserMovie,
 };
