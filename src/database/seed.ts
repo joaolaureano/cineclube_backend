@@ -21,6 +21,8 @@ const connect = async () => {
     const tags = readMovieTags(movieIds);
     const platforms = readMoviePlatforms(movieIds);
     const movies = readMovies(movieIds);
+    const actors = readMovieActors(movieIds);
+    const directors = readMovieDirectors(movieIds);
 
     // Get repositories
     const tagRepository = getCustomRepository(Repositories.TagRepository);
@@ -31,6 +33,8 @@ const connect = async () => {
     const movieTagRepository = getCustomRepository(
       Repositories.MovieTagRepository
     );
+    const actorRepository = getCustomRepository(Repositories.ActorRepository);
+    const castRepository = getCustomRepository(Repositories.CastRepository);
 
     // Insert data
     console.log("Inserting tags...");
@@ -43,6 +47,12 @@ const connect = async () => {
     console.log("DONE");
     console.log("Inserting Movies...");
     const insertedMovies = await movieRepository.save(Object.values(movies));
+    console.log("DONE");
+    console.log("Inserting actors...");
+    const insertedActors = await actorRepository.save(Object.values(actors));
+    const insertedDirectors = await actorRepository.save(
+      Object.values(directors)
+    );
     console.log("DONE");
 
     // Link tags and platforms to movies
@@ -83,8 +93,53 @@ const connect = async () => {
     const insertedMovieTags = await movieTagRepository.save(movieTags);
     console.log("DONE");
 
+    // Link actors to movies
+    const actorMap = toObject("name", insertedActors);
+    const directorsMap = toObject("name", insertedDirectors);
+
+    const cast: Models.Cast[] = [];
+
+    movieIds.forEach((id: string) => {
+      const movie = movieData[id];
+      const movieModel = movieMap[movie.brazilian_title];
+
+      const actors: string[] = movie.cast;
+      actors.forEach((actorName) => {
+        const actorModel = actorMap[actorName];
+
+        const castModel = new Models.Cast();
+        castModel.actor = actorModel;
+        castModel.movie = movieModel;
+        castModel.director = false;
+        cast.push(castModel);
+      });
+
+      const directors: string[] = movie.directors;
+      directors.forEach((actorName) => {
+        const actorModel = directorsMap[actorName];
+
+        const castModel = new Models.Cast();
+        castModel.actor = actorModel;
+        castModel.movie = movieModel;
+        castModel.director = true;
+        cast.push(castModel);
+      });
+    });
+
+    console.log("Linking Actors to Movies...");
+    const insertedCast = await castRepository.save(Object.values(cast));
+    console.log("DONE");
+
     // Print inserted data
-    // console.log({tags: insertedTags, platforms: insertedPlatforms, movies: insertedMovies, movieTags: insertedMovieTags});
+    // console.log({
+    //   tags: insertedTags,
+    //   platforms: insertedPlatforms,
+    //   movies: insertedMovies,
+    //   movieTags: insertedMovieTags,
+    //   actors: insertedActors,
+    //   directors: insertedDirectors,
+    //   cast: insertedCast,
+    // });
 
     console.log("Finished inserting data, exiting...");
     connection.close();
@@ -131,6 +186,42 @@ const readMoviePlatforms = (movieIds: string[]) => {
   return platforms;
 };
 
+const readMovieActors = (movieIds: string[]) => {
+  const actors: { [actorName: string]: Models.Actor } = {};
+
+  movieIds.forEach((id: string) => {
+    const movie = movieData[id];
+
+    const actorNames: string[] = movie.cast;
+    actorNames.forEach((actorName) => {
+      if (!actors[actorName]) {
+        const actorModel = new Models.Actor();
+        actorModel.name = actorName;
+        actors[actorName] = actorModel;
+      }
+    });
+  });
+  return actors;
+};
+
+const readMovieDirectors = (movieIds: string[]) => {
+  const director: { [directorName: string]: Models.Actor } = {};
+
+  movieIds.forEach((id: string) => {
+    const movie = movieData[id];
+
+    const directorNames: string[] = movie.directors;
+    directorNames.forEach((directorName) => {
+      if (!director[directorName]) {
+        const directorModel = new Models.Actor();
+        directorModel.name = directorName;
+        director[directorName] = directorModel;
+      }
+    });
+  });
+  return director;
+};
+
 const readMovies = (movieIds: string[]) => {
   const movies: { [movieId: string]: Models.Movie } = {};
 
@@ -145,6 +236,7 @@ const readMovies = (movieIds: string[]) => {
     movieModel.curator = movie.curator;
     movieModel.critic = movie.custom_description;
     movieModel.pathBanner = movie.cover_url;
+    movieModel.duration = movie.runtime;
     movieModel.platforms = [];
     movies[id] = movieModel;
   });

@@ -41,26 +41,19 @@ const models: TsoaRoute.Models = {
       curator: { dataType: "string", required: true },
       year: { dataType: "double", required: true },
       pathBanner: { dataType: "string", required: true },
+      duration: { dataType: "double", required: true },
       platforms: {
         dataType: "array",
         array: { ref: "Platform" },
         required: true,
       },
-      usersToWatch: {
-        dataType: "array",
-        array: { ref: "User" },
-        required: true,
-      },
-      usersWatched: {
-        dataType: "array",
-        array: { ref: "Watched" },
-        required: true,
-      },
+      users: { dataType: "array", array: { ref: "UserMovie" }, required: true },
       moviesTags: {
         dataType: "array",
         array: { ref: "MovieTag" },
         required: true,
       },
+      cast: { dataType: "array", array: { ref: "Cast" }, required: true },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },
@@ -79,6 +72,20 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserMovie: {
+    dataType: "refObject",
+    properties: {
+      userId: { dataType: "string", required: true },
+      movieId: { dataType: "double", required: true },
+      status: { dataType: "string", required: true },
+      user: { ref: "User", required: true },
+      movie: { ref: "Movie", required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   User: {
     dataType: "refObject",
     properties: {
@@ -86,22 +93,11 @@ const models: TsoaRoute.Models = {
       name: { dataType: "string", required: true },
       photoPath: { dataType: "string", required: true },
       randomness: { dataType: "double", required: true },
-      toWatch: { dataType: "array", array: { ref: "Movie" }, required: true },
-      watched: { dataType: "array", array: { ref: "Watched" }, required: true },
-      createdAt: { dataType: "datetime", required: true },
-      updatedAt: { dataType: "datetime", required: true },
-    },
-    additionalProperties: true,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  Watched: {
-    dataType: "refObject",
-    properties: {
-      userId: { dataType: "double", required: true },
-      movieId: { dataType: "double", required: true },
-      liked: { dataType: "boolean", required: true },
-      user: { ref: "User", required: true },
-      movie: { ref: "Movie", required: true },
+      movies: {
+        dataType: "array",
+        array: { ref: "UserMovie" },
+        required: true,
+      },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },
@@ -133,6 +129,32 @@ const models: TsoaRoute.Models = {
         array: { ref: "MovieTag" },
         required: true,
       },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Cast: {
+    dataType: "refObject",
+    properties: {
+      actorId: { dataType: "double", required: true },
+      movieId: { dataType: "double", required: true },
+      director: { dataType: "boolean", required: true },
+      actor: { ref: "Actor", required: true },
+      movie: { ref: "Movie", required: true },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Actor: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "string", required: true },
+      name: { dataType: "string", required: true },
+      cast: { dataType: "array", array: { ref: "Cast" }, required: true },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },
@@ -172,6 +194,44 @@ const models: TsoaRoute.Models = {
               photoPath: { dataType: "string" },
             },
           },
+        },
+      },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  HttpResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: { dataType: "any" },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  MovieUserStatus: {
+    dataType: "refEnum",
+    enums: [
+      "already_watched",
+      "want_to_watch",
+      "dont_want_to_watch",
+      "watched_and_liked",
+      "watched_and_disliked",
+    ],
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UserMoviesStatusListResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          userMovies: { dataType: "array", array: { ref: "UserMovie" } },
         },
       },
       details: { dataType: "string" },
@@ -295,6 +355,94 @@ export function RegisterRoutes(app: express.Router) {
       const controller = new UserController();
 
       const promise = controller.authenticate.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.post(
+    "/api/v1/user/movie",
+    authenticateMiddleware([{ firebase: [] }]),
+    function UserController_setUserMovieStatus(
+      request: any,
+      response: any,
+      next: any
+    ) {
+      const args = {
+        requestBody: {
+          in: "body",
+          name: "requestBody",
+          required: true,
+          dataType: "nestedObjectLiteral",
+          nestedProperties: {
+            status: { ref: "MovieUserStatus", required: true },
+            movieId: { dataType: "string", required: true },
+          },
+        },
+        request: {
+          in: "request",
+          name: "request",
+          required: true,
+          dataType: "object",
+        },
+      };
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+      const promise = controller.setUserMovieStatus.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.get(
+    "/api/v1/user/movie/:status",
+    authenticateMiddleware([{ firebase: [] }]),
+    function UserController_getUserMoviesByStatus(
+      request: any,
+      response: any,
+      next: any
+    ) {
+      const args = {
+        request: {
+          in: "request",
+          name: "request",
+          required: true,
+          dataType: "object",
+        },
+        status: {
+          in: "path",
+          name: "status",
+          required: true,
+          dataType: "string",
+        },
+      };
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+      const promise = controller.getUserMoviesByStatus.apply(
         controller,
         validatedArgs as any
       );

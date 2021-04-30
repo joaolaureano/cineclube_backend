@@ -9,21 +9,21 @@ import {
 
 import { Movie, User } from ".";
 
-@Entity("watched")
-export class Watched {
+@Entity("user_movie")
+export class UserMovie {
   @PrimaryColumn()
-  userId: number;
+  userId: string;
 
   @PrimaryColumn()
   movieId: number;
 
   @Column()
-  liked: boolean;
+  status: string;
 
-  @ManyToOne(() => User, (user) => user.watched)
+  @ManyToOne(() => User, (user) => user.movies)
   user: User;
 
-  @ManyToOne(() => Movie, (movie) => movie.usersWatched)
+  @ManyToOne(() => Movie, (movie) => movie.users)
   movie: Movie;
 
   @CreateDateColumn({ name: "created_At" })

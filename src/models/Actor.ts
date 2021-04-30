@@ -4,30 +4,24 @@ import {
   Entity,
   JoinColumn,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Movie, UserMovie } from ".";
+import { Cast } from ".";
 
-@Entity({ name: "user" })
-export class User {
-  @PrimaryColumn()
+@Entity({ name: "actor" })
+export class Actor {
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column()
   name: string;
 
-  @Column()
-  photoPath: string;
-
-  @Column()
-  randomness: number;
-
-  @OneToMany(() => UserMovie, (userMovie) => userMovie.user)
+  @OneToMany(() => Cast, (cast) => cast.actor)
   @JoinColumn({
-    name: "userId",
+    name: "actorId",
   })
-  movies: UserMovie[];
+  cast: Cast[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;

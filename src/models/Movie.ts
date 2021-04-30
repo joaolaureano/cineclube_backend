@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { MovieTag, Platform, Tag, User, Watched } from ".";
+import { MovieTag, Platform, User, UserMovie, Cast } from ".";
 
 @Entity({ name: "movie" })
 export class Movie {
@@ -43,25 +43,31 @@ export class Movie {
   @Column()
   pathBanner: string;
 
+  @Column()
+  duration: number;
+
   @ManyToMany(() => Platform, (platform) => platform.movies, {
     cascade: true,
   })
   platforms: Platform[];
 
-  @ManyToMany(() => User, (user) => user.toWatch)
-  usersToWatch: User[];
-
-  @OneToMany(() => Watched, (watched) => watched.movie)
+  @OneToMany(() => UserMovie, (userMovie) => userMovie.movie)
   @JoinColumn({
     name: "movieId",
   })
-  usersWatched: Watched[];
+  users: UserMovie[];
 
   @OneToMany(() => MovieTag, (movieTag) => movieTag.movie)
   @JoinColumn({
     name: "movieId",
   })
   moviesTags: MovieTag[];
+
+  @OneToMany(() => Cast, (cast) => cast.movie)
+  @JoinColumn({
+    name: "movieId",
+  })
+  cast: Cast[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;

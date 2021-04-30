@@ -1,6 +1,11 @@
 import { getCustomRepository } from "typeorm";
+import { UserMovie } from "../models";
 import { User } from "../models/User";
-import { UserRepository } from "../repositories";
+import {
+  UserRepository,
+  UserMovieRepository,
+  PlatformRepository,
+} from "../repositories";
 
 export interface userDetails {
   id: string;
@@ -30,4 +35,157 @@ const findUserById = async (id: string): Promise<User | undefined> => {
   return user;
 };
 
-export default { createUser, findUserById };
+const getUserMoviesByStatus = async (
+  status: string,
+  userId: string
+): Promise<UserMovie[]> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const movies = await userMovieRepository.find({
+    where: { userId, status },
+    relations: ["movie", "movie.platforms"],
+  });
+
+  const moviesWithoutId = movies.map((movie) => {
+    movie.userId = "";
+    return movie;
+  });
+
+  return moviesWithoutId;
+};
+
+const setMovieStatusWatchedLiked = async (
+  idMovie: string,
+  idUser: string,
+  status: string
+): Promise<UserMovie> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const exists = await userMovieRepository.findOne({
+    where: { movieId: idMovie, userId: idUser },
+  });
+  if (!exists) {
+    const newUserMovieStatus = new UserMovie();
+    newUserMovieStatus.movieId = parseInt(idMovie);
+    newUserMovieStatus.userId = idUser;
+    newUserMovieStatus.status = status;
+
+    const result = await userMovieRepository.save(newUserMovieStatus);
+
+    return result;
+  } else {
+    exists.status = status;
+
+    const result = await userMovieRepository.save(exists);
+
+    return result;
+  }
+};
+
+const setMovieStatusWatchedDisliked = async (
+  idMovie: string,
+  idUser: string,
+  status: string
+): Promise<UserMovie> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const exists = await userMovieRepository.findOne({
+    where: { movieId: idMovie, userId: idUser },
+  });
+  if (!exists) {
+    const newUserMovieStatus = new UserMovie();
+    newUserMovieStatus.movieId = parseInt(idMovie);
+    newUserMovieStatus.userId = idUser;
+    newUserMovieStatus.status = status;
+
+    const result = await userMovieRepository.save(newUserMovieStatus);
+
+    return result;
+  } else {
+    exists.status = status;
+
+    const result = await userMovieRepository.save(exists);
+
+    return result;
+  }
+};
+
+const setMovieStatusDontWantWatch = async (
+  idMovie: string,
+  idUser: string,
+  status: string
+): Promise<UserMovie> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const exists = await userMovieRepository.findOne({
+    where: { movieId: idMovie, userId: idUser },
+  });
+  if (!exists) {
+    const newUserMovieStatus = new UserMovie();
+    newUserMovieStatus.movieId = parseInt(idMovie);
+    newUserMovieStatus.userId = idUser;
+    newUserMovieStatus.status = status;
+
+    const result = await userMovieRepository.save(newUserMovieStatus);
+
+    return result;
+  } else {
+    exists.status = status;
+
+    const result = await userMovieRepository.save(exists);
+
+    return result;
+  }
+};
+
+const deleteUserMovie = async (
+  idMovie: string,
+  idUser: string
+): Promise<UserMovie | undefined> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const exists = await userMovieRepository.findOne({
+    where: { movieId: idMovie, userId: idUser },
+  });
+  if (exists) {
+    const removed = await userMovieRepository.remove(exists);
+    return removed;
+  }
+};
+const setMovieStatusWantToWatch = async (
+  idMovie: string,
+  idUser: string,
+  status: string
+): Promise<UserMovie> => {
+  const userMovieRepository = getCustomRepository(UserMovieRepository);
+
+  const exists = await userMovieRepository.findOne({
+    where: { movieId: idMovie, userId: idUser },
+  });
+  if (!exists) {
+    const newUserMovieStatus = new UserMovie();
+    newUserMovieStatus.movieId = parseInt(idMovie);
+    newUserMovieStatus.userId = idUser;
+    newUserMovieStatus.status = status;
+
+    const result = await userMovieRepository.save(newUserMovieStatus);
+
+    return result;
+  } else {
+    exists.status = status;
+
+    const result = await userMovieRepository.save(exists);
+
+    return result;
+  }
+};
+export default {
+  createUser,
+  findUserById,
+  setMovieStatusWatchedLiked,
+  setMovieStatusWatchedDisliked,
+  getUserMoviesByStatus,
+  setMovieStatusDontWantWatch,
+  setMovieStatusWantToWatch,
+  deleteUserMovie,
+};

@@ -4,7 +4,6 @@ type UserDetails = {
   email?: string;
   photoPath?: string;
 };
-
 declare namespace Express {
   interface Request {
     user?: UserDetails;
