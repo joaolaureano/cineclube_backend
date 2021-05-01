@@ -22,7 +22,7 @@ import { MovieUserStatus } from "../enum/MovieUserStatus";
 export class UserController extends Controller {
   @Post("/auth")
   @SuccessResponse("200")
-  @Security("firebase")
+  @Security("firebaseLogin")
   async authenticate(
     @Request() request: express.Request
   ): Promise<UserAuthenticationResponse> {
