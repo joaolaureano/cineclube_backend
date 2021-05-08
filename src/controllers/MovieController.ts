@@ -1,5 +1,14 @@
 import express from "express";
-import { Controller, Route, Get, Tags, SuccessResponse, Path } from "tsoa";
+import {
+  Controller,
+  Route,
+  Get,
+  Tags,
+  SuccessResponse,
+  Path,
+  Security,
+  Request,
+} from "tsoa";
 
 import { HttpResponse } from "../utils/httpResponse";
 import MovieService from "../services/MovieService";
@@ -10,19 +19,23 @@ import { Movie } from "../models";
 export class MovieController extends Controller {
   @Get("/")
   @SuccessResponse("200")
-  async getAll(): Promise<MovieResponse> {
+  @Security("firebase")
+  async getAll(@Request() request: express.Request): Promise<MovieResponse> {
+    const { user } = request;
     try {
-      const movies = await MovieService.getAll();
+      if (user) {
+        const movies = await MovieService.getAll(user.id);
 
-      if (movies) {
-        this.setStatus(200);
-        return {
-          success: true,
-          message: `Found ${movies.length} movies.`,
-          body: {
-            movies,
-          },
-        };
+        if (movies) {
+          this.setStatus(200);
+          return {
+            success: true,
+            message: `Found ${movies.length} movies.`,
+            body: {
+              movies,
+            },
+          };
+        }
       }
 
       throw new Error();

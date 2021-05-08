@@ -1,6 +1,6 @@
 import { getCustomRepository } from "typeorm";
 import { Movie } from "../models/Movie";
-import { MovieRepository } from "../repositories";
+import { MovieRepository, UserMovieRepository } from "../repositories";
 
 export interface userDetails {
   id: string;
@@ -9,20 +9,26 @@ export interface userDetails {
   photoPath?: string;
 }
 
-const getAll = async (): Promise<Movie[] | undefined> => {
+const getAll = async (userId: string): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
 
-  const movies = await movieRepository.find({
-    relations: [
-      "moviesTags",
-      "moviesTags.tag",
-      "platforms",
-      "cast",
-      "cast.actor",
-    ],
-  });
+  const userMovieList = getCustomRepository(UserMovieRepository)
+    .createQueryBuilder("userMovie")
+    .select("userMovie.movieId", "movieId")
+    .where(`userMovie.userId = "${userId}"`)
+    .getSql();
 
-  return movies;
+  const moviesNotInUserList = movieRepository
+    .createQueryBuilder("movie")
+    .leftJoinAndSelect("movie.platforms", "platforms")
+    .leftJoinAndSelect("movie.cast", "cast")
+    .leftJoinAndSelect("cast.actor", "actors")
+    .leftJoinAndSelect("movie.moviesTags", "movieTag", "movieTag.super = true")
+    .leftJoinAndSelect("movieTag.tag", "tag")
+    .where(`movie.id NOT IN (${userMovieList})`)
+    .getMany();
+
+  return moviesNotInUserList;
 };
 
 const getById = async (id: number) => {
