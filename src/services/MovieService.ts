@@ -1,6 +1,11 @@
-import { getCustomRepository } from "typeorm";
+import { Any, getCustomRepository } from "typeorm";
 import { Movie } from "../models/Movie";
-import { MovieRepository, UserMovieRepository } from "../repositories";
+import {
+  MovieRepository,
+  MovieTagRepository,
+  UserMovieRepository,
+} from "../repositories";
+import { UserTagRepository } from "../repositories/UserTagRepository";
 
 export interface userDetails {
   id: string;
@@ -31,6 +36,34 @@ const getAll = async (userId: string): Promise<Movie[] | undefined> => {
   return moviesNotInUserList;
 };
 
+const getRecommendedList = async (
+  userId: string
+): Promise<Movie[] | undefined> => {
+  const movieRepository = getCustomRepository(MovieRepository);
+  const userTagRepository = getCustomRepository(UserTagRepository);
+  const movieTagRepository = getCustomRepository(MovieTagRepository);
+
+  // Select de todas as tags que o usuário se interessa
+  const userTagList = await userTagRepository
+    .createQueryBuilder("userTag")
+    .select("userTag.totalPoint", "totalPoint")
+    .addSelect("userTag.tagId", "tagId")
+    .where(`userTag.userId = "${userId}"`)
+    .execute();
+
+  const tagIdList = userTagList.map((userTag: { tagId: any }) => userTag.tagId);
+
+  // let result = objArray.map(a => a.foo);
+  //Select de todos os IDS de filmes que possuem alguma tag gerada na query acima
+  const moveIdList = await movieTagRepository
+    .createQueryBuilder("movieTag")
+    .select("movieTag.movieId", "movieId")
+    .where(`movieTag.tagId in (${tagIdList})`)
+    .execute();
+  console.log(moveIdList);
+
+  return undefined;
+};
 const getById = async (id: number) => {
   const movieRepository = getCustomRepository(MovieRepository);
 
@@ -39,4 +72,4 @@ const getById = async (id: number) => {
   return movie;
 };
 
-export default { getAll, getById };
+export default { getAll, getById, getRecommendedList };
