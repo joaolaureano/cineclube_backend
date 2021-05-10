@@ -14,6 +14,27 @@ export interface userDetails {
   email?: string;
   photoPath?: string;
 }
+const getAll = async (userId: string): Promise<Movie[] | undefined> => {
+  const movieRepository = getCustomRepository(MovieRepository);
+
+  const userMovieList = getCustomRepository(UserMovieRepository)
+    .createQueryBuilder("userMovie")
+    .select("userMovie.movieId", "movieId")
+    .where(`userMovie.userId = "${userId}"`)
+    .getSql();
+
+  const moviesNotInUserList = movieRepository
+    .createQueryBuilder("movie")
+    .leftJoinAndSelect("movie.platforms", "platforms")
+    .leftJoinAndSelect("movie.cast", "cast")
+    .leftJoinAndSelect("cast.actor", "actors")
+    .leftJoinAndSelect("movie.moviesTags", "movieTag", "movieTag.super = true")
+    .leftJoinAndSelect("movieTag.tag", "tag")
+    .where(`movie.id NOT IN (${userMovieList})`)
+    .getMany();
+
+  return moviesNotInUserList;
+};
 
 const getRecommendedList = async (
   userId: string
@@ -30,9 +51,9 @@ const getRecommendedList = async (
     .where(`userTag.userId = "${userId}"`)
     .execute();
 
+  if (userTagList.length === 0) return getAll(userId);
   // Geração de lista com apenas os valores das ids de tag
   const tagIdList = userTagList.map((userTag: { tagId: any }) => userTag.tagId);
-
   //Select de todos os IDS de filmes que possuem alguma tag gerada na query acima
   const movieTagIdList = await movieTagRepository
     .createQueryBuilder("movieTag")
