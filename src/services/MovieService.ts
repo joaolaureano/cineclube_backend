@@ -1,3 +1,4 @@
+import { SourceMap } from "module";
 import { Any, getCustomRepository } from "typeorm";
 import { Movie } from "../models/Movie";
 import {
@@ -73,11 +74,18 @@ const getRecommendedList = async (
     .where(`movie.id in (${movieIdList})`)
     .execute();
 
-  const scoreMovies = Object();
   const mapUserTagTotalPoint = Object();
   userTagList.map((tagId: { tagId: string | number; totalPoint: any }) => {
     mapUserTagTotalPoint[tagId.tagId] = tagId.totalPoint;
   });
+
+  const mapMovie = Object();
+
+  movies.map((movie: any) => {
+    mapMovie[movie.movie_id] = movie;
+  });
+
+  let scoreMovies = Object();
 
   movieIdList.forEach((movie: number) => {
     scoreMovies[movie] = {} as MovieScore;
@@ -88,11 +96,13 @@ const getRecommendedList = async (
     scoreMovies[relacao.movieId].score += mapUserTagTotalPoint[relacao.tagId];
   });
 
-  movieTagIdList.forEach((element) => {
-    scoreMovies[relacao.movieId].score += mapUserTagTotalPoint[relacao.tagId];
-  });
+  for (var index in mapMovie) {
+    scoreMovies[index].movie = mapMovie[index];
+  }
 
-  return undefined;
+  scoreMovies = Object.values(scoreMovies);
+
+  return scoreMovies.sort((a: any, b: any) => (a.score > b.score ? -1 : 1));
 };
 const getById = async (id: number) => {
   const movieRepository = getCustomRepository(MovieRepository);
