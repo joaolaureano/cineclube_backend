@@ -41,68 +41,67 @@ const getRecommendedList = async (
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
   const userTagRepository = getCustomRepository(UserTagRepository);
-  const movieTagRepository = getCustomRepository(MovieTagRepository);
 
   // Select de todas as tags que o usuário se interessa
   const userTagList = await userTagRepository
     .createQueryBuilder("userTag")
-    .select("userTag.totalPoint", "totalPoint")
-    .addSelect("userTag.tagId", "tagId")
     .where(`userTag.userId = "${userId}"`)
-    .execute();
+    .getMany();
 
   if (userTagList.length === 0) return getAll(userId);
+
   // Geração de lista com apenas os valores das ids de tag
-  const tagIdList = userTagList.map((userTag: { tagId: any }) => userTag.tagId);
-  //Select de todos os IDS de filmes que possuem alguma tag gerada na query acima
-  const movieTagIdList = await movieTagRepository
-    .createQueryBuilder("movieTag")
-    .select("movieTag.movieId", "movieId")
-    .addSelect("movieTag.tagId", "tagId")
-    .where(`movieTag.tagId in (${tagIdList})`)
-    .execute();
+  const tagIdList = userTagRepository
+    .createQueryBuilder("userTag")
+    .select("userTag.tagId", "tagId")
+    .where(`userTag.userId = "${userId}"`)
+    .getSql();
 
-  // Geração de lista com apenas os valores das ids de filme
-  const movieIdList = movieTagIdList.map(
-    (movie: { movieId: any }) => movie.movieId
-  );
-
-  //Select de todos os filmes que estao na lista acima
+  //Select de todos os filmes que possuem alguma tag gerada na query acima
   const movies = await movieRepository
     .createQueryBuilder("movie")
-    .select("movie")
-    .where(`movie.id in (${movieIdList})`)
-    .execute();
+    .innerJoinAndSelect("movie.moviesTags", "movieTag")
+    .where(`movie.tagId in (${tagIdList})`)
+    .getMany();
 
   //Mapeamento de pontuação da tag para a id da tag
-  const mapUserTagTotalPoint = Object();
-  userTagList.map((tagId: { tagId: string | number; totalPoint: any }) => {
+  const mapUserTagTotalPoint: { [tagId: number]: number } = {};
+  userTagList.map((tagId) => {
     mapUserTagTotalPoint[tagId.tagId] = tagId.totalPoint;
   });
 
   // Mapeamento de filme para id do filme
-  const mapMovie = Object();
-  movies.map((movie: any) => {
-    mapMovie[movie.movie_id] = movie;
+  const mapMovie: { [movieId: number]: Movie } = {};
+  movies.map((movie) => {
+    mapMovie[movie.id] = movie;
   });
 
   // Inicialização de score em 0 e dos filmes
-  let scoreMovies: MapMovieScore = {};
-  movieIdList.forEach((movie: number) => {
-    scoreMovies[movie] = {} as MovieScore;
-    scoreMovies[movie].score = 0;
-    scoreMovies[movie].movie = mapMovie[movie];
+  const scoreMovies: MovieScore[] = movies.map((movie) => {
+    return {
+      score: 0,
+      movie,
+    };
   });
 
   // Cálculo do score para determinado filme
-  movieTagIdList.forEach((relacao: any) => {
-    scoreMovies[relacao.movieId].score += mapUserTagTotalPoint[relacao.tagId];
+  movies.forEach((movie) => {
+    movie.moviesTags.forEach((movieTag) => {
+      scoreMovies[movieTag.movieId].score +=
+        mapUserTagTotalPoint[movieTag.tagId];
+    });
   });
 
-  const arrMovieScore = Object.values(scoreMovies);
+  const sortedMovies = movies.sort((movie, nextMovie) => {
+    const movieScore = scoreMovies[movie.id].score;
+    const nextMovieScore = scoreMovies[nextMovie.id].score;
 
-  return arrMovieScore.sort((a: any, b: any) => (a.score > b.score ? -1 : 1));
+    return nextMovieScore - movieScore;
+  });
+
+  return sortedMovies;
 };
+
 const getById = async (id: number) => {
   const movieRepository = getCustomRepository(MovieRepository);
 
@@ -110,12 +109,10 @@ const getById = async (id: number) => {
 
   return movie;
 };
-interface MapMovieScore {
-  [movieId: number]: MovieScore;
-}
+
 interface MovieScore {
   movie: Movie;
-  score: Number;
+  score: number;
 }
 
 export default { getById, getRecommendedList };
