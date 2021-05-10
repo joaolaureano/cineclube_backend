@@ -115,24 +115,15 @@ const getRecommendedList = async (
     mapUserTagTotalPoint[tagId.tagId] = tagId.totalPoint;
   });
 
-  // Mapeamento de filme para id do filme
-  const mapMovie: { [movieId: number]: Movie } = {};
-  movies.map((movie) => {
-    mapMovie[movie.id] = movie;
-  });
-
-  // Inicialização de score em 0 e dos filmes
   const scoreMovies: { [movieId: number]: MovieScore } = {};
 
+  // Inicialização de score em 0 e dos filmes e
+  // cálculo do score para determinado filme
   movies.forEach((movie) => {
     scoreMovies[movie.id] = {
       score: 0,
       movie,
     };
-  });
-
-  // Cálculo do score para determinado filme
-  movies.forEach((movie) => {
     movie.moviesTags.forEach((movieTag) => {
       scoreMovies[movie.id].score += mapUserTagTotalPoint[movieTag.tagId];
     });
