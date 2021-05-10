@@ -61,7 +61,7 @@ const getRecommendedList = async (
   const movies = await movieRepository
     .createQueryBuilder("movie")
     .innerJoinAndSelect("movie.moviesTags", "movieTag")
-    .where(`movie.tagId in (${tagIdList})`)
+    .where(`movieTag.tagId in (${tagIdList})`)
     .getMany();
 
   //Mapeamento de pontuação da tag para a id da tag
