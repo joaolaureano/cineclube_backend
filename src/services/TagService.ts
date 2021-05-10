@@ -17,11 +17,6 @@ const mainTags = [
 
 const getMainTags = async (): Promise<Tag[]> => {
   const tagRepository = getCustomRepository(TagRepository);
-  const testTags = await tagRepository
-    .createQueryBuilder("tag")
-    .where(`tag.name IN ${mainTags}`)
-    .getSql();
-  console.log(testTags);
 
   const tags = await tagRepository
     .createQueryBuilder("tag")
