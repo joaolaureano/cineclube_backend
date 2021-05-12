@@ -1,5 +1,5 @@
-import { getCustomRepository } from "typeorm";
-import { UserMovie } from "../models";
+import { getCustomRepository, getRepository } from "typeorm";
+import { UserMovie, UserTag } from "../models";
 import { User } from "../models/User";
 import {
   UserRepository,
@@ -179,6 +179,22 @@ const setMovieStatusWantToWatch = async (
     return result;
   }
 };
+
+const setSignUpPreferences = async (
+  userId: string,
+  tagIds: number[]
+): Promise<UserTag[]> => {
+  const userTagRespoitory = getRepository(UserTag);
+  const userTags = tagIds.map((id) => {
+    const userTag = new UserTag();
+    userTag.tagId = id;
+    userTag.userId = userId;
+    userTag.totalPoint = 50;
+    return userTag;
+  });
+  const insertedUserTags = await userTagRespoitory.save(userTags);
+  return insertedUserTags;
+};
 export default {
   createUser,
   findUserById,
@@ -188,4 +204,5 @@ export default {
   setMovieStatusDontWantWatch,
   setMovieStatusWantToWatch,
   deleteUserMovie,
+  setSignUpPreferences,
 };
