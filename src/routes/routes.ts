@@ -15,6 +15,10 @@ import { HelloWorldController } from "./../controllers/HelloWorldController";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MovieController } from "./../controllers/MovieController";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { PlatformController } from "./../controllers/PlatformController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { TagController } from "./../controllers/TagController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from "./../controllers/UserController";
 import { expressAuthentication } from "./../middlewares/authentication";
 import * as express from "express";
@@ -98,6 +102,32 @@ const models: TsoaRoute.Models = {
         array: { ref: "UserMovie" },
         required: true,
       },
+      userTags: {
+        dataType: "array",
+        array: { ref: "UserTag" },
+        required: true,
+      },
+      createdAt: { dataType: "datetime", required: true },
+      updatedAt: { dataType: "datetime", required: true },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  Tag: {
+    dataType: "refObject",
+    properties: {
+      id: { dataType: "double", required: true },
+      name: { dataType: "string", required: true },
+      moviesTags: {
+        dataType: "array",
+        array: { ref: "MovieTag" },
+        required: true,
+      },
+      userTags: {
+        dataType: "array",
+        array: { ref: "UserTag" },
+        required: true,
+      },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },
@@ -119,16 +149,14 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  Tag: {
+  UserTag: {
     dataType: "refObject",
     properties: {
-      id: { dataType: "double", required: true },
-      name: { dataType: "string", required: true },
-      moviesTags: {
-        dataType: "array",
-        array: { ref: "MovieTag" },
-        required: true,
-      },
+      userId: { dataType: "string", required: true },
+      tagId: { dataType: "double", required: true },
+      totalPoint: { dataType: "double", required: true },
+      user: { ref: "User", required: true },
+      tag: { ref: "Tag", required: true },
       createdAt: { dataType: "datetime", required: true },
       updatedAt: { dataType: "datetime", required: true },
     },
@@ -170,6 +198,38 @@ const models: TsoaRoute.Models = {
         dataType: "nestedObjectLiteral",
         nestedProperties: {
           movies: { dataType: "array", array: { ref: "Movie" } },
+        },
+      },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  PlatformResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          platforms: { dataType: "array", array: { ref: "Platform" } },
+        },
+      },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  TagResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          tags: { dataType: "array", array: { ref: "Tag" } },
         },
       },
       details: { dataType: "string" },
@@ -220,6 +280,7 @@ const models: TsoaRoute.Models = {
       "dont_want_to_watch",
       "watched_and_liked",
       "watched_and_disliked",
+      "none",
     ],
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -276,8 +337,16 @@ export function RegisterRoutes(app: express.Router) {
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.get(
     "/api/v1/movies",
+    authenticateMiddleware([{ firebase: [] }]),
     function MovieController_getAll(request: any, response: any, next: any) {
-      const args = {};
+      const args = {
+        request: {
+          in: "request",
+          name: "request",
+          required: true,
+          dataType: "object",
+        },
+      };
 
       // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
@@ -326,9 +395,61 @@ export function RegisterRoutes(app: express.Router) {
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.get(
+    "/api/v1/platforms",
+    function PlatformController_getPlatforms(
+      request: any,
+      response: any,
+      next: any
+    ) {
+      const args = {};
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new PlatformController();
+
+      const promise = controller.getPlatforms.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.get(
+    "/api/v1/tags",
+    function TagController_getMainTags(request: any, response: any, next: any) {
+      const args = {};
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new TagController();
+
+      const promise = controller.getMainTags.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post(
     "/api/v1/user/auth",
-    authenticateMiddleware([{ firebase: [] }]),
+    authenticateMiddleware([{ firebaseLogin: [] }]),
     function UserController_authenticate(
       request: any,
       response: any,
@@ -443,6 +564,55 @@ export function RegisterRoutes(app: express.Router) {
       const controller = new UserController();
 
       const promise = controller.getUserMoviesByStatus.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.post(
+    "/api/v1/user/preferences",
+    authenticateMiddleware([{ firebase: [] }]),
+    function UserController_setUserPreferences(
+      request: any,
+      response: any,
+      next: any
+    ) {
+      const args = {
+        requestBody: {
+          in: "body",
+          name: "requestBody",
+          required: true,
+          dataType: "nestedObjectLiteral",
+          nestedProperties: {
+            tagIds: {
+              dataType: "array",
+              array: { dataType: "double" },
+              required: true,
+            },
+          },
+        },
+        request: {
+          in: "request",
+          name: "request",
+          required: true,
+          dataType: "object",
+        },
+      };
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+      const promise = controller.setUserPreferences.apply(
         controller,
         validatedArgs as any
       );

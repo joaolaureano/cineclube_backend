@@ -1,10 +1,11 @@
-import { getCustomRepository, getRepository } from "typeorm";
-import { UserMovie, UserTag } from "../models";
+import { getConnection, getCustomRepository, getRepository } from "typeorm";
+import { Movie, UserMovie, UserTag } from "../models";
 import { User } from "../models/User";
 import {
   UserRepository,
   UserMovieRepository,
   PlatformRepository,
+  MovieTagRepository,
 } from "../repositories";
 
 export interface userDetails {
@@ -52,6 +53,67 @@ const getUserMoviesByStatus = async (
   });
 
   return moviesWithoutId;
+};
+
+const setUserTags = async (
+  idMovie: string,
+  idUser: string
+): Promise<UserTag[]> => {
+  const userTagRepository = getRepository(UserTag);
+
+  const movieTagList = await getCustomRepository(MovieTagRepository)
+    .createQueryBuilder("movieTag")
+    .select("movieTag.tagId", "tagId")
+    .addSelect("movieTag.weight", "weight")
+    .where(`movieTag.movieId = "${idMovie}"`)
+    .getMany();
+
+  const movieTagSql = getCustomRepository(MovieTagRepository)
+    .createQueryBuilder("movieTag")
+    .select("movieTag.tagId", "tagId")
+    .where(`movieTag.movieId = "${idMovie}"`)
+    .getSql();
+
+  const existingUserTags = await userTagRepository
+    .createQueryBuilder("userTag")
+    .select()
+    .where(`userTag.tagId IN "${movieTagSql}"`)
+    .andWhere(`userTag.userId = "${idUser}"`)
+    .getMany();
+
+  const leftTags = movieTagList.filter((tag) => {
+    return existingUserTags.find((usertag) => usertag.tagId == tag.tagId)
+      ? false
+      : true;
+  });
+
+  existingUserTags.forEach(async (tag) => {
+    const actualMovieTag = movieTagList.find(
+      (movieTag) => movieTag.tagId == tag.tagId
+    );
+    if (actualMovieTag)
+      await getConnection()
+        .createQueryBuilder()
+        .update(UserTag)
+        .set({ totalPoint: tag.totalPoint + actualMovieTag.weight })
+        .where("tagId = :tagId", { tagId: tag.tagId })
+        .execute();
+  });
+
+  leftTags.forEach(async (tag) => {
+    await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(UserTag)
+      .values({ totalPoint: tag.weight, userId: idUser, tagId: tag.tagId })
+      .execute();
+  });
+
+  return userTagRepository
+    .createQueryBuilder("userTag")
+    .select()
+    .where(`userTag.tagId IN "${movieTagSql}"`)
+    .getMany();
 };
 
 const setMovieStatusWatchedLiked = async (
