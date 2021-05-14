@@ -24,7 +24,7 @@ export class MovieController extends Controller {
     const { user } = request;
     try {
       if (user) {
-        const movies = await MovieService.getAll(user.id);
+        const movies = await MovieService.getRecommendedList(user.id);
 
         if (movies) {
           this.setStatus(200);
