@@ -73,7 +73,8 @@ const getMovieListByIds = async (
 };
 
 const getRecommendedList = async (
-  userId: string
+  userId: string,
+  filterList?: number[]
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
   const userTagRepository = getCustomRepository(UserTagRepository);
@@ -141,6 +142,17 @@ const getRecommendedList = async (
 
     return nextMovieScore - movieScore;
   });
+
+  if (filterList) {
+    if (filterList.length > 0) {
+      const filteredMovies = sortedMovies?.filter((movie) => {
+        return movie.moviesTags.find((movieTag) => {
+          return filterList.indexOf(movieTag.tagId) > 0;
+        });
+      });
+      return filteredMovies;
+    }
+  }
 
   return sortedMovies;
 };

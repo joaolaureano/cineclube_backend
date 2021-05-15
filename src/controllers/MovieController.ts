@@ -8,6 +8,8 @@ import {
   Path,
   Security,
   Request,
+  Body,
+  Query,
 } from "tsoa";
 
 import { HttpResponse } from "../utils/httpResponse";
@@ -20,12 +22,26 @@ export class MovieController extends Controller {
   @Get("/")
   @SuccessResponse("200")
   @Security("firebase")
-  async getAll(@Request() request: express.Request): Promise<MovieResponse> {
+  async getAll(
+    @Request() request: express.Request,
+    @Query() filterList: string
+  ): Promise<MovieResponse> {
     const { user } = request;
     try {
       if (user) {
-        const movies = await MovieService.getRecommendedList(user.id);
-
+        let movies;
+        if (filterList) {
+          const filterListSplit = filterList.split(",");
+          const filterListNumber = filterListSplit.map((filter) =>
+            parseInt(filter)
+          );
+          movies = await MovieService.getRecommendedList(
+            user.id,
+            filterListNumber
+          );
+        } else {
+          movies = await MovieService.getRecommendedList(user.id);
+        }
         if (movies) {
           this.setStatus(200);
           return {
