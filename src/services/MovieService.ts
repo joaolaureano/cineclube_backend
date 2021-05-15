@@ -137,7 +137,6 @@ const getRecommendedList = async (
   const sortedMovies = sortedMovieModels?.sort((movie, nextMovie) => {
     const movieScore = scoreMovies[movie.id].score;
     const nextMovieScore = scoreMovies[nextMovie.id].score;
-    console.log(`${movie.id} -- ${nextMovie.id}`);
 
     return nextMovieScore - movieScore;
   });
