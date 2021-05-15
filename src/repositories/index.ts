@@ -6,6 +6,7 @@ import { MovieTagRepository } from "./MovieTagRepository";
 import { ActorRepository } from "./ActorRepository";
 import { CastRepository } from "./CastRepository";
 import { UserMovieRepository } from "./UserMovieRepository";
+import { UserTagRepository } from "./UserTagRepository";
 
 export {
   UserRepository,
@@ -16,4 +17,5 @@ export {
   ActorRepository,
   CastRepository,
   UserMovieRepository,
+  UserTagRepository,
 };
