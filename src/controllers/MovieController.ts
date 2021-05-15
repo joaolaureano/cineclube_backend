@@ -24,24 +24,34 @@ export class MovieController extends Controller {
   @Security("firebase")
   async getAll(
     @Request() request: express.Request,
-    @Query() filter?: string
+    @Query() tags?: string,
+    @Query() platforms?: string
   ): Promise<MovieResponse> {
     const { user } = request;
     try {
       if (user) {
-        let movies;
-        if (filter) {
-          const filterListSplit = filter.split(",");
-          const filterListNumber = filterListSplit.map((filter) =>
+        const filters: { tags?: number[]; platforms?: number[] } = {};
+
+        if (tags) {
+          const tagsSplit = tags.split(",");
+          const tagsListNumber = tagsSplit.map((tagId) => parseInt(tagId));
+          filters.tags = tagsListNumber;
+        }
+
+        if (platforms) {
+          const platformSplit = platforms.split(",");
+          const filterListNumber = platformSplit.map((filter) =>
             parseInt(filter)
           );
-          movies = await MovieService.getRecommendedList(
-            user.id,
-            filterListNumber
-          );
-        } else {
-          movies = await MovieService.getRecommendedList(user.id);
+          filters.platforms = filterListNumber;
         }
+
+        const movies = await MovieService.getRecommendedList(
+          user.id,
+          filters.tags,
+          filters.platforms
+        );
+
         if (movies) {
           this.setStatus(200);
           return {
