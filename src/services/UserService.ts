@@ -6,6 +6,7 @@ import {
   UserMovieRepository,
   PlatformRepository,
   MovieTagRepository,
+  UserTagRepository,
 } from "../repositories";
 
 export interface userDetails {
@@ -55,16 +56,11 @@ const getUserMoviesByStatus = async (
   return moviesWithoutId;
 };
 
-const setUserTags = async (
-  idMovie: string,
-  idUser: string
-): Promise<UserTag[]> => {
-  const userTagRepository = getRepository(UserTag);
+const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
+  const userTagRepository = getCustomRepository(UserTagRepository);
 
   const movieTagList = await getCustomRepository(MovieTagRepository)
     .createQueryBuilder("movieTag")
-    .select("movieTag.tagId", "tagId")
-    .addSelect("movieTag.weight", "weight")
     .where(`movieTag.movieId = "${idMovie}"`)
     .getMany();
 
@@ -76,8 +72,7 @@ const setUserTags = async (
 
   const existingUserTags = await userTagRepository
     .createQueryBuilder("userTag")
-    .select()
-    .where(`userTag.tagId IN "${movieTagSql}"`)
+    .where(`userTag.tagId IN (${movieTagSql})`)
     .andWhere(`userTag.userId = "${idUser}"`)
     .getMany();
 
@@ -87,33 +82,24 @@ const setUserTags = async (
       : true;
   });
 
-  existingUserTags.forEach(async (tag) => {
+  existingUserTags.forEach((tag) => {
     const actualMovieTag = movieTagList.find(
-      (movieTag) => movieTag.tagId == tag.tagId
+      (movietag) => movietag.tagId == tag.tagId
     );
-    if (actualMovieTag)
-      await getConnection()
-        .createQueryBuilder()
-        .update(UserTag)
-        .set({ totalPoint: tag.totalPoint + actualMovieTag.weight })
-        .where("tagId = :tagId", { tagId: tag.tagId })
-        .execute();
+    if (actualMovieTag) {
+      tag.totalPoint += actualMovieTag.weight;
+    }
   });
 
-  leftTags.forEach(async (tag) => {
-    await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(UserTag)
-      .values({ totalPoint: tag.weight, userId: idUser, tagId: tag.tagId })
-      .execute();
+  leftTags.forEach((movietag) => {
+    const newUserTag = new UserTag();
+    newUserTag.tagId = movietag.tagId;
+    newUserTag.userId = idUser;
+    newUserTag.totalPoint = movietag.weight;
+    existingUserTags.push(newUserTag);
   });
 
-  return userTagRepository
-    .createQueryBuilder("userTag")
-    .select()
-    .where(`userTag.tagId IN "${movieTagSql}"`)
-    .getMany();
+  userTagRepository.save(existingUserTags);
 };
 
 const setMovieStatusWatchedLiked = async (
@@ -134,11 +120,15 @@ const setMovieStatusWatchedLiked = async (
 
     const result = await userMovieRepository.save(newUserMovieStatus);
 
+    setUserTags(idMovie, idUser);
+
     return result;
   } else {
     exists.status = status;
 
     const result = await userMovieRepository.save(exists);
+
+    setUserTags(idMovie, idUser);
 
     return result;
   }
