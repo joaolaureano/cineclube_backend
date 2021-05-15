@@ -15,6 +15,10 @@ import { HelloWorldController } from "./../controllers/HelloWorldController";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MovieController } from "./../controllers/MovieController";
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { PlatformController } from "./../controllers/PlatformController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { TagController } from "./../controllers/TagController";
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from "./../controllers/UserController";
 import { expressAuthentication } from "./../middlewares/authentication";
 import * as express from "express";
@@ -201,6 +205,38 @@ const models: TsoaRoute.Models = {
     additionalProperties: true,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  PlatformResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          platforms: { dataType: "array", array: { ref: "Platform" } },
+        },
+      },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  TagResponse: {
+    dataType: "refObject",
+    properties: {
+      success: { dataType: "boolean", required: true },
+      message: { dataType: "string", required: true },
+      body: {
+        dataType: "nestedObjectLiteral",
+        nestedProperties: {
+          tags: { dataType: "array", array: { ref: "Tag" } },
+        },
+      },
+      details: { dataType: "string" },
+    },
+    additionalProperties: true,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   UserAuthenticationResponse: {
     dataType: "refObject",
     properties: {
@@ -359,6 +395,58 @@ export function RegisterRoutes(app: express.Router) {
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.get(
+    "/api/v1/platforms",
+    function PlatformController_getPlatforms(
+      request: any,
+      response: any,
+      next: any
+    ) {
+      const args = {};
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new PlatformController();
+
+      const promise = controller.getPlatforms.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.get(
+    "/api/v1/tags",
+    function TagController_getMainTags(request: any, response: any, next: any) {
+      const args = {};
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new TagController();
+
+      const promise = controller.getMainTags.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   app.post(
     "/api/v1/user/auth",
     authenticateMiddleware([{ firebaseLogin: [] }]),
@@ -476,6 +564,55 @@ export function RegisterRoutes(app: express.Router) {
       const controller = new UserController();
 
       const promise = controller.getUserMoviesByStatus.apply(
+        controller,
+        validatedArgs as any
+      );
+      promiseHandler(controller, promise, response, undefined, next);
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  app.post(
+    "/api/v1/user/preferences",
+    authenticateMiddleware([{ firebase: [] }]),
+    function UserController_setUserPreferences(
+      request: any,
+      response: any,
+      next: any
+    ) {
+      const args = {
+        requestBody: {
+          in: "body",
+          name: "requestBody",
+          required: true,
+          dataType: "nestedObjectLiteral",
+          nestedProperties: {
+            tagIds: {
+              dataType: "array",
+              array: { dataType: "double" },
+              required: true,
+            },
+          },
+        },
+        request: {
+          in: "request",
+          name: "request",
+          required: true,
+          dataType: "object",
+        },
+      };
+
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request, response);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+      const promise = controller.setUserPreferences.apply(
         controller,
         validatedArgs as any
       );

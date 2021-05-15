@@ -1,10 +1,12 @@
-import { getCustomRepository, getRepository } from "typeorm";
-import { UserMovie, UserTag } from "../models";
+import { getConnection, getCustomRepository, getRepository } from "typeorm";
+import { Movie, UserMovie, UserTag } from "../models";
 import { User } from "../models/User";
 import {
   UserRepository,
   UserMovieRepository,
   PlatformRepository,
+  MovieTagRepository,
+  UserTagRepository,
 } from "../repositories";
 
 export interface userDetails {
@@ -54,6 +56,52 @@ const getUserMoviesByStatus = async (
   return moviesWithoutId;
 };
 
+const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
+  const userTagRepository = getCustomRepository(UserTagRepository);
+
+  const movieTagList = await getCustomRepository(MovieTagRepository)
+    .createQueryBuilder("movieTag")
+    .where(`movieTag.movieId = "${idMovie}"`)
+    .getMany();
+
+  const movieTagSql = getCustomRepository(MovieTagRepository)
+    .createQueryBuilder("movieTag")
+    .select("movieTag.tagId", "tagId")
+    .where(`movieTag.movieId = "${idMovie}"`)
+    .getSql();
+
+  const existingUserTags = await userTagRepository
+    .createQueryBuilder("userTag")
+    .where(`userTag.tagId IN (${movieTagSql})`)
+    .andWhere(`userTag.userId = "${idUser}"`)
+    .getMany();
+
+  const leftTags = movieTagList.filter((tag) => {
+    return existingUserTags.find((usertag) => usertag.tagId == tag.tagId)
+      ? false
+      : true;
+  });
+
+  existingUserTags.forEach((tag) => {
+    const actualMovieTag = movieTagList.find(
+      (movietag) => movietag.tagId == tag.tagId
+    );
+    if (actualMovieTag) {
+      tag.totalPoint += actualMovieTag.weight;
+    }
+  });
+
+  leftTags.forEach((movietag) => {
+    const newUserTag = new UserTag();
+    newUserTag.tagId = movietag.tagId;
+    newUserTag.userId = idUser;
+    newUserTag.totalPoint = movietag.weight;
+    existingUserTags.push(newUserTag);
+  });
+
+  userTagRepository.save(existingUserTags);
+};
+
 const setMovieStatusWatchedLiked = async (
   idMovie: string,
   idUser: string,
@@ -72,11 +120,15 @@ const setMovieStatusWatchedLiked = async (
 
     const result = await userMovieRepository.save(newUserMovieStatus);
 
+    setUserTags(idMovie, idUser);
+
     return result;
   } else {
     exists.status = status;
 
     const result = await userMovieRepository.save(exists);
+
+    setUserTags(idMovie, idUser);
 
     return result;
   }

@@ -160,6 +160,7 @@ export class UserController extends Controller {
       };
     }
   }
+
   @Get("/movie/{status}")
   @SuccessResponse("200")
   @Security("firebase")
