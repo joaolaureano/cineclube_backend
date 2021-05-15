@@ -24,14 +24,14 @@ export class MovieController extends Controller {
   @Security("firebase")
   async getAll(
     @Request() request: express.Request,
-    @Query() filterList: string
+    @Query() filter?: string
   ): Promise<MovieResponse> {
     const { user } = request;
     try {
       if (user) {
         let movies;
-        if (filterList) {
-          const filterListSplit = filterList.split(",");
+        if (filter) {
+          const filterListSplit = filter.split(",");
           const filterListNumber = filterListSplit.map((filter) =>
             parseInt(filter)
           );
