@@ -31,7 +31,8 @@ const getAll = async (userId: string): Promise<Movie[] | undefined> => {
 };
 
 const getMoviesNotInUserLists = async (
-  userId: string
+  userId: string,
+  superTags?: boolean
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
 
@@ -46,7 +47,11 @@ const getMoviesNotInUserLists = async (
     .leftJoinAndSelect("movie.platforms", "platforms")
     .leftJoinAndSelect("movie.cast", "cast")
     .leftJoinAndSelect("cast.actor", "actors")
-    .leftJoinAndSelect("movie.moviesTags", "movieTag", "movieTag.super = true")
+    .leftJoinAndSelect(
+      "movie.moviesTags",
+      "movieTag",
+      superTags ? "movieTag.super = true" : ""
+    )
     .leftJoinAndSelect("movieTag.tag", "tag")
     .where(`movie.id NOT IN (${userMovieList})`)
     .getMany();
@@ -55,7 +60,8 @@ const getMoviesNotInUserLists = async (
 };
 
 const getMovieListByIds = async (
-  movieIds: number[]
+  movieIds: number[],
+  superTags?: boolean
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
 
@@ -64,7 +70,11 @@ const getMovieListByIds = async (
     .leftJoinAndSelect("movie.platforms", "platforms")
     .leftJoinAndSelect("movie.cast", "cast")
     .leftJoinAndSelect("cast.actor", "actors")
-    .leftJoinAndSelect("movie.moviesTags", "movieTag", "movieTag.super = true")
+    .leftJoinAndSelect(
+      "movie.moviesTags",
+      "movieTag",
+      superTags ? "movieTag.super = true" : ""
+    )
     .leftJoinAndSelect("movieTag.tag", "tag")
     .where(`movie.id IN (${movieIds})`)
     .getMany();
@@ -73,7 +83,8 @@ const getMovieListByIds = async (
 };
 
 const getRecommendedList = async (
-  userId: string
+  userId: string,
+  filterList?: number[]
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
   const userTagRepository = getCustomRepository(UserTagRepository);
@@ -84,7 +95,24 @@ const getRecommendedList = async (
     .where(`userTag.userId = "${userId}"`)
     .getMany();
 
-  if (userTagList.length === 0) return getMoviesNotInUserLists(userId);
+  if (userTagList.length === 0) {
+    if (filterList) {
+      const movies = await getMoviesNotInUserLists(userId);
+
+      if (movies) {
+        const filteredMoviesWithTags = filterMoviesByTags(filterList, movies);
+        const filteredMovies = filteredMoviesWithTags.map((movie) => {
+          movie.moviesTags = movie.moviesTags.filter(
+            (movieTag) => movieTag.super
+          );
+          return movie;
+        });
+
+        return filteredMovies;
+      }
+    }
+    return getMoviesNotInUserLists(userId, true);
+  }
 
   // Geração de lista com apenas os valores das ids de tag
   const tagIdList = userTagRepository
@@ -141,7 +169,40 @@ const getRecommendedList = async (
     return nextMovieScore - movieScore;
   });
 
+  if (filterList) {
+    if (sortedMovies) {
+      const filteredMoviesWithTags = filterMoviesByTags(
+        filterList,
+        sortedMovies
+      );
+
+      const filteredMovies = filteredMoviesWithTags.map((movie) => {
+        movie.moviesTags = movie.moviesTags.filter(
+          (movieTag) => movieTag.super
+        );
+        return movie;
+      });
+
+      return filteredMovies;
+    }
+  }
+
   return sortedMovies;
+};
+
+const filterMoviesByTags = (filterList: number[], movieList: Movie[]) => {
+  if (filterList.length == 0) {
+    return movieList;
+  }
+
+  const filteredMovies = movieList?.filter((movie) => {
+    const movieFilteredTags = movie.moviesTags.find((movieTag) => {
+      return filterList.indexOf(movieTag.tagId) >= 0;
+    });
+    return movieFilteredTags;
+  });
+
+  return filteredMovies;
 };
 
 const getById = async (id: number) => {
