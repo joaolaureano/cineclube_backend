@@ -154,7 +154,8 @@ const getRecommendedList = async (
       movie,
     };
     movie.moviesTags.forEach((movieTag) => {
-      scoreMovies[movie.id].score += mapUserTagTotalPoint[movieTag.tagId];
+      scoreMovies[movie.id].score +=
+        mapUserTagTotalPoint[movieTag.tagId] * movieTag.weight;
     });
   });
 
