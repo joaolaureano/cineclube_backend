@@ -84,7 +84,8 @@ const getMovieListByIds = async (
 
 const getRecommendedList = async (
   userId: string,
-  filterList?: number[]
+  tags?: number[],
+  platforms?: number[]
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
   const userTagRepository = getCustomRepository(UserTagRepository);
@@ -96,12 +97,14 @@ const getRecommendedList = async (
     .getMany();
 
   if (userTagList.length === 0) {
-    if (filterList) {
-      const movies = await getMoviesNotInUserLists(userId);
+    if (tags || platforms) {
+      let movies = await getMoviesNotInUserLists(userId);
 
       if (movies) {
-        const filteredMoviesWithTags = filterMoviesByTags(filterList, movies);
-        const filteredMovies = filteredMoviesWithTags.map((movie) => {
+        if (platforms) movies = filterMoviesByPlatforms(platforms, movies);
+        if (tags) movies = filterMoviesByTags(tags, movies);
+
+        const filteredMovies = movies.map((movie) => {
           movie.moviesTags = movie.moviesTags.filter(
             (movieTag) => movieTag.super
           );
@@ -169,14 +172,13 @@ const getRecommendedList = async (
     return nextMovieScore - movieScore;
   });
 
-  if (filterList) {
+  if (tags || platforms) {
     if (sortedMovies) {
-      const filteredMoviesWithTags = filterMoviesByTags(
-        filterList,
-        sortedMovies
-      );
+      let movies = sortedMovies;
+      if (platforms) movies = filterMoviesByPlatforms(platforms, movies);
+      if (tags) movies = filterMoviesByTags(tags, movies);
 
-      const filteredMovies = filteredMoviesWithTags.map((movie) => {
+      const filteredMovies = movies.map((movie) => {
         movie.moviesTags = movie.moviesTags.filter(
           (movieTag) => movieTag.super
         );
@@ -190,16 +192,31 @@ const getRecommendedList = async (
   return sortedMovies;
 };
 
-const filterMoviesByTags = (filterList: number[], movieList: Movie[]) => {
-  if (filterList.length == 0) {
+const filterMoviesByTags = (tags: number[], movieList: Movie[]) => {
+  if (tags.length == 0) {
     return movieList;
   }
 
   const filteredMovies = movieList?.filter((movie) => {
     const movieFilteredTags = movie.moviesTags.find((movieTag) => {
-      return filterList.indexOf(movieTag.tagId) >= 0;
+      return tags.indexOf(movieTag.tagId) >= 0;
     });
     return movieFilteredTags;
+  });
+
+  return filteredMovies;
+};
+
+const filterMoviesByPlatforms = (platforms: number[], movieList: Movie[]) => {
+  if (platforms.length == 0) {
+    return movieList;
+  }
+
+  const filteredMovies = movieList?.filter((movie) => {
+    const movieFilteredByPlatforms = movie.platforms.find((platform) => {
+      return platforms.indexOf(platform.id) >= 0;
+    });
+    return movieFilteredByPlatforms;
   });
 
   return filteredMovies;
