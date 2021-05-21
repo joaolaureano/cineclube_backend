@@ -97,22 +97,20 @@ const getRecommendedList = async (
     .getMany();
 
   if (userTagList.length === 0) {
-    if (tags || platforms) {
-      let movies = await getMoviesNotInUserLists(userId);
+    let movies = await getMoviesNotInUserLists(userId);
 
-      if (movies) {
-        if (platforms) movies = filterMoviesByPlatforms(platforms, movies);
-        if (tags) movies = filterMoviesByTags(tags, movies);
+    if (movies) {
+      if (platforms) movies = filterMoviesByPlatforms(platforms, movies);
+      if (tags) movies = filterMoviesByTags(tags, movies);
 
-        const filteredMovies = movies.map((movie) => {
-          movie.moviesTags = movie.moviesTags.filter(
-            (movieTag) => movieTag.super
-          );
-          return movie;
-        });
+      const filteredMovies = movies.map((movie) => {
+        movie.moviesTags = movie.moviesTags.filter(
+          (movieTag) => movieTag.super
+        );
+        return movie;
+      });
 
-        return filteredMovies;
-      }
+      return filteredMovies;
     }
     return getMoviesNotInUserLists(userId, true);
   }
@@ -156,7 +154,8 @@ const getRecommendedList = async (
       movie,
     };
     movie.moviesTags.forEach((movieTag) => {
-      scoreMovies[movie.id].score += mapUserTagTotalPoint[movieTag.tagId];
+      scoreMovies[movie.id].score +=
+        mapUserTagTotalPoint[movieTag.tagId] * movieTag.weight;
     });
   });
 
@@ -172,24 +171,18 @@ const getRecommendedList = async (
     return nextMovieScore - movieScore;
   });
 
-  if (tags || platforms) {
-    if (sortedMovies) {
-      let movies = sortedMovies;
-      if (platforms) movies = filterMoviesByPlatforms(platforms, movies);
-      if (tags) movies = filterMoviesByTags(tags, movies);
+  if (sortedMovies) {
+    let movies = sortedMovies;
+    if (platforms) movies = filterMoviesByPlatforms(platforms, movies);
+    if (tags) movies = filterMoviesByTags(tags, movies);
 
-      const filteredMovies = movies.map((movie) => {
-        movie.moviesTags = movie.moviesTags.filter(
-          (movieTag) => movieTag.super
-        );
-        return movie;
-      });
+    const filteredMovies = movies.map((movie) => {
+      movie.moviesTags = movie.moviesTags.filter((movieTag) => movieTag.super);
+      return movie;
+    });
 
-      return filteredMovies;
-    }
+    return filteredMovies;
   }
-
-  return sortedMovies;
 };
 
 const filterMoviesByTags = (tags: number[], movieList: Movie[]) => {

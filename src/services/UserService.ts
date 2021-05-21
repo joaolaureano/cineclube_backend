@@ -99,7 +99,7 @@ const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
     existingUserTags.push(newUserTag);
   });
 
-  userTagRepository.save(existingUserTags);
+  await userTagRepository.save(existingUserTags);
 };
 
 const setMovieStatusWatchedLiked = async (
@@ -120,7 +120,7 @@ const setMovieStatusWatchedLiked = async (
 
     const result = await userMovieRepository.save(newUserMovieStatus);
 
-    setUserTags(idMovie, idUser);
+    await setUserTags(idMovie, idUser);
 
     return result;
   } else {
@@ -128,7 +128,7 @@ const setMovieStatusWatchedLiked = async (
 
     const result = await userMovieRepository.save(exists);
 
-    setUserTags(idMovie, idUser);
+    await setUserTags(idMovie, idUser);
 
     return result;
   }
