@@ -63,6 +63,7 @@ export class UserController extends Controller {
               randomness: createdUser.randomness,
             },
           },
+          firstLogin: true,
         };
       }
 
@@ -251,4 +252,5 @@ interface UserAuthenticationResponse extends HttpResponse {
       randomness: number;
     };
   };
+  firstLogin?: boolean;
 }
