@@ -67,14 +67,21 @@ const connect = async () => {
       const movieModel = movieMap[movie.brazilian_title];
 
       const supertags: string[] = movie.supertags;
+
+      const superTagMap: { [tagName: string]: string } = {};
       supertags.forEach((tagName) => {
+        superTagMap[tagName] = tagName;
+      });
+
+      const tagList: string[] = movie.tags;
+      tagList.forEach(([tagName, weight]) => {
         const tagModel = tagMap[tagName];
 
         const movieTagModel = new Models.MovieTag();
         movieTagModel.tag = tagModel;
         movieTagModel.movie = movieModel;
-        movieTagModel.super = true;
-        movieTagModel.weight = 2;
+        movieTagModel.super = !!superTagMap[tagName];
+        movieTagModel.weight = parseInt(weight);
         movieTags.push(movieTagModel);
       });
 
@@ -157,7 +164,16 @@ const readMovieTags = (movieIds: string[]) => {
     const movie = movieData[id];
 
     const supertags: string[] = movie.supertags;
-    supertags.forEach((tagName) => {
+    supertags.forEach((superTagName) => {
+      if (!tags[superTagName]) {
+        const tagModel = new Models.Tag();
+        tagModel.name = superTagName;
+        tags[superTagName] = tagModel;
+      }
+    });
+
+    const tagList: string[] = movie.tags;
+    tagList.forEach(([tagName]) => {
       if (!tags[tagName]) {
         const tagModel = new Models.Tag();
         tagModel.name = tagName;
@@ -165,6 +181,7 @@ const readMovieTags = (movieIds: string[]) => {
       }
     });
   });
+
   return tags;
 };
 

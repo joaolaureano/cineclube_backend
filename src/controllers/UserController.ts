@@ -22,7 +22,7 @@ import { MovieUserStatus } from "../enum/MovieUserStatus";
 export class UserController extends Controller {
   @Post("/auth")
   @SuccessResponse("200")
-  @Security("firebase")
+  @Security("firebaseLogin")
   async authenticate(
     @Request() request: express.Request
   ): Promise<UserAuthenticationResponse> {
@@ -63,6 +63,7 @@ export class UserController extends Controller {
               randomness: createdUser.randomness,
             },
           },
+          firstLogin: true,
         };
       }
 
@@ -136,7 +137,11 @@ export class UserController extends Controller {
               success: true,
             };
           case MovieUserStatus.WANT_TO_WATCH:
-            UserService.setMovieStatusWantToWatch(movieId, userId, status);
+            await UserService.setMovieStatusWantToWatch(
+              movieId,
+              userId,
+              status
+            );
             this.setStatus(200);
             return {
               message: "User and movie associated",
@@ -160,6 +165,7 @@ export class UserController extends Controller {
       };
     }
   }
+
   @Get("/movie/{status}")
   @SuccessResponse("200")
   @Security("firebase")
@@ -197,6 +203,42 @@ export class UserController extends Controller {
       };
     }
   }
+  @Post("/preferences")
+  @SuccessResponse("200")
+  @Security("firebase")
+  async setUserPreferences(
+    @Body() requestBody: { tagIds: number[] },
+    @Request() request: express.Request
+  ): Promise<HttpResponse> {
+    const { tagIds } = requestBody;
+    const { user } = request;
+    if (!tagIds) {
+      this.setStatus(400);
+      throw new Error("Could not find tags");
+    }
+    try {
+      if (user) {
+        const { id } = user;
+        const response = await UserService.setSignUpPreferences(id, tagIds);
+        if (response) {
+          this.setStatus(200);
+          return {
+            message: "Preferences were set",
+            success: true,
+          };
+        }
+      }
+      throw new Error();
+    } catch (error) {
+      this.setStatus(500);
+
+      return {
+        success: false,
+        message: "Internal server error.",
+        details: error.message,
+      };
+    }
+  }
 }
 
 interface UserMoviesStatusListResponse extends HttpResponse {
@@ -214,4 +256,5 @@ interface UserAuthenticationResponse extends HttpResponse {
       randomness: number;
     };
   };
+  firstLogin?: boolean;
 }

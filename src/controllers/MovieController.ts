@@ -1,5 +1,16 @@
 import express from "express";
-import { Controller, Route, Get, Tags, SuccessResponse, Path } from "tsoa";
+import {
+  Controller,
+  Route,
+  Get,
+  Tags,
+  SuccessResponse,
+  Path,
+  Security,
+  Request,
+  Body,
+  Query,
+} from "tsoa";
 
 import { HttpResponse } from "../utils/httpResponse";
 import MovieService from "../services/MovieService";
@@ -10,19 +21,47 @@ import { Movie } from "../models";
 export class MovieController extends Controller {
   @Get("/")
   @SuccessResponse("200")
-  async getAll(): Promise<MovieResponse> {
+  @Security("firebase")
+  async getAll(
+    @Request() request: express.Request,
+    @Query() tags?: string,
+    @Query() platforms?: string
+  ): Promise<MovieResponse> {
+    const { user } = request;
     try {
-      const movies = await MovieService.getAll();
+      if (user) {
+        const filters: { tags?: number[]; platforms?: number[] } = {};
 
-      if (movies) {
-        this.setStatus(200);
-        return {
-          success: true,
-          message: `Found ${movies.length} movies.`,
-          body: {
-            movies,
-          },
-        };
+        if (tags) {
+          const tagsSplit = tags.split(",");
+          const tagsListNumber = tagsSplit.map((tagId) => parseInt(tagId));
+          filters.tags = tagsListNumber;
+        }
+
+        if (platforms) {
+          const platformSplit = platforms.split(",");
+          const filterListNumber = platformSplit.map((filter) =>
+            parseInt(filter)
+          );
+          filters.platforms = filterListNumber;
+        }
+
+        const movies = await MovieService.getRecommendedList(
+          user.id,
+          filters.tags,
+          filters.platforms
+        );
+
+        if (movies) {
+          this.setStatus(200);
+          return {
+            success: true,
+            message: `Found ${movies.length} movies.`,
+            body: {
+              movies,
+            },
+          };
+        }
       }
 
       throw new Error();
