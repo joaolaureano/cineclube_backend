@@ -156,6 +156,9 @@ const setMovieStatusWatchedDisliked = async (
 
     return result;
   } else {
+    if (exists.status == MovieUserStatus.WATCHED_AND_LIKED)
+      await decreaseUserTagPoints(exists);
+
     exists.status = status;
 
     const result = await userMovieRepository.save(exists);
