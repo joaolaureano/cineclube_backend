@@ -1,4 +1,5 @@
 import { getConnection, getCustomRepository, getRepository } from "typeorm";
+import { MovieUserStatus } from "../enum/MovieUserStatus";
 import { Movie, UserMovie, UserTag } from "../models";
 import { User } from "../models/User";
 import {
@@ -58,13 +59,14 @@ const getUserMoviesByStatus = async (
 
 const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
   const userTagRepository = getCustomRepository(UserTagRepository);
+  const movieTagRepository = getCustomRepository(MovieTagRepository);
 
-  const movieTagList = await getCustomRepository(MovieTagRepository)
+  const movieTagList = await movieTagRepository
     .createQueryBuilder("movieTag")
     .where(`movieTag.movieId = "${idMovie}"`)
     .getMany();
 
-  const movieTagSql = getCustomRepository(MovieTagRepository)
+  const movieTagSql = movieTagRepository
     .createQueryBuilder("movieTag")
     .select("movieTag.tagId", "tagId")
     .where(`movieTag.movieId = "${idMovie}"`)
@@ -154,6 +156,9 @@ const setMovieStatusWatchedDisliked = async (
 
     return result;
   } else {
+    if (exists.status == MovieUserStatus.WATCHED_AND_LIKED)
+      await decreaseUserTagPoints(exists);
+
     exists.status = status;
 
     const result = await userMovieRepository.save(exists);
@@ -190,6 +195,49 @@ const setMovieStatusDontWantWatch = async (
   }
 };
 
+const decreaseUserTagPoints = async (userMovie: UserMovie): Promise<void> => {
+  const userTagRepository = getCustomRepository(UserTagRepository);
+  const movieTagRepository = getCustomRepository(MovieTagRepository);
+
+  const movieTagList = await movieTagRepository
+    .createQueryBuilder("movieTag")
+    .where(`movieTag.movieId = "${userMovie.movieId}"`)
+    .getMany();
+
+  const movieTagSql = movieTagRepository
+    .createQueryBuilder("movieTag")
+    .select("movieTag.tagId", "tagId")
+    .where(`movieTag.movieId = "${userMovie.movieId}"`)
+    .getSql();
+
+  const existingUserTags = await userTagRepository
+    .createQueryBuilder("userTag")
+    .where(`userTag.tagId IN (${movieTagSql})`)
+    .andWhere(`userTag.userId = "${userMovie.userId}"`)
+    .getMany();
+
+  const removeList: UserTag[] = [];
+  const updateList: UserTag[] = [];
+
+  existingUserTags.forEach((userTag) => {
+    const actualMovieTag = movieTagList.find(
+      (movietag) => movietag.tagId == userTag.tagId
+    );
+    if (actualMovieTag) {
+      userTag.totalPoint -= actualMovieTag.weight;
+      if (userTag.totalPoint <= 0) {
+        removeList.push(userTag);
+      } else {
+        updateList.push(userTag);
+      }
+    }
+  });
+
+  await userTagRepository.save(updateList);
+
+  await userTagRepository.remove(removeList);
+};
+
 const deleteUserMovie = async (
   idMovie: string,
   idUser: string
@@ -200,7 +248,11 @@ const deleteUserMovie = async (
     where: { movieId: idMovie, userId: idUser },
   });
   if (exists) {
+    if (exists.status == MovieUserStatus.WATCHED_AND_LIKED)
+      await decreaseUserTagPoints(exists);
+
     const removed = await userMovieRepository.remove(exists);
+
     return removed;
   }
 };
