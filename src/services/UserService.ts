@@ -198,8 +198,7 @@ const setMovieStatusDontWantWatch = async (
 const decreaseUserTagPoints = async (userMovie: UserMovie): Promise<void> => {
   const userTagRepository = getCustomRepository(UserTagRepository);
   const movieTagRepository = getCustomRepository(MovieTagRepository);
-  //console.log(userMovie);
-  console.log("decrease");
+
   const movieTagList = await movieTagRepository
     .createQueryBuilder("movieTag")
     .where(`movieTag.movieId = "${userMovie.movieId}"`)
@@ -251,7 +250,6 @@ const deleteUserMovie = async (
   if (exists) {
     if (exists.status == MovieUserStatus.WATCHED_AND_LIKED)
       await decreaseUserTagPoints(exists);
-    console.log("remove");
 
     const removed = await userMovieRepository.remove(exists);
 
