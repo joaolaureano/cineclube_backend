@@ -161,6 +161,9 @@ const getRecommendedList = async (
 
   // Busca dos filmes com todas informações necessárias junto (cast, platforms, tags, etc)
   const sortedMovieIds = movies.map((movie) => movie.id);
+  if (sortedMovieIds.length === 0) {
+    return [];
+  }
   const sortedMovieModels = await getMovieListByIds(sortedMovieIds);
 
   // Ordenar os filmes por score
