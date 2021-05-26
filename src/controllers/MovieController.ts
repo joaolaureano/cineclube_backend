@@ -66,6 +66,7 @@ export class MovieController extends Controller {
 
       throw new Error();
     } catch (error) {
+      console.log(error);
       this.setStatus(500);
 
       return {
