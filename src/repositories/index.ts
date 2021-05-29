@@ -8,7 +8,6 @@ import { CastRepository } from "./CastRepository";
 import { UserMovieRepository } from "./UserMovieRepository";
 import { UserTagRepository } from "./UserTagRepository";
 import { AchievementRepository } from "./AchievementRepository";
-import { AchievementTagRepository } from "./AchievementTagRepository";
 import { UserAchievementRepository } from "./UserAchievementRepository";
 
 export {
@@ -22,6 +21,5 @@ export {
   UserMovieRepository,
   UserTagRepository,
   AchievementRepository,
-  AchievementTagRepository,
   UserAchievementRepository,
 };

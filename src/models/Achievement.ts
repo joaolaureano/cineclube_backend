@@ -3,12 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { UserAchievement, AchievementTag } from ".";
+import { UserAchievement, Tag } from ".";
 
 @Entity({ name: "achievement" })
 export class Achievement {
@@ -36,11 +37,21 @@ export class Achievement {
   })
   users: UserAchievement[];
 
-  @OneToOne(
-    () => AchievementTag,
-    (achievementTag) => achievementTag.achievement
-  )
-  tag: AchievementTag;
+  @ManyToOne(() => Tag, (tag) => tag.achievements, {
+    cascade: true,
+  })
+  @JoinTable({
+    name: "achievement_tag",
+    joinColumn: {
+      name: "achievement",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "tag",
+      referencedColumnName: "id",
+    },
+  })
+  tag: Tag;
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;
