@@ -35,6 +35,9 @@ const connect = async () => {
     );
     const actorRepository = getCustomRepository(Repositories.ActorRepository);
     const castRepository = getCustomRepository(Repositories.CastRepository);
+    const achievementRepository = getCustomRepository(
+      Repositories.AchievementRepository
+    );
 
     // Insert data
     console.log("Inserting tags...");
@@ -136,6 +139,109 @@ const connect = async () => {
     console.log("Linking Actors to Movies...");
     const insertedCast = await castRepository.save(Object.values(cast));
     console.log("DONE");
+
+    //Create achievements
+    const achievements: AchievementData[] = [];
+    const achievementImage =
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Trophy_Flat_Icon.svg/480px-Trophy_Flat_Icon.svg.png";
+    achievements.push({
+      tagName: "Drama",
+      targetScore: 5,
+      pathImage: achievementImage,
+      title: "Que drama!",
+      description: "Parabéns! Você assistiu 5 filmes de drama.",
+    });
+    achievements.push({
+      tagName: "Drama",
+      targetScore: 10,
+      pathImage: achievementImage,
+      title: "A vida é um drama!!!!",
+      description: "Incrível! Você assitiu 10 filmes de drama.",
+    });
+    achievements.push({
+      tagName: "Mystery",
+      targetScore: 3,
+      pathImage: achievementImage,
+      title: "Cuidado, algo está acontecendo!",
+      description: "Secretamente você assistiu 3 filmes de mistério.",
+    });
+    achievements.push({
+      tagName: "Thriller",
+      targetScore: 3,
+      pathImage: achievementImage,
+      title: "Plot Twist!",
+      description: "Do nada você assistiu 3 filmes tríler.",
+    });
+    achievements.push({
+      tagName: "Comedy",
+      targetScore: 3,
+      pathImage: achievementImage,
+      title: "Respira que tem mais piada!",
+      description:
+        "Acalma que tem muita risada, mas parabéns pelos 3 filmes de comédia assistidos.",
+    });
+    achievements.push({
+      tagName: "Horror",
+      targetScore: 3,
+      pathImage: achievementImage,
+      title: "Não tenha medo!",
+      description:
+        "O filme já acabou e acho que nada daquilo é real. Enfim, parabéns pela conquista de 3 filmes de terror assistidos.",
+    });
+    achievements.push({
+      tagName: "Romance",
+      targetScore: 3,
+      pathImage: achievementImage,
+      title: "Awnn que amor!",
+      description: "Com muito amor você assistiu 3 filmes de romance.",
+    });
+
+    //Link tags to achievements
+    const achievementModels: Models.Achievement[] = [];
+
+    achievements.forEach((achievement) => {
+      const achievementModel = new Models.Achievement();
+      achievementModel.pathImage = achievement.pathImage;
+      achievementModel.title = achievement.title;
+      achievementModel.description = achievement.description;
+      achievementModel.targetScore = achievement.targetScore;
+
+      const tagModel = tagMap[achievement.tagName];
+      achievementModel.tag = tagModel;
+
+      achievementModels.push(achievementModel);
+    });
+
+    console.log("Inserting achievements...");
+    const insertedAchievements = await achievementRepository.save(
+      achievementModels
+    );
+    console.log("DONE");
+
+    // const achievementTagModels: Models.AchievementTag[] = [];
+
+    // insertedAchievements.forEach((achievement) => {
+    //   const achievementTagModel = new Models.AchievementTag();
+    //   achievementTagModel.achievement = achievement;
+    //   achievementTagModel.achievementId = achievement.id;
+
+    //   const achievementTagName = achievements.find(
+    //     (achiev) => achiev.title === achievement.title
+    //   )?.tagName;
+
+    //   if (achievementTagName) {
+    //     const tagModel = tagMap[achievementTagName];
+    //     achievementTagModel.tag = tagModel;
+    //     achievementTagModel.tagId = tagModel.id;
+    //   }
+    //   achievementTagModels.push(achievementTagModel);
+    // });
+
+    // console.log("Linking tags to achievements...");
+    // const insertedAchievementTags = await achievementTagRepository.save(
+    //   achievementTagModels
+    // );
+    // console.log("DONE");
 
     // Print inserted data
     // console.log({
@@ -259,6 +365,14 @@ const readMovies = (movieIds: string[]) => {
   });
   return movies;
 };
+
+interface AchievementData {
+  title: string;
+  description: string;
+  pathImage: string;
+  targetScore: number;
+  tagName: string;
+}
 
 const toObject = (keyField: string, arr: Array<any>) => {
   const obj: { [key: string]: any } = {};
