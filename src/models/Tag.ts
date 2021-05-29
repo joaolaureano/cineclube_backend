@@ -7,7 +7,7 @@ import {
   OneToMany,
   JoinColumn,
 } from "typeorm";
-import { MovieTag, UserTag } from ".";
+import { MovieTag, UserTag, AchievementTag } from ".";
 
 @Entity({ name: "tag" })
 export class Tag {
@@ -28,6 +28,12 @@ export class Tag {
     name: "tagId",
   })
   userTags: UserTag[];
+
+  @OneToMany(() => AchievementTag, (achievementTag) => achievementTag.tag)
+  @JoinColumn({
+    name: "tagId",
+  })
+  achievements: AchievementTag[];
 
   @CreateDateColumn({ name: "created_At" })
   createdAt: Date;

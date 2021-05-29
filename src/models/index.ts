@@ -7,6 +7,9 @@ import { MovieTag } from "./MovieTag";
 import { Actor } from "./Actor";
 import { Cast } from "./Cast";
 import { UserTag } from "./UserTag";
+import { Achievement } from "./Achievement";
+import { AchievementTag } from "./AchievementTag";
+import { UserAchievement } from "./UserAchievement";
 
 export {
   User,
@@ -18,4 +21,7 @@ export {
   Actor,
   Cast,
   UserTag,
+  Achievement,
+  AchievementTag,
+  UserAchievement,
 };
