@@ -1,6 +1,6 @@
 import { getConnection, getCustomRepository, getRepository } from "typeorm";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
-import { Movie, UserMovie, UserTag } from "../models";
+import { Movie, UserAchievement, UserMovie, UserTag } from "../models";
 import { User } from "../models/User";
 import {
   UserRepository,
@@ -8,6 +8,9 @@ import {
   PlatformRepository,
   MovieTagRepository,
   UserTagRepository,
+  MovieRepository,
+  UserAchievementRepository,
+  AchievementRepository,
 } from "../repositories";
 
 export interface userDetails {
@@ -299,6 +302,76 @@ const setSignUpPreferences = async (
   const insertedUserTags = await userTagRespoitory.save(userTags);
   return insertedUserTags;
 };
+
+const setAchievementProgress = async (
+  movieId: string,
+  userId: string
+): Promise<UserAchievement | undefined> => {
+  const movieTagRepository = getCustomRepository(MovieTagRepository);
+  const userAchievement = getCustomRepository(UserAchievementRepository);
+  const achievementRepository = getCustomRepository(AchievementRepository);
+  // Faz uma query para pegar as supertags do filme
+  const movieTagSql = movieTagRepository
+    .createQueryBuilder("movieTag")
+    .select("movieTag.tagId", "tagId")
+    .where(`movieTag.movieId = "${movieId}"`)
+    .andWhere(`movieTag.super = 1`)
+    .getSql();
+
+  // Faz uma busca para pegar os achievements relacionados com as supertags
+  const achievementsByMovie = await achievementRepository
+    .createQueryBuilder("userAchievement")
+    .where(`userAchievement.tagId IN (${movieTagSql})`)
+    .getMany();
+
+  let achievementsByMovieMap = Object.assign(
+    {},
+    ...achievementsByMovie.map((x) => ({ [x.id]: x }))
+  );
+
+  // Faz uma busca dos achievements que o usuário já conquistou
+  const existingUserAchivements = await userAchievement
+    .createQueryBuilder("userAchievement")
+    .where(
+      `userAchievement.achievementId IN (${Object.keys(
+        achievementsByMovieMap
+      )})`
+    )
+    .andWhere(`userAchievement.userId = "${userId}"`)
+    .getMany();
+
+  let userAchievementMap = Object.assign(
+    {},
+    ...existingUserAchivements.map((x) => ({ [x.achievementId]: x }))
+  );
+
+  const allAchievementsIds = new Set([
+    ...Object.keys(achievementsByMovieMap),
+    ...Object.keys(userAchievementMap),
+  ]);
+
+  allAchievementsIds.forEach((id) => {
+    if (userAchievementMap[id]) {
+      if (
+        achievementsByMovieMap[id].targetScore >
+        userAchievementMap[id].currentScore
+      )
+        userAchievementMap[id].currentScore += 1;
+    } else {
+      const userAchievementObj = new UserAchievement();
+      userAchievementObj.achievementId = Number(id);
+      userAchievementObj.currentScore = 1;
+      userAchievementObj.userId = userId;
+      userAchievementMap[id] = userAchievementObj;
+    }
+  });
+
+  // const result = await userAchievement.save(userAchievementMap);
+  //  Falta colocar tipagem para não bugar o SAVE()
+  // console.log(userAchievementMap);
+  return undefined;
+};
+
 export default {
   createUser,
   findUserById,
@@ -309,4 +382,5 @@ export default {
   setMovieStatusWantToWatch,
   deleteUserMovie,
   setSignUpPreferences,
+  setAchievementProgress,
 };
