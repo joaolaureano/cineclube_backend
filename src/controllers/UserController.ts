@@ -241,29 +241,6 @@ export class UserController extends Controller {
       };
     }
   }
-
-  @Post("/movie/achievement")
-  @SuccessResponse("200")
-  @Security("firebase")
-  async testMovieAchievement(
-    @Request() request: express.Request,
-    @Body() requestBody: { movieId: string }
-  ): Promise<null> {
-    const { user } = request;
-    const { movieId } = requestBody;
-    try {
-      console.log(user);
-      if (user) {
-        UserService.setAchievementProgress(movieId, user.id);
-        return null;
-      }
-      throw new Error("User not found;");
-    } catch (error) {
-      this.setStatus(500);
-
-      return null;
-    }
-  }
 }
 
 interface UserMoviesStatusListResponse extends HttpResponse {
