@@ -14,7 +14,7 @@ import {
 
 import { HttpResponse } from "../utils/httpResponse";
 import UserService from "../services/UserService";
-import { UserMovie } from "../models";
+import { Achievement, UserMovie } from "../models";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
 
 @Route("user")
@@ -85,7 +85,8 @@ export class UserController extends Controller {
   async setUserMovieStatus(
     @Body() requestBody: { movieId: string; status: MovieUserStatus },
     @Request() request: express.Request
-  ): Promise<HttpResponse> {
+  ): Promise<MovieStatusResponse> {
+    //Retorno -> Se tiver um body é porque alguma conquista foi atingida
     const { movieId, status } = requestBody;
     const { user } = request;
     if (!(movieId || status)) {
@@ -281,4 +282,10 @@ interface UserAuthenticationResponse extends HttpResponse {
     };
   };
   firstLogin?: boolean;
+}
+
+interface MovieStatusResponse extends HttpResponse {
+  body?: {
+    achievements: Achievement[];
+  };
 }
