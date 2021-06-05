@@ -1,6 +1,6 @@
 import { getConnection, getCustomRepository, getRepository } from "typeorm";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
-import { Movie, UserMovie, UserTag } from "../models";
+import { Achievement, UserAchievement, UserMovie, UserTag } from "../models";
 import { User } from "../models/User";
 import {
   UserRepository,
@@ -8,6 +8,9 @@ import {
   PlatformRepository,
   MovieTagRepository,
   UserTagRepository,
+  MovieRepository,
+  UserAchievementRepository,
+  AchievementRepository,
 } from "../repositories";
 
 export interface userDetails {
@@ -108,7 +111,7 @@ const setMovieStatusWatchedLiked = async (
   idMovie: string,
   idUser: string,
   status: string
-): Promise<UserMovie> => {
+): Promise<Achievement[] | undefined> => {
   const userMovieRepository = getCustomRepository(UserMovieRepository);
 
   const exists = await userMovieRepository.findOne({
@@ -120,17 +123,21 @@ const setMovieStatusWatchedLiked = async (
     newUserMovieStatus.userId = idUser;
     newUserMovieStatus.status = status;
 
-    const result = await userMovieRepository.save(newUserMovieStatus);
+    await userMovieRepository.save(newUserMovieStatus);
 
     await setUserTags(idMovie, idUser);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   } else {
     exists.status = status;
 
-    const result = await userMovieRepository.save(exists);
+    await userMovieRepository.save(exists);
 
     await setUserTags(idMovie, idUser);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   }
@@ -140,7 +147,7 @@ const setMovieStatusWatchedDisliked = async (
   idMovie: string,
   idUser: string,
   status: string
-): Promise<UserMovie> => {
+): Promise<Achievement[] | undefined> => {
   const userMovieRepository = getCustomRepository(UserMovieRepository);
 
   const exists = await userMovieRepository.findOne({
@@ -152,7 +159,9 @@ const setMovieStatusWatchedDisliked = async (
     newUserMovieStatus.userId = idUser;
     newUserMovieStatus.status = status;
 
-    const result = await userMovieRepository.save(newUserMovieStatus);
+    await userMovieRepository.save(newUserMovieStatus);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   } else {
@@ -161,7 +170,9 @@ const setMovieStatusWatchedDisliked = async (
 
     exists.status = status;
 
-    const result = await userMovieRepository.save(exists);
+    await userMovieRepository.save(exists);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   }
@@ -299,6 +310,98 @@ const setSignUpPreferences = async (
   const insertedUserTags = await userTagRespoitory.save(userTags);
   return insertedUserTags;
 };
+
+const setAchievementProgress = async (
+  movieId: string,
+  userId: string
+): Promise<Achievement[] | undefined> => {
+  const movieTagRepository = getCustomRepository(MovieTagRepository);
+  const userAchievementRepo = getCustomRepository(UserAchievementRepository);
+  const achievementRepository = getCustomRepository(AchievementRepository);
+  // Faz uma query para pegar as tags do filme
+  const movieTagSql = movieTagRepository
+    .createQueryBuilder("movieTag")
+    .select("movieTag.tagId", "tagId")
+    .where(`movieTag.movieId = "${movieId}"`)
+    .getSql();
+
+  // Faz uma busca para pegar os achievements relacionados com as tags
+  const achievementsByMovie = await achievementRepository
+    .createQueryBuilder("userAchievement")
+    .where(`userAchievement.tagId IN (${movieTagSql})`)
+    .getMany();
+
+  const achievementsByMovieMap = Object.assign(
+    {},
+    ...achievementsByMovie.map((x) => ({ [x.id]: x }))
+  );
+
+  // Faz uma busca dos achievements que o usuário já conquistou
+  const existingUserAchivements = await userAchievementRepo
+    .createQueryBuilder("userAchievement")
+    .where(
+      `userAchievement.achievementId IN (${Object.keys(
+        achievementsByMovieMap
+      )})`
+    )
+    .andWhere(`userAchievement.userId = "${userId}"`)
+    .getMany();
+
+  const userAchievementMap: {
+    [achievementId: string]: UserAchievement;
+  } = Object.assign(
+    {},
+    ...existingUserAchivements.map((x) => ({ [x.achievementId]: x }))
+  );
+
+  const allAchievementsIds = new Set([
+    ...Object.keys(achievementsByMovieMap),
+    ...Object.keys(userAchievementMap),
+  ]);
+
+  const retAchievementIds: string[] = [];
+
+  allAchievementsIds.forEach((id) => {
+    if (userAchievementMap[id]) {
+      let changed = false;
+      if (
+        achievementsByMovieMap[id].targetScore >
+        userAchievementMap[id].currentScore
+      ) {
+        changed = true;
+        userAchievementMap[id].currentScore += 1;
+      }
+      //com as pontuações iguais e ocorrendo uma mudança, quer dizer que este deve ser retornado para ser exibido na tela
+      if (
+        changed === true &&
+        achievementsByMovieMap[id].targetScore ===
+          userAchievementMap[id].currentScore
+      )
+        retAchievementIds.push(id);
+    } else {
+      const userAchievementObj = new UserAchievement();
+      userAchievementObj.achievementId = Number(id);
+      userAchievementObj.currentScore = 1;
+      userAchievementObj.userId = userId;
+      userAchievementMap[id] = userAchievementObj;
+    }
+  });
+
+  await userAchievementRepo.save(Object.values(userAchievementMap));
+
+  //se existir algum achievement para retornar
+  if (retAchievementIds.length !== 0) {
+    const achievementsById = await achievementRepository
+      .createQueryBuilder("achievements")
+      .where(`achievements.id IN (${retAchievementIds})`)
+      .getMany();
+
+    return achievementsById;
+  }
+
+  return undefined;
+};
+
 export default {
   createUser,
   findUserById,
@@ -309,4 +412,5 @@ export default {
   setMovieStatusWantToWatch,
   deleteUserMovie,
   setSignUpPreferences,
+  setAchievementProgress,
 };
