@@ -111,7 +111,7 @@ const setMovieStatusWatchedLiked = async (
   idMovie: string,
   idUser: string,
   status: string
-): Promise<UserMovie> => {
+): Promise<Achievement[] | undefined> => {
   const userMovieRepository = getCustomRepository(UserMovieRepository);
 
   const exists = await userMovieRepository.findOne({
@@ -123,17 +123,21 @@ const setMovieStatusWatchedLiked = async (
     newUserMovieStatus.userId = idUser;
     newUserMovieStatus.status = status;
 
-    const result = await userMovieRepository.save(newUserMovieStatus);
+    await userMovieRepository.save(newUserMovieStatus);
 
     await setUserTags(idMovie, idUser);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   } else {
     exists.status = status;
 
-    const result = await userMovieRepository.save(exists);
+    await userMovieRepository.save(exists);
 
     await setUserTags(idMovie, idUser);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   }
@@ -143,7 +147,7 @@ const setMovieStatusWatchedDisliked = async (
   idMovie: string,
   idUser: string,
   status: string
-): Promise<UserMovie> => {
+): Promise<Achievement[] | undefined> => {
   const userMovieRepository = getCustomRepository(UserMovieRepository);
 
   const exists = await userMovieRepository.findOne({
@@ -155,7 +159,9 @@ const setMovieStatusWatchedDisliked = async (
     newUserMovieStatus.userId = idUser;
     newUserMovieStatus.status = status;
 
-    const result = await userMovieRepository.save(newUserMovieStatus);
+    await userMovieRepository.save(newUserMovieStatus);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   } else {
@@ -164,7 +170,9 @@ const setMovieStatusWatchedDisliked = async (
 
     exists.status = status;
 
-    const result = await userMovieRepository.save(exists);
+    await userMovieRepository.save(exists);
+
+    const result = await setAchievementProgress(idMovie, idUser);
 
     return result;
   }

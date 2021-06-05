@@ -96,29 +96,48 @@ export class UserController extends Controller {
     try {
       if (user) {
         const userId = user?.id;
+        let achievements: Achievement[] | undefined = undefined;
         switch (status) {
           case MovieUserStatus.WATCHED_AND_LIKED:
-            await UserService.setMovieStatusWatchedLiked(
+            achievements = await UserService.setMovieStatusWatchedLiked(
               movieId,
               userId,
               status
             );
             this.setStatus(200);
-            return {
-              message: "User and movie associated",
-              success: true,
-            };
+            if (achievements) {
+              return {
+                message: "User and movie associated",
+                success: true,
+                body: {
+                  achievements: achievements,
+                },
+              };
+            } else
+              return {
+                message: "User and movie associated",
+                success: true,
+              };
           case MovieUserStatus.WATCHED_AND_DISLIKED:
-            await UserService.setMovieStatusWatchedDisliked(
+            achievements = await UserService.setMovieStatusWatchedDisliked(
               movieId,
               userId,
               status
             );
             this.setStatus(200);
-            return {
-              message: "User and movie associated",
-              success: true,
-            };
+            if (achievements) {
+              return {
+                message: "User and movie associated",
+                success: true,
+                body: {
+                  achievements: achievements,
+                },
+              };
+            } else
+              return {
+                message: "User and movie associated",
+                success: true,
+              };
           case MovieUserStatus.DONT_WANT_TO_WATCH:
             await UserService.setMovieStatusDontWantWatch(
               movieId,
