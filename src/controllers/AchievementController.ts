@@ -1,5 +1,13 @@
 import express from "express";
-import { Controller, Route, Get, Tags, SuccessResponse, Path } from "tsoa";
+import {
+  Controller,
+  Route,
+  Get,
+  Tags,
+  SuccessResponse,
+  Security,
+  Request,
+} from "tsoa";
 import { Achievement } from "../models";
 import AchievementService from "../services/AchievementService";
 
@@ -23,6 +31,44 @@ export class AchievementController extends Controller {
             achievements: achievements,
           },
         };
+      }
+
+      throw new Error();
+    } catch (error) {
+      this.setStatus(500);
+
+      return {
+        success: false,
+        message: "Internal server error.",
+        details: error.message,
+      };
+    }
+  }
+
+  @Get("/user")
+  @SuccessResponse("200")
+  @Security("firebase")
+  async getUserAchievements(
+    @Request() request: express.Request
+  ): Promise<AchievementResponse> {
+    const { user } = request;
+
+    try {
+      if (user) {
+        const achievements = await AchievementService.getUserAchievements(
+          user.id
+        );
+
+        if (achievements) {
+          this.setStatus(200);
+          return {
+            success: true,
+            message: `Found ${achievements.length} achievements.`,
+            body: {
+              achievements: achievements,
+            },
+          };
+        }
       }
 
       throw new Error();
