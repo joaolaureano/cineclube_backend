@@ -1,14 +1,12 @@
-import { getConnection, getCustomRepository, getRepository } from "typeorm";
+import { getCustomRepository, getRepository } from "typeorm";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
 import { Achievement, UserAchievement, UserMovie, UserTag } from "../models";
 import { User } from "../models/User";
 import {
   UserRepository,
   UserMovieRepository,
-  PlatformRepository,
   MovieTagRepository,
   UserTagRepository,
-  MovieRepository,
   UserAchievementRepository,
   AchievementRepository,
 } from "../repositories";
@@ -286,8 +284,6 @@ const decreaseUserAchievementsPoint = async (
 
   const toRemoveAchievement: UserAchievement[] = [];
   const toReduceAchievement: UserAchievement[] = [];
-  console.log(existingUserAchivements);
-  console.log(achievementsByMovie);
 
   existingUserAchivements.forEach((userAchievement) => {
     userAchievement.currentScore -= 1;
