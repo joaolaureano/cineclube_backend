@@ -248,7 +248,10 @@ const decreaseUserTagPoints = async (userMovie: UserMovie): Promise<void> => {
 
   await userTagRepository.remove(removeList);
 };
-const removeUserAchievementsPoint = async (userId: string, movieId: string) => {
+const decreaseUserAchievementsPoint = async (
+  userId: string,
+  movieId: string
+) => {
   const movieTagRepository = getCustomRepository(MovieTagRepository);
   const userAchievementRepo = getCustomRepository(UserAchievementRepository);
   const achievementRepository = getCustomRepository(AchievementRepository);
@@ -282,19 +285,18 @@ const removeUserAchievementsPoint = async (userId: string, movieId: string) => {
     .getMany();
 
   const toRemoveAchievement: UserAchievement[] = [];
-
+  const toReduceAchievement: UserAchievement[] = [];
   console.log(existingUserAchivements);
+  console.log(achievementsByMovie);
 
   existingUserAchivements.forEach((userAchievement) => {
     userAchievement.currentScore -= 1;
-    if (userAchievement.currentScore === 0) {
+    if (userAchievement.currentScore === 0)
       toRemoveAchievement.push(userAchievement);
-      var index = existingUserAchivements.indexOf(userAchievement);
-      existingUserAchivements.splice(index, 1);
-    }
+    else toReduceAchievement.push(userAchievement);
   });
 
-  await userAchievementRepo.save(existingUserAchivements);
+  await userAchievementRepo.save(toReduceAchievement);
   await userAchievementRepo.remove(toRemoveAchievement);
 };
 
@@ -314,7 +316,7 @@ const deleteUserMovie = async (
     ) {
       if (exists.status == MovieUserStatus.WATCHED_AND_LIKED)
         await decreaseUserTagPoints(exists);
-      await removeUserAchievementsPoint(idUser, idMovie);
+      await decreaseUserAchievementsPoint(idUser, idMovie);
     }
 
     const removed = await userMovieRepository.remove(exists);
