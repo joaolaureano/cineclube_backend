@@ -40,7 +40,9 @@ export class Movie {
   })
   year: number;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   pathBanner: string;
 
   @Column()
