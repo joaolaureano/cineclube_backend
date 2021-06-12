@@ -8,7 +8,7 @@ export class createTables1619891457572 implements MigrationInterface {
       "CREATE TABLE `user` (`id` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `photoPath` varchar(255) NOT NULL, `randomness` int NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`id`)) ENGINE=InnoDB"
     );
     await queryRunner.query(
-      "CREATE TABLE `movie` (`id` int NOT NULL AUTO_INCREMENT, `title` varchar(255) NOT NULL, `originalTitle` varchar(255) NOT NULL, `synopsis` text NOT NULL, `critic` text NOT NULL, `curator` varchar(255) NOT NULL, `year` char(4) NOT NULL, `pathBanner` varchar(255) NOT NULL, `duration` int NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`id`)) ENGINE=InnoDB"
+      "CREATE TABLE `movie` (`id` int NOT NULL AUTO_INCREMENT, `title` varchar(255) NOT NULL, `originalTitle` varchar(255) NOT NULL, `synopsis` text NOT NULL, `critic` text NOT NULL, `curator` varchar(255) NOT NULL, `year` char(4) NOT NULL, `pathBanner` text NOT NULL, `duration` int NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`id`)) ENGINE=InnoDB"
     );
     await queryRunner.query(
       "CREATE TABLE `platform` (`id` int NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `created_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_At` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`id`)) ENGINE=InnoDB"
