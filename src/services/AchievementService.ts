@@ -20,7 +20,7 @@ const getUserAchievements = async (userId: string): Promise<Achievement[]> => {
     .innerJoin(
       "achievement.users",
       "users",
-      `users.userId = "${userId}" AND users.currentScore = achievement.targetScore`
+      `users.userId = "${userId}" AND users.currentScore >= achievement.targetScore`
     )
     .getMany();
 
