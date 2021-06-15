@@ -422,8 +422,8 @@ const setAchievementProgress = async (
         userAchievementMap[id].currentScore
       ) {
         changed = true;
-        userAchievementMap[id].currentScore += 1;
       }
+      userAchievementMap[id].currentScore += 1;
       //com as pontuações iguais e ocorrendo uma mudança, quer dizer que este deve ser retornado para ser exibido na tela
       if (
         changed &&
