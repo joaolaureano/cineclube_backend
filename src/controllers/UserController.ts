@@ -14,7 +14,7 @@ import {
 
 import { HttpResponse } from "../utils/httpResponse";
 import UserService from "../services/UserService";
-import { UserMovie } from "../models";
+import { Achievement, UserMovie } from "../models";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
 
 @Route("user")
@@ -85,7 +85,8 @@ export class UserController extends Controller {
   async setUserMovieStatus(
     @Body() requestBody: { movieId: string; status: MovieUserStatus },
     @Request() request: express.Request
-  ): Promise<HttpResponse> {
+  ): Promise<MovieStatusResponse> {
+    //Retorno -> Se tiver um body é porque alguma conquista foi atingida
     const { movieId, status } = requestBody;
     const { user } = request;
     if (!(movieId || status)) {
@@ -95,29 +96,48 @@ export class UserController extends Controller {
     try {
       if (user) {
         const userId = user?.id;
+        let achievements: Achievement[] | undefined = undefined;
         switch (status) {
           case MovieUserStatus.WATCHED_AND_LIKED:
-            await UserService.setMovieStatusWatchedLiked(
+            achievements = await UserService.setMovieStatusWatchedLiked(
               movieId,
               userId,
               status
             );
             this.setStatus(200);
-            return {
-              message: "User and movie associated",
-              success: true,
-            };
+            if (achievements) {
+              return {
+                message: "User and movie associated",
+                success: true,
+                body: {
+                  achievements: achievements,
+                },
+              };
+            } else
+              return {
+                message: "User and movie associated",
+                success: true,
+              };
           case MovieUserStatus.WATCHED_AND_DISLIKED:
-            await UserService.setMovieStatusWatchedDisliked(
+            achievements = await UserService.setMovieStatusWatchedDisliked(
               movieId,
               userId,
               status
             );
             this.setStatus(200);
-            return {
-              message: "User and movie associated",
-              success: true,
-            };
+            if (achievements) {
+              return {
+                message: "User and movie associated",
+                success: true,
+                body: {
+                  achievements: achievements,
+                },
+              };
+            } else
+              return {
+                message: "User and movie associated",
+                success: true,
+              };
           case MovieUserStatus.DONT_WANT_TO_WATCH:
             await UserService.setMovieStatusDontWantWatch(
               movieId,
@@ -203,6 +223,7 @@ export class UserController extends Controller {
       };
     }
   }
+
   @Post("/preferences")
   @SuccessResponse("200")
   @Security("firebase")
@@ -257,4 +278,10 @@ interface UserAuthenticationResponse extends HttpResponse {
     };
   };
   firstLogin?: boolean;
+}
+
+interface MovieStatusResponse extends HttpResponse {
+  body?: {
+    achievements: Achievement[];
+  };
 }
