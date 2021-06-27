@@ -142,8 +142,7 @@ const connect = async () => {
 
     //Create achievements
     const achievements: AchievementData[] = [];
-    const achievementImage =
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Trophy_Flat_Icon.svg/480px-Trophy_Flat_Icon.svg.png";
+    const achievementImage = "https://i.imgur.com/kuZNoUt.png";
     achievements.push({
       tagName: "Drama",
       targetScore: 5,
