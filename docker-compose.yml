@@ -11,7 +11,7 @@ services:
       - cinedb
     networks:
       - app-network
-    command: sh -c "chmod +x ./wait-for-it.sh && ./wait-for-it.sh -t 0 cinedb:3306 && npm run typeorm -- migration:run && npm run tsoa:gen && npm start"
+    command: sh -c "chmod +x ./wait-for-it.sh && ./wait-for-it.sh -t 0 cinedb:3306 && npm run typeorm -- migration:run && npm run db:seed && npm run tsoa:gen && npm start"
   cinedb:
     image: mysql:latest
     restart: always

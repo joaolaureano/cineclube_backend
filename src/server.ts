@@ -7,24 +7,20 @@ import swaggerConfig from "./config/swaggerConfig";
 import { RegisterRoutes } from "./routes/routes";
 import { errorhandler } from "./utils/errorHandler";
 
-const init = () => {
+const init = (): void => {
   const server = express();
 
   server.use(json());
   server.use(cors());
 
   // Init routes
-  // server.use(routes);
   RegisterRoutes(server); // New router version
 
   server.use(swaggerConfig);
   server.use(errorhandler);
 
   server.get("/", (_, res: express.Response) => {
-    res.send({
-      status: "Api is running",
-      docs: `Go to /docs to see the routes documentation.`,
-    });
+    res.redirect("/doc");
   });
 
   const PORT = variables.PORT || 5000;
