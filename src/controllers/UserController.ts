@@ -73,7 +73,7 @@ export class UserController extends Controller {
       const error = err as Error;
       return {
         success: false,
-        message: "Internal server error.",
+        message: "Internal server error." + __dirname,
         details: error.message,
       };
     }
