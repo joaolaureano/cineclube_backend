@@ -30,9 +30,6 @@ const connect = async () => {
       Repositories.PlatformRepository
     );
     const movieRepository = getCustomRepository(Repositories.MovieRepository);
-    const movieTagRepository = getCustomRepository(
-      Repositories.MovieTagRepository
-    );
     const actorRepository = getCustomRepository(Repositories.ActorRepository);
     const castRepository = getCustomRepository(Repositories.CastRepository);
     const achievementRepository = getCustomRepository(
@@ -136,7 +133,7 @@ const connect = async () => {
     });
 
     console.log("Linking Actors to Movies...");
-    const insertedCast = await castRepository.save(Object.values(cast));
+    await castRepository.save(Object.values(cast));
     console.log("DONE");
 
     //Create achievements
@@ -210,53 +207,13 @@ const connect = async () => {
       achievementModels.push(achievementModel);
     });
 
-    console.log("Inserting achievements...");
-    const insertedAchievements = await achievementRepository.save(
-      achievementModels
-    );
-    console.log("DONE");
-
-    // const achievementTagModels: Models.AchievementTag[] = [];
-
-    // insertedAchievements.forEach((achievement) => {
-    //   const achievementTagModel = new Models.AchievementTag();
-    //   achievementTagModel.achievement = achievement;
-    //   achievementTagModel.achievementId = achievement.id;
-
-    //   const achievementTagName = achievements.find(
-    //     (achiev) => achiev.title === achievement.title
-    //   )?.tagName;
-
-    //   if (achievementTagName) {
-    //     const tagModel = tagMap[achievementTagName];
-    //     achievementTagModel.tag = tagModel;
-    //     achievementTagModel.tagId = tagModel.id;
-    //   }
-    //   achievementTagModels.push(achievementTagModel);
-    // });
-
-    // console.log("Linking tags to achievements...");
-    // const insertedAchievementTags = await achievementTagRepository.save(
-    //   achievementTagModels
-    // );
-    // console.log("DONE");
-
-    // Print inserted data
-    // console.log({
-    //   tags: insertedTags,
-    //   platforms: insertedPlatforms,
-    //   movies: insertedMovies,
-    //   movieTags: insertedMovieTags,
-    //   actors: insertedActors,
-    //   directors: insertedDirectors,
-    //   cast: insertedCast,
-    // });
-
+    await achievementRepository.save(achievementModels);
     console.log("Finished inserting data, exiting...");
     connection.close();
     process.exit();
   } catch (err) {
-    console.log(`Error connecting to database!\n${err.message}`);
+    const error = err as Error;
+    console.log(`Error connecting to database!\n${error.message}`);
     process.exit();
   }
 };

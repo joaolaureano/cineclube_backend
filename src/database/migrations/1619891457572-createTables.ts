@@ -14,7 +14,7 @@ export class createTables1619891457572 implements MigrationInterface {
       "CREATE TABLE platform (id serial, name varchar NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE tag (id serial, name varchar NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
+      "CREATE TABLE tag (id serial, name varchar NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
       "CREATE TABLE app_user_movie (app_userId varchar NOT NULL, movieId int NOT NULL, status varchar NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, movieId))"
