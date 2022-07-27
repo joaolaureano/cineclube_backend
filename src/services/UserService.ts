@@ -1,12 +1,12 @@
 import { getCustomRepository, getRepository } from "typeorm";
 import { MovieUserStatus } from "../enum/MovieUserStatus";
-import { Achievement, UserAchievement, UserMovie, UserTag } from "../models";
+import { Achievement, UserAchievement, UserMovie, user_tag } from "../models";
 import { User } from "../models/User";
 import {
   UserRepository,
   UserMovieRepository,
   MovieTagRepository,
-  UserTagRepository,
+  user_tagRepository,
   UserAchievementRepository,
   AchievementRepository,
 } from "../repositories";
@@ -58,8 +58,8 @@ const getUserMoviesByStatus = async (
   return moviesWithoutId;
 };
 
-const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
-  const userTagRepository = getCustomRepository(UserTagRepository);
+const setuser_tags = async (idMovie: string, idUser: string): Promise<void> => {
+  const user_tagRepository = getCustomRepository(user_tagRepository);
   const movieTagRepository = getCustomRepository(MovieTagRepository);
 
   const movieTagList = await movieTagRepository
@@ -73,19 +73,19 @@ const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
     .where(`movieTag.movie_id = "${idMovie}"`)
     .getSql();
 
-  const existingUserTags = await userTagRepository
-    .createQueryBuilder("userTag")
-    .where(`userTag.tagId IN (${movieTagSql})`)
-    .andWhere(`userTag.user_id = "${idUser}"`)
+  const existinguser_tags = await user_tagRepository
+    .createQueryBuilder("user_tag")
+    .where(`user_tag.tagId IN (${movieTagSql})`)
+    .andWhere(`user_tag.user_id = "${idUser}"`)
     .getMany();
 
   const leftTags = movieTagList.filter((tag) => {
-    return existingUserTags.find((usertag) => usertag.tagId == tag.tagId)
+    return existinguser_tags.find((user_tag) => user_tag.tagId == tag.tagId)
       ? false
       : true;
   });
 
-  existingUserTags.forEach((tag) => {
+  existinguser_tags.forEach((tag) => {
     const actualMovieTag = movieTagList.find(
       (movietag) => movietag.tagId == tag.tagId
     );
@@ -95,14 +95,14 @@ const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
   });
 
   leftTags.forEach((movietag) => {
-    const newUserTag = new UserTag();
-    newUserTag.tagId = movietag.tagId;
-    newUserTag.user_id = idUser;
-    newUserTag.totalPoint = movietag.weight;
-    existingUserTags.push(newUserTag);
+    const newuser_tag = new user_tag();
+    newuser_tag.tagId = movietag.tagId;
+    newuser_tag.user_id = idUser;
+    newuser_tag.totalPoint = movietag.weight;
+    existinguser_tags.push(newuser_tag);
   });
 
-  await userTagRepository.save(existingUserTags);
+  await user_tagRepository.save(existinguser_tags);
 };
 
 const setMovieStatusWatchedLiked = async (
@@ -123,7 +123,7 @@ const setMovieStatusWatchedLiked = async (
 
     await userMovieRepository.save(newUserMovieStatus);
 
-    await setUserTags(idMovie, idUser);
+    await setuser_tags(idMovie, idUser);
 
     const result = await setAchievementProgress(idMovie, idUser);
 
@@ -133,7 +133,7 @@ const setMovieStatusWatchedLiked = async (
 
     await userMovieRepository.save(exists);
 
-    await setUserTags(idMovie, idUser);
+    await setuser_tags(idMovie, idUser);
 
     const result = await setAchievementProgress(idMovie, idUser);
 
@@ -164,7 +164,7 @@ const setMovieStatusWatchedDisliked = async (
     return result;
   } else {
     if (exists.status == MovieUserStatus.WATCHED_AND_LIKED)
-      await decreaseUserTagPoints(exists);
+      await decreaseuser_tagPoints(exists);
 
     exists.status = status;
 
@@ -204,8 +204,8 @@ const setMovieStatusDontWantWatch = async (
   }
 };
 
-const decreaseUserTagPoints = async (userMovie: UserMovie): Promise<void> => {
-  const userTagRepository = getCustomRepository(UserTagRepository);
+const decreaseuser_tagPoints = async (userMovie: UserMovie): Promise<void> => {
+  const user_tagRepository = getCustomRepository(user_tagRepository);
   const movieTagRepository = getCustomRepository(MovieTagRepository);
 
   const movieTagList = await movieTagRepository
@@ -219,32 +219,32 @@ const decreaseUserTagPoints = async (userMovie: UserMovie): Promise<void> => {
     .where(`movieTag.movie_id = "${userMovie.movie_id}"`)
     .getSql();
 
-  const existingUserTags = await userTagRepository
-    .createQueryBuilder("userTag")
-    .where(`userTag.tagId IN (${movieTagSql})`)
-    .andWhere(`userTag.user_id = "${userMovie.user_id}"`)
+  const existinguser_tags = await user_tagRepository
+    .createQueryBuilder("user_tag")
+    .where(`user_tag.tagId IN (${movieTagSql})`)
+    .andWhere(`user_tag.user_id = "${userMovie.user_id}"`)
     .getMany();
 
-  const removeList: UserTag[] = [];
-  const updateList: UserTag[] = [];
+  const removeList: user_tag[] = [];
+  const updateList: user_tag[] = [];
 
-  existingUserTags.forEach((userTag) => {
+  existinguser_tags.forEach((user_tag) => {
     const actualMovieTag = movieTagList.find(
-      (movietag) => movietag.tagId == userTag.tagId
+      (movietag) => movietag.tagId == user_tag.tagId
     );
     if (actualMovieTag) {
-      userTag.totalPoint -= actualMovieTag.weight;
-      if (userTag.totalPoint <= 0) {
-        removeList.push(userTag);
+      user_tag.totalPoint -= actualMovieTag.weight;
+      if (user_tag.totalPoint <= 0) {
+        removeList.push(user_tag);
       } else {
-        updateList.push(userTag);
+        updateList.push(user_tag);
       }
     }
   });
 
-  await userTagRepository.save(updateList);
+  await user_tagRepository.save(updateList);
 
-  await userTagRepository.remove(removeList);
+  await user_tagRepository.remove(removeList);
 };
 const decreaseUserAchievementsPoint = async (
   user_id: string,
@@ -311,7 +311,7 @@ const deleteUserMovie = async (
       exists.status == MovieUserStatus.WATCHED_AND_DISLIKED
     ) {
       if (exists.status == MovieUserStatus.WATCHED_AND_LIKED)
-        await decreaseUserTagPoints(exists);
+        await decreaseuser_tagPoints(exists);
       await decreaseUserAchievementsPoint(idUser, idMovie);
     }
 
@@ -351,17 +351,17 @@ const setMovieStatusWantToWatch = async (
 const setSignUpPreferences = async (
   user_id: string,
   tagIds: number[]
-): Promise<UserTag[]> => {
-  const userTagRespoitory = getRepository(UserTag);
-  const userTags = tagIds.map((id) => {
-    const userTag = new UserTag();
-    userTag.tagId = id;
-    userTag.user_id = user_id;
-    userTag.totalPoint = 50;
-    return userTag;
+): Promise<user_tag[]> => {
+  const user_tagRespoitory = getRepository(user_tag);
+  const user_tags = tagIds.map((id) => {
+    const user_tag = new user_tag();
+    user_tag.tagId = id;
+    user_tag.user_id = user_id;
+    user_tag.totalPoint = 50;
+    return user_tag;
   });
-  const insertedUserTags = await userTagRespoitory.save(userTags);
-  return insertedUserTags;
+  const inserteduser_tags = await user_tagRespoitory.save(user_tags);
+  return inserteduser_tags;
 };
 
 const setAchievementProgress = async (

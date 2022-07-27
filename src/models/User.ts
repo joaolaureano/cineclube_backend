@@ -7,7 +7,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { UserMovie, UserTag, UserAchievement } from ".";
+import { UserMovie, user_tag, UserAchievement } from ".";
 
 @Entity({ name: "app_user" })
 export class User {
@@ -29,11 +29,11 @@ export class User {
   })
   movies: UserMovie[];
 
-  @OneToMany(() => UserTag, (userTag) => userTag.user)
+  @OneToMany(() => user_tag, (user_tag) => user_tag.user)
   @JoinColumn({
     name: "user_id",
   })
-  userTags: UserTag[];
+  user_tags: user_tag[];
 
   @OneToMany(() => UserAchievement, (userAchievemnt) => userAchievemnt.user)
   @JoinColumn({
