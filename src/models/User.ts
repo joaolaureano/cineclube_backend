@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { UserMovie, UserTag, UserAchievement } from ".";
 
-@Entity({ name: "user" })
+@Entity({ name: "app_user" })
 export class User {
   @PrimaryColumn()
   id: string;
