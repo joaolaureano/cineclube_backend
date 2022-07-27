@@ -5,10 +5,10 @@ export class addAchievements1622319034177 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      "CREATE TABLE appUser_achievement (userId varchar NOT NULL, achievementId int NOT NULL, currentScore int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (userId, achievementId))"
+      "CREATE TABLE appUser_achievement (userId varchar NOT NULL, achievementId int NOT NULL, currentScore int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (userId, achievementId))"
     );
     await queryRunner.query(
-      "CREATE TABLE achievement (id serial, title varchar NOT NULL, description varchar NOT NULL, pathImage varchar NOT NULL, targetScore int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , tagId int NULL, PRIMARY KEY (id))"
+      "CREATE TABLE achievement (id serial, title varchar NOT NULL, description varchar NOT NULL, pathImage varchar NOT NULL, targetScore int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , tagId int NULL, PRIMARY KEY (id))"
     );
     await queryRunner.query(
       "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_2a418515c335cab7c5ba70c28b3 FOREIGN KEY (userId) REFERENCES app_user(id) "

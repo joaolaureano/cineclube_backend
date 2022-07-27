@@ -5,31 +5,31 @@ export class createTables1619891457572 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      "CREATE TABLE app_user (id varchar NOT NULL, name varchar NOT NULL, photoPath varchar NOT NULL, randomness int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW(), PRIMARY KEY (id))"
+      "CREATE TABLE app_user (id varchar NOT NULL, name varchar NOT NULL, photoPath varchar NOT NULL, randomness int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW(), PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie (id serial, title varchar NOT NULL, originalTitle varchar NOT NULL, synopsis text NOT NULL, critic text NOT NULL, curator varchar NOT NULL, year char(4) NOT NULL, pathBanner text NOT NULL, duration int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
+      "CREATE TABLE movie (id serial, title varchar NOT NULL, originalTitle varchar NOT NULL, synopsis text NOT NULL, critic text NOT NULL, curator varchar NOT NULL, year char(4) NOT NULL, pathBanner text NOT NULL, duration int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE platform (id serial, name varchar NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
+      "CREATE TABLE platform (id serial, name varchar NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
       "CREATE TABLE tag (id serial, name varchar NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE app_user_movie (app_userId varchar NOT NULL, movieId int NOT NULL, status varchar NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, movieId))"
+      "CREATE TABLE app_user_movie (app_userId varchar NOT NULL, movieId int NOT NULL, status varchar NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie_tag (tagId int NOT NULL, movieId int NOT NULL, super smallint NOT NULL, weight int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (tagId, movieId))"
+      "CREATE TABLE movie_tag (tagId int NOT NULL, movieId int NOT NULL, super smallint NOT NULL, weight int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (tagId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie_cast (actorId int NOT NULL, movieId int NOT NULL, director smallint NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (actorId, movieId))"
+      "CREATE TABLE movie_cast (actorId int NOT NULL, movieId int NOT NULL, director smallint NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (actorId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE app_user_tag (app_userId varchar NOT NULL, tagId int NOT NULL, totalPoint int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, tagId))"
+      "CREATE TABLE app_user_tag (app_userId varchar NOT NULL, tagId int NOT NULL, totalPoint int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, tagId))"
     );
     await queryRunner.query(
-      "CREATE TABLE actor (id serial, name varchar NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
+      "CREATE TABLE actor (id serial, name varchar NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
       "CREATE TABLE movie_platform (platform int NOT NULL, movie int NOT NULL)"

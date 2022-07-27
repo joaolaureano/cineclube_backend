@@ -26,7 +26,7 @@ export class UserAchievement {
   @ManyToOne(() => Achievement, (achievement) => achievement.users)
   achievement: Achievement;
 
-  @CreateDateColumn({ name: "created_At" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_At" })

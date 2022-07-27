@@ -71,7 +71,7 @@ export class Movie {
   })
   cast: Cast[];
 
-  @CreateDateColumn({ name: "created_At" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_At" })

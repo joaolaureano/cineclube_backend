@@ -26,7 +26,7 @@ export class Cast {
   @ManyToOne(() => Movie, (movie) => movie.cast)
   movie: Movie;
 
-  @CreateDateColumn({ name: "created_At" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_At" })

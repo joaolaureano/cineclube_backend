@@ -53,7 +53,7 @@ export class Achievement {
   })
   tag: Tag;
 
-  @CreateDateColumn({ name: "created_At" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_At" })
