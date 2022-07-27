@@ -15,7 +15,7 @@ export interface userDetails {
   id: string;
   name: string;
   email?: string;
-  photoPath?: string;
+  photo_path?: string;
 }
 
 const createUser = async (userDetails: userDetails): Promise<User> => {

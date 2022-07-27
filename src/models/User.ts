@@ -18,7 +18,7 @@ export class User {
   name: string;
 
   @Column()
-  photoPath: string;
+  photo_path: string;
 
   @Column()
   randomness: number;

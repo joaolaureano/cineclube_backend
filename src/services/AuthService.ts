@@ -7,7 +7,7 @@ const authenticateUser = async (authToken: string) => {
     id: userInfo.user_id,
     name: userInfo.name,
     email: userInfo.email,
-    photoPath: userInfo.picture,
+    photo_path: userInfo.picture,
   };
 };
 

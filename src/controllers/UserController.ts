@@ -57,7 +57,7 @@ export class UserController extends Controller {
           message: "New user successfully created.",
           body: {
             user: {
-              photoPath: createdUser.photoPath,
+              photo_path: createdUser.photo_path,
               id: createdUser.id,
               name: createdUser.name,
               randomness: createdUser.randomness,
@@ -271,7 +271,7 @@ interface UserMoviesStatusListResponse extends HttpResponse {
 interface UserAuthenticationResponse extends HttpResponse {
   body?: {
     user?: {
-      photoPath?: string;
+      photo_path?: string;
       id: string;
       name: string;
       randomness: number;

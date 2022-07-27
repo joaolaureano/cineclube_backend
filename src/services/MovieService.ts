@@ -12,7 +12,7 @@ export interface userDetails {
   id: string;
   name: string;
   email?: string;
-  photoPath?: string;
+  photo_path?: string;
 }
 
 const getAll = async (user_id: string): Promise<Movie[] | undefined> => {
