@@ -6,7 +6,7 @@ import {
   MovieTagRepository,
   UserMovieRepository,
 } from "../repositories";
-import { user_tagRepository } from "../repositories/user_tagRepository";
+import { UserTagRepository } from "../repositories/UserTagRepository";
 
 export interface userDetails {
   id: string;
@@ -88,7 +88,7 @@ const getRecommendedList = async (
   platforms?: number[]
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
-  const user_tagRepository = getCustomRepository(user_tagRepository);
+  const user_tagRepository = getCustomRepository(UserTagRepository);
 
   // Select de todas as tags que o usuário se interessa
   const user_tagList = await user_tagRepository
