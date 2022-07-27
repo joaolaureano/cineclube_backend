@@ -19,7 +19,7 @@ const init = (): void => {
   server.use(swaggerConfig);
   server.use(errorhandler);
 
-  server.get("/", (_, res: express.Response) => {
+  server.get("/", (_: express.Request, res: express.Response) => {
     res.redirect("/doc");
   });
 
