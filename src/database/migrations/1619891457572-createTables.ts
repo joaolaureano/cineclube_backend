@@ -23,7 +23,7 @@ export class createTables1619891457572 implements MigrationInterface {
       "CREATE TABLE movie_tag (tagId int NOT NULL, movieId int NOT NULL, super smallint NOT NULL, weight int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (tagId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE  (actorId int NOT NULL, movieId int NOT NULL, director smallint NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (actorId, movieId))"
+      "CREATE TABLE movie_cast (actorId int NOT NULL, movieId int NOT NULL, director smallint NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (actorId, movieId))"
     );
     await queryRunner.query(
       "CREATE TABLE app_user_tag (app_userId varchar(255) NOT NULL, tagId int NOT NULL, totalPoint int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, tagId))"
@@ -47,10 +47,10 @@ export class createTables1619891457572 implements MigrationInterface {
       "ALTER TABLE movie_tag ADD CONSTRAINT FK_c5c695f219479d1f627143836d0 FOREIGN KEY (movieId) REFERENCES movie(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
     );
     await queryRunner.query(
-      "ALTER TABLE  ADD CONSTRAINT FK_d3ec511ff2f2564f167064a2ee0 FOREIGN KEY (actorId) REFERENCES actor(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+      "ALTER TABLE movie_cast ADD CONSTRAINT FK_d3ec511ff2f2564f167064a2ee0 FOREIGN KEY (actorId) REFERENCES actor(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
     );
     await queryRunner.query(
-      "ALTER TABLE  ADD CONSTRAINT FK_dcacf1ce3d9cc81bc6427f0f6b3 FOREIGN KEY (movieId) REFERENCES movie(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+      "ALTER TABLE movie_cast ADD CONSTRAINT FK_dcacf1ce3d9cc81bc6427f0f6b3 FOREIGN KEY (movieId) REFERENCES movie(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
     );
     await queryRunner.query(
       "ALTER TABLE app_user_tag ADD CONSTRAINT FK_7cf25d8a11ccc18f04cbd8cb46c FOREIGN KEY (app_userId) REFERENCES app_user(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
@@ -80,10 +80,10 @@ export class createTables1619891457572 implements MigrationInterface {
       "ALTER TABLE app_user_tag DROP FOREIGN KEY FK_7cf25d8a11ccc18f04cbd8cb46c"
     );
     await queryRunner.query(
-      "ALTER TABLE  DROP FOREIGN KEY FK_dcacf1ce3d9cc81bc6427f0f6b3"
+      "ALTER TABLE movie_cast DROP FOREIGN KEY FK_dcacf1ce3d9cc81bc6427f0f6b3"
     );
     await queryRunner.query(
-      "ALTER TABLE  DROP FOREIGN KEY FK_d3ec511ff2f2564f167064a2ee0"
+      "ALTER TABLE movie_cast DROP FOREIGN KEY FK_d3ec511ff2f2564f167064a2ee0"
     );
     await queryRunner.query(
       "ALTER TABLE movie_tag DROP FOREIGN KEY FK_c5c695f219479d1f627143836d0"
@@ -106,7 +106,7 @@ export class createTables1619891457572 implements MigrationInterface {
     await queryRunner.query("DROP TABLE movie_platform");
     await queryRunner.query("DROP TABLE actor");
     await queryRunner.query("DROP TABLE app_user_tag");
-    await queryRunner.query("DROP TABLE ");
+    await queryRunner.query("DROP TABLE movie_cast");
     await queryRunner.query("DROP TABLE movie_tag");
     await queryRunner.query("DROP TABLE app_user_movie");
     await queryRunner.query("DROP TABLE tag");

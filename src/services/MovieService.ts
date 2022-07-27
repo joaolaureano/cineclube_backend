@@ -21,8 +21,8 @@ const getAll = async (userId: string): Promise<Movie[] | undefined> => {
   const moviesNotInUserList = movieRepository
     .createQueryBuilder("movie")
     .leftJoinAndSelect("movie.platforms", "platforms")
-    .leftJoinAndSelect("movie.cast", "cast")
-    .leftJoinAndSelect("cast.actor", "actors")
+    .leftJoinAndSelect("movie.movie_cast", "movie_cast")
+    .leftJoinAndSelect("movie_cast.actor", "actors")
     .leftJoinAndSelect("movie.moviesTags", "movieTag", "movieTag.super = true")
     .leftJoinAndSelect("movieTag.tag", "tag")
     .getMany();
@@ -45,8 +45,8 @@ const getMoviesNotInUserLists = async (
   const moviesNotInUserList = movieRepository
     .createQueryBuilder("movie")
     .leftJoinAndSelect("movie.platforms", "platforms")
-    .leftJoinAndSelect("movie.cast", "cast")
-    .leftJoinAndSelect("cast.actor", "actors")
+    .leftJoinAndSelect("movie.movie_cast", "movie_cast")
+    .leftJoinAndSelect("movie_cast.actor", "actors")
     .leftJoinAndSelect(
       "movie.moviesTags",
       "movieTag",
@@ -68,8 +68,8 @@ const getMovieListByIds = async (
   const movies = await movieRepository
     .createQueryBuilder("movie")
     .leftJoinAndSelect("movie.platforms", "platforms")
-    .leftJoinAndSelect("movie.cast", "cast")
-    .leftJoinAndSelect("cast.actor", "actors")
+    .leftJoinAndSelect("movie.movie_cast", "movie_cast")
+    .leftJoinAndSelect("movie_cast.actor", "actors")
     .leftJoinAndSelect(
       "movie.moviesTags",
       "movieTag",
@@ -159,7 +159,7 @@ const getRecommendedList = async (
     });
   });
 
-  // Busca dos filmes com todas informações necessárias junto (cast, platforms, tags, etc)
+  // Busca dos filmes com todas informações necessárias junto (movie_cast, platforms, tags, etc)
   const sortedMovieIds = movies.map((movie) => movie.id);
   if (sortedMovieIds.length === 0) {
     return [];
