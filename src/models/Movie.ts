@@ -19,7 +19,7 @@ export class Movie {
   title: string;
 
   @Column()
-  originalTitle: string;
+  original_title: string;
 
   @Column({
     type: "text",

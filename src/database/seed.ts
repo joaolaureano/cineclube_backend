@@ -308,7 +308,7 @@ const readMovies = (movieIds: string[]) => {
 
     const movieModel = new Models.Movie();
     movieModel.title = movie.brazilian_title;
-    movieModel.originalTitle = movie.original_title;
+    movieModel.original_title = movie.original_title;
     movieModel.synopsis = movie.synopsis;
     movieModel.year = movie.year;
     movieModel.curator = movie.curator;
