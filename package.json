@@ -5,7 +5,7 @@
   "author": "Time AGES 2021/1 - Cine Clube",
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsoa routes && tsoa swagger && ts-node dist/src/index.js ",
+    "start": "ts-node dist/src/index.js ",
     "dev": "tsoa routes && tsoa swagger && ts-node-dev src/index.ts",
     "build": "tsoa routes && tsoa swagger && tsc",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --config src/config/database.ts",
