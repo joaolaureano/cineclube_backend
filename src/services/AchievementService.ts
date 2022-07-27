@@ -12,7 +12,7 @@ const getAll = async (): Promise<Achievement[]> => {
   return achievements;
 };
 
-const getUserAchievements = async (userId: string): Promise<Achievement[]> => {
+const getUserAchievements = async (user_id: string): Promise<Achievement[]> => {
   const achievementRepository = getCustomRepository(AchievementRepository);
 
   const achievements = await achievementRepository
@@ -20,7 +20,7 @@ const getUserAchievements = async (userId: string): Promise<Achievement[]> => {
     .innerJoin(
       "achievement.users",
       "users",
-      `users.userId = "${userId}" AND users.currentScore >= achievement.targetScore`
+      `users.user_id = "${user_id}" AND users.currentScore >= achievement.targetScore`
     )
     .getMany();
 

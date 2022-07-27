@@ -12,10 +12,10 @@ import { Tag, User } from ".";
 @Entity("user_tag")
 export class UserTag {
   @PrimaryColumn()
-  userId: string;
+  user_id: string;
 
   @PrimaryColumn()
-  tagId: number;
+  tag_id: number;
 
   @Column()
   totalPoint: number;

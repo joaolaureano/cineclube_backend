@@ -95,13 +95,13 @@ export class UserController extends Controller {
     }
     try {
       if (user) {
-        const userId = user?.id;
+        const user_id = user?.id;
         let achievements: Achievement[] | undefined = undefined;
         switch (status) {
           case MovieUserStatus.WATCHED_AND_LIKED:
             achievements = await UserService.setMovieStatusWatchedLiked(
               movieId,
-              userId,
+              user_id,
               status
             );
             this.setStatus(200);
@@ -121,7 +121,7 @@ export class UserController extends Controller {
           case MovieUserStatus.WATCHED_AND_DISLIKED:
             achievements = await UserService.setMovieStatusWatchedDisliked(
               movieId,
-              userId,
+              user_id,
               status
             );
             this.setStatus(200);
@@ -141,7 +141,7 @@ export class UserController extends Controller {
           case MovieUserStatus.DONT_WANT_TO_WATCH:
             await UserService.setMovieStatusDontWantWatch(
               movieId,
-              userId,
+              user_id,
               status
             );
             this.setStatus(200);
@@ -150,7 +150,7 @@ export class UserController extends Controller {
               success: true,
             };
           case MovieUserStatus.NONE:
-            await UserService.deleteUserMovie(movieId, userId);
+            await UserService.deleteUserMovie(movieId, user_id);
             this.setStatus(200);
             return {
               message: "Status reset successfully",
@@ -159,7 +159,7 @@ export class UserController extends Controller {
           case MovieUserStatus.WANT_TO_WATCH:
             await UserService.setMovieStatusWantToWatch(
               movieId,
-              userId,
+              user_id,
               status
             );
             this.setStatus(200);
@@ -228,19 +228,19 @@ export class UserController extends Controller {
   @SuccessResponse("200")
   @Security("firebase")
   async setUserPreferences(
-    @Body() requestBody: { tagIds: number[] },
+    @Body() requestBody: { tag_ids: number[] },
     @Request() request: express.Request
   ): Promise<HttpResponse> {
-    const { tagIds } = requestBody;
+    const { tag_ids } = requestBody;
     const { user } = request;
-    if (!tagIds) {
+    if (!tag_ids) {
       this.setStatus(400);
       throw new Error("Could not find tags");
     }
     try {
       if (user) {
         const { id } = user;
-        const response = await UserService.setSignUpPreferences(id, tagIds);
+        const response = await UserService.setSignUpPreferences(id, tag_ids);
         if (response) {
           this.setStatus(200);
           return {

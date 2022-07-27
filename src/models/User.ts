@@ -25,19 +25,19 @@ export class User {
 
   @OneToMany(() => UserMovie, (userMovie) => userMovie.user)
   @JoinColumn({
-    name: "userId",
+    name: "user_id",
   })
   movies: UserMovie[];
 
   @OneToMany(() => UserTag, (userTag) => userTag.user)
   @JoinColumn({
-    name: "userId",
+    name: "user_id",
   })
   userTags: UserTag[];
 
   @OneToMany(() => UserAchievement, (userAchievemnt) => userAchievemnt.user)
   @JoinColumn({
-    name: "userId",
+    name: "user_id",
   })
   achievements: UserAchievement[];
 

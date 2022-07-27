@@ -142,35 +142,35 @@ const connect = async () => {
     achievements.push({
       tagName: "Drama",
       targetScore: 5,
-      pathImage: achievementImage,
+      path_image: achievementImage,
       title: "Que drama!",
       description: "Parabéns! Você assistiu 5 filmes de drama.",
     });
     achievements.push({
       tagName: "Drama",
       targetScore: 10,
-      pathImage: achievementImage,
+      path_image: achievementImage,
       title: "A vida é um drama!!!!",
       description: "Incrível! Você assitiu 10 filmes de drama.",
     });
     achievements.push({
       tagName: "Mystery",
       targetScore: 3,
-      pathImage: achievementImage,
+      path_image: achievementImage,
       title: "Cuidado, algo está acontecendo!",
       description: "Secretamente você assistiu 3 filmes de mistério.",
     });
     achievements.push({
       tagName: "Thriller",
       targetScore: 3,
-      pathImage: achievementImage,
+      path_image: achievementImage,
       title: "Plot Twist!",
       description: "Do nada você assistiu 3 filmes tríler.",
     });
     achievements.push({
       tagName: "Comedy",
       targetScore: 3,
-      pathImage: achievementImage,
+      path_image: achievementImage,
       title: "Respira que tem mais piada!",
       description:
         "Acalma que tem muita risada, mas parabéns pelos 3 filmes de comédia assistidos.",
@@ -178,7 +178,7 @@ const connect = async () => {
     achievements.push({
       tagName: "Horror",
       targetScore: 3,
-      pathImage: achievementImage,
+      path_image: achievementImage,
       title: "Não tenha medo!",
       description:
         "O filme já acabou e acho que nada daquilo é real. Enfim, parabéns pela conquista de 3 filmes de terror assistidos.",
@@ -186,7 +186,7 @@ const connect = async () => {
     achievements.push({
       tagName: "Romance",
       targetScore: 3,
-      pathImage: achievementImage,
+      path_image: achievementImage,
       title: "Awnn que amor!",
       description: "Com muito amor você assistiu 3 filmes de romance.",
     });
@@ -196,7 +196,7 @@ const connect = async () => {
 
     achievements.forEach((achievement) => {
       const achievementModel = new Models.Achievement();
-      achievementModel.pathImage = achievement.pathImage;
+      achievementModel.path_image = achievement.path_image;
       achievementModel.title = achievement.title;
       achievementModel.description = achievement.description;
       achievementModel.targetScore = achievement.targetScore;
@@ -308,7 +308,7 @@ const readMovies = (movieIds: string[]) => {
 
     const movieModel = new Models.Movie();
     movieModel.title = movie.brazilian_title;
-    movieModel.originalTitle = movie.original_title;
+    movieModel.original_title = movie.original_title;
     movieModel.synopsis = movie.synopsis;
     movieModel.year = movie.year;
     movieModel.curator = movie.curator;
@@ -324,7 +324,7 @@ const readMovies = (movieIds: string[]) => {
 interface AchievementData {
   title: string;
   description: string;
-  pathImage: string;
+  path_image: string;
   targetScore: number;
   tagName: string;
 }

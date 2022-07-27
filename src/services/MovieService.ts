@@ -15,7 +15,7 @@ export interface userDetails {
   photoPath?: string;
 }
 
-const getAll = async (userId: string): Promise<Movie[] | undefined> => {
+const getAll = async (user_id: string): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
 
   const moviesNotInUserList = movieRepository
@@ -31,7 +31,7 @@ const getAll = async (userId: string): Promise<Movie[] | undefined> => {
 };
 
 const getMoviesNotInUserLists = async (
-  userId: string,
+  user_id: string,
   superTags?: boolean
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
@@ -39,7 +39,7 @@ const getMoviesNotInUserLists = async (
   const userMovieList = getCustomRepository(UserMovieRepository)
     .createQueryBuilder("userMovie")
     .select("userMovie.movieId", "movieId")
-    .where(`userMovie.userId = "${userId}"`)
+    .where(`userMovie.user_id = "${user_id}"`)
     .getSql();
 
   const moviesNotInUserList = movieRepository
@@ -83,7 +83,7 @@ const getMovieListByIds = async (
 };
 
 const getRecommendedList = async (
-  userId: string,
+  user_id: string,
   tags?: number[],
   platforms?: number[]
 ): Promise<Movie[] | undefined> => {
@@ -93,11 +93,11 @@ const getRecommendedList = async (
   // Select de todas as tags que o usuário se interessa
   const userTagList = await userTagRepository
     .createQueryBuilder("userTag")
-    .where(`userTag.userId = "${userId}"`)
+    .where(`userTag.user_id = "${user_id}"`)
     .getMany();
 
   if (userTagList.length === 0) {
-    let movies = await getMoviesNotInUserLists(userId);
+    let movies = await getMoviesNotInUserLists(user_id);
 
     if (movies) {
       if (platforms) movies = filterMoviesByPlatforms(platforms, movies);
@@ -112,21 +112,21 @@ const getRecommendedList = async (
 
       return filteredMovies;
     }
-    return getMoviesNotInUserLists(userId, true);
+    return getMoviesNotInUserLists(user_id, true);
   }
 
   // Geração de lista com apenas os valores das ids de tag
-  const tagIdList = userTagRepository
+  const tag_idList = userTagRepository
     .createQueryBuilder("userTag")
-    .select("userTag.tagId", "tagId")
-    .where(`userTag.userId = "${userId}"`)
+    .select("userTag.tag_id", "tag_id")
+    .where(`userTag.user_id = "${user_id}"`)
     .getSql();
 
   //Select com os ids de filmes em listas do usuário
   const userMovieList = getCustomRepository(UserMovieRepository)
     .createQueryBuilder("userMovie")
     .select("userMovie.movieId", "movieId")
-    .where(`userMovie.userId = "${userId}"`)
+    .where(`userMovie.user_id = "${user_id}"`)
     .getSql();
 
   //Select de todos os filmes que possuem alguma tag gerada na query acima
@@ -134,14 +134,14 @@ const getRecommendedList = async (
     .createQueryBuilder("movie")
     .innerJoinAndSelect("movie.moviesTags", "movieTag")
     .where(
-      `movieTag.tagId in (${tagIdList}) AND movieTag.movieId NOT IN (${userMovieList})`
+      `movieTag.tag_id in (${tag_idList}) AND movieTag.movieId NOT IN (${userMovieList})`
     )
     .getMany();
 
   //Mapeamento de pontuação da tag para a id da tag
-  const mapUserTagTotalPoint: { [tagId: number]: number } = {};
-  userTagList.map((tagId) => {
-    mapUserTagTotalPoint[tagId.tagId] = tagId.totalPoint;
+  const mapUserTagTotalPoint: { [tag_id: number]: number } = {};
+  userTagList.map((tag_id) => {
+    mapUserTagTotalPoint[tag_id.tag_id] = tag_id.totalPoint;
   });
 
   const scoreMovies: { [movieId: number]: MovieScore } = {};
@@ -155,7 +155,7 @@ const getRecommendedList = async (
     };
     movie.moviesTags.forEach((movieTag) => {
       scoreMovies[movie.id].score +=
-        mapUserTagTotalPoint[movieTag.tagId] * movieTag.weight;
+        mapUserTagTotalPoint[movieTag.tag_id] * movieTag.weight;
     });
   });
 
@@ -195,7 +195,7 @@ const filterMoviesByTags = (tags: number[], movieList: Movie[]) => {
 
   const filteredMovies = movieList?.filter((movie) => {
     const movieFilteredTags = movie.moviesTags.find((movieTag) => {
-      return tags.indexOf(movieTag.tagId) >= 0;
+      return tags.indexOf(movieTag.tag_id) >= 0;
     });
     return movieFilteredTags;
   });

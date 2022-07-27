@@ -12,7 +12,7 @@ import { User, Achievement } from ".";
 @Entity("user_achievement")
 export class UserAchievement {
   @PrimaryColumn()
-  userId: string;
+  user_id: string;
 
   @PrimaryColumn()
   achievementId: number;
