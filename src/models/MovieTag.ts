@@ -14,7 +14,7 @@ export class MovieTag {
   tagId: number;
 
   @PrimaryColumn()
-  movieId: number;
+  movie_id: number;
 
   @Column()
   super: boolean;

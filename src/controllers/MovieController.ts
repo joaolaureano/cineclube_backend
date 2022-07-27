@@ -77,11 +77,11 @@ export class MovieController extends Controller {
     }
   }
 
-  @Get("/{movieId}")
+  @Get("/{movie_id}")
   @SuccessResponse("200")
-  async getById(@Path() movieId: number): Promise<MovieResponse> {
+  async getById(@Path() movie_id: number): Promise<MovieResponse> {
     try {
-      const movie = await MovieService.getById(movieId);
+      const movie = await MovieService.getById(movie_id);
 
       if (movie) {
         this.setStatus(200);

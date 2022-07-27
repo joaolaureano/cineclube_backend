@@ -15,7 +15,7 @@ export class UserMovie {
   user_id: string;
 
   @PrimaryColumn()
-  movieId: number;
+  movie_id: number;
 
   @Column()
   status: string;

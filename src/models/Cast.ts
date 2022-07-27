@@ -15,7 +15,7 @@ export class Cast {
   actor_id: number;
 
   @PrimaryColumn()
-  movieId: number;
+  movie_id: number;
 
   @Column()
   director: boolean;

@@ -17,12 +17,12 @@ const connect = async () => {
     console.log("Connected successfully to database.");
 
     // Read JSON
-    const movieIds = Object.keys(movieData);
-    const tags = readMovieTags(movieIds);
-    const platforms = readMoviePlatforms(movieIds);
-    const movies = readMovies(movieIds);
-    const actors = readMovieActors(movieIds);
-    const directors = readMovieDirectors(movieIds);
+    const movie_ids = Object.keys(movieData);
+    const tags = readMovieTags(movie_ids);
+    const platforms = readMoviePlatforms(movie_ids);
+    const movies = readMovies(movie_ids);
+    const actors = readMovieActors(movie_ids);
+    const directors = readMovieDirectors(movie_ids);
 
     // Get repositories
     const tagRepository = getCustomRepository(Repositories.TagRepository);
@@ -62,7 +62,7 @@ const connect = async () => {
 
     const movieTags: Models.MovieTag[] = [];
 
-    movieIds.forEach((id: string) => {
+    movie_ids.forEach((id: string) => {
       const movie = movieData[id];
       const movieModel = movieMap[movie.brazilian_title];
 
@@ -105,7 +105,7 @@ const connect = async () => {
 
     const cast: Models.Cast[] = [];
 
-    movieIds.forEach((id: string) => {
+    movie_ids.forEach((id: string) => {
       const movie = movieData[id];
       const movieModel = movieMap[movie.brazilian_title];
 
@@ -218,10 +218,10 @@ const connect = async () => {
   }
 };
 
-const readMovieTags = (movieIds: string[]) => {
+const readMovieTags = (movie_ids: string[]) => {
   const tags: { [tagName: string]: Models.Tag } = {};
 
-  movieIds.forEach((id: string) => {
+  movie_ids.forEach((id: string) => {
     const movie = movieData[id];
 
     const supertags: string[] = movie.supertags;
@@ -246,10 +246,10 @@ const readMovieTags = (movieIds: string[]) => {
   return tags;
 };
 
-const readMoviePlatforms = (movieIds: string[]) => {
+const readMoviePlatforms = (movie_ids: string[]) => {
   const platforms: { [platformName: string]: Models.Platform } = {};
 
-  movieIds.forEach((id: string) => {
+  movie_ids.forEach((id: string) => {
     const movie = movieData[id];
 
     const platformNames: string[] = movie.platforms;
@@ -264,10 +264,10 @@ const readMoviePlatforms = (movieIds: string[]) => {
   return platforms;
 };
 
-const readMovieActors = (movieIds: string[]) => {
+const readMovieActors = (movie_ids: string[]) => {
   const actors: { [actorName: string]: Models.Actor } = {};
 
-  movieIds.forEach((id: string) => {
+  movie_ids.forEach((id: string) => {
     const movie = movieData[id];
 
     const actorNames: string[] = movie.cast;
@@ -282,10 +282,10 @@ const readMovieActors = (movieIds: string[]) => {
   return actors;
 };
 
-const readMovieDirectors = (movieIds: string[]) => {
+const readMovieDirectors = (movie_ids: string[]) => {
   const director: { [directorName: string]: Models.Actor } = {};
 
-  movieIds.forEach((id: string) => {
+  movie_ids.forEach((id: string) => {
     const movie = movieData[id];
 
     const directorNames: string[] = movie.directors;
@@ -300,10 +300,10 @@ const readMovieDirectors = (movieIds: string[]) => {
   return director;
 };
 
-const readMovies = (movieIds: string[]) => {
-  const movies: { [movieId: string]: Models.Movie } = {};
+const readMovies = (movie_ids: string[]) => {
+  const movies: { [movie_id: string]: Models.Movie } = {};
 
-  movieIds.forEach((id: string) => {
+  movie_ids.forEach((id: string) => {
     const movie = movieData[id];
 
     const movieModel = new Models.Movie();
