@@ -12,8 +12,8 @@ export default {
   password: DB_PASSWORD,
   logging: false,
   synchronize: false,
-  entities: [`${__dirname}/src/models/*.{js,ts}`],
-  migrations: [`${__dirname}/src/database/migrations/*.{js,ts}`],
+  entities: [`${__dirname}/../models/*.{js,ts}`],
+  migrations: [`${__dirname}/../database/migrations/*.{js,ts}`],
   cli: {
     migrationsDir: "src/database/migrations",
   },
