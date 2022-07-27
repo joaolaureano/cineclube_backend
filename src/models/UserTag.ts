@@ -20,10 +20,10 @@ export class UserTag {
   @Column()
   totalPoint: number;
 
-  @ManyToOne(() => User, (user) => user.userTags)
+  @ManyToOne(() => User, (user) => user.user_tags)
   user: User;
 
-  @ManyToOne(() => Tag, (tag) => tag.userTags)
+  @ManyToOne(() => Tag, (tag) => tag.user_tags)
   tag: Tag;
 
   @CreateDateColumn({ name: "created_at" })

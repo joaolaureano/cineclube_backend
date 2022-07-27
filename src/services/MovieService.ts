@@ -6,7 +6,7 @@ import {
   MovieTagRepository,
   UserMovieRepository,
 } from "../repositories";
-import { UserTagRepository } from "../repositories/UserTagRepository";
+import { user_tagRepository } from "../repositories/user_tagRepository";
 
 export interface userDetails {
   id: string;
@@ -88,15 +88,15 @@ const getRecommendedList = async (
   platforms?: number[]
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
-  const userTagRepository = getCustomRepository(UserTagRepository);
+  const user_tagRepository = getCustomRepository(user_tagRepository);
 
   // Select de todas as tags que o usuário se interessa
-  const userTagList = await userTagRepository
-    .createQueryBuilder("userTag")
-    .where(`userTag.user_id = "${user_id}"`)
+  const user_tagList = await user_tagRepository
+    .createQueryBuilder("user_tag")
+    .where(`user_tag.user_id = "${user_id}"`)
     .getMany();
 
-  if (userTagList.length === 0) {
+  if (user_tagList.length === 0) {
     let movies = await getMoviesNotInUserLists(user_id);
 
     if (movies) {
@@ -116,10 +116,10 @@ const getRecommendedList = async (
   }
 
   // Geração de lista com apenas os valores das ids de tag
-  const tagIdList = userTagRepository
-    .createQueryBuilder("userTag")
-    .select("userTag.tagId", "tagId")
-    .where(`userTag.user_id = "${user_id}"`)
+  const tagIdList = user_tagRepository
+    .createQueryBuilder("user_tag")
+    .select("user_tag.tagId", "tagId")
+    .where(`user_tag.user_id = "${user_id}"`)
     .getSql();
 
   //Select com os ids de filmes em listas do usuário
@@ -139,9 +139,9 @@ const getRecommendedList = async (
     .getMany();
 
   //Mapeamento de pontuação da tag para a id da tag
-  const mapUserTagTotalPoint: { [tagId: number]: number } = {};
-  userTagList.map((tagId) => {
-    mapUserTagTotalPoint[tagId.tagId] = tagId.totalPoint;
+  const mapuser_tagTotalPoint: { [tagId: number]: number } = {};
+  user_tagList.map((tagId) => {
+    mapuser_tagTotalPoint[tagId.tagId] = tagId.totalPoint;
   });
 
   const scoreMovies: { [movie_id: number]: MovieScore } = {};
@@ -155,7 +155,7 @@ const getRecommendedList = async (
     };
     movie.moviesTags.forEach((movieTag) => {
       scoreMovies[movie.id].score +=
-        mapUserTagTotalPoint[movieTag.tagId] * movieTag.weight;
+        mapuser_tagTotalPoint[movieTag.tagId] * movieTag.weight;
     });
   });
 
