@@ -11,7 +11,7 @@ export class addAchievements1622319034177 implements MigrationInterface {
       "CREATE TABLE achievement (id serial, title varchar(255) NOT NULL, description varchar(255) NOT NULL, pathImage varchar(255) NOT NULL, targetScore int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , tagId int NULL, PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_2a418515c335cab7c5ba70c28b3 FOREIGN KEY (userId) REFERENCES user(id) "
+      "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_2a418515c335cab7c5ba70c28b3 FOREIGN KEY (userId) REFERENCES app_user(id) "
     );
     await queryRunner.query(
       "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_843ecd1965f1aac694875674a18 FOREIGN KEY (achievementId) REFERENCES achievement(id) "
