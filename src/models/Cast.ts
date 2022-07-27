@@ -12,7 +12,7 @@ import { Movie, Actor } from ".";
 @Entity("movie_cast")
 export class Cast {
   @PrimaryColumn()
-  actorId: number;
+  actor_id: number;
 
   @PrimaryColumn()
   movieId: number;

@@ -19,7 +19,7 @@ export class Actor {
 
   @OneToMany(() => Cast, (cast) => cast.actor)
   @JoinColumn({
-    name: "actorId",
+    name: "actor_id",
   })
   cast: Cast[];
 
