@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { MovieTag, Platform, User, UserMovie, Cast } from ".";
+import { MovieTag, Platform, UserMovie, Cast } from ".";
 
 @Entity({ name: "movie" })
 export class Movie {
