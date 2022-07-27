@@ -19,13 +19,13 @@ export class Tag {
 
   @OneToMany(() => MovieTag, (movieTag) => movieTag.tag)
   @JoinColumn({
-    name: "tagId",
+    name: "tag_id",
   })
-  moviesTags: MovieTag[];
+  movies_tags: MovieTag[];
 
   @OneToMany(() => UserTag, (user_tag) => user_tag.tag)
   @JoinColumn({
-    name: "tagId",
+    name: "tag_id",
   })
   user_tags: UserTag[];
 
@@ -33,8 +33,8 @@ export class Tag {
   achievements: Achievement[];
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updatedAt: Date;
+  updated_at: Date;
 }

@@ -1,11 +1,6 @@
-import { SourceMap } from "module";
-import { Any, getCustomRepository } from "typeorm";
+import { getCustomRepository } from "typeorm";
 import { Movie } from "../models/Movie";
-import {
-  MovieRepository,
-  MovieTagRepository,
-  UserMovieRepository,
-} from "../repositories";
+import { MovieRepository, UserMovieRepository } from "../repositories";
 import { UserTagRepository } from "../repositories/UserTagRepository";
 
 export interface userDetails {
@@ -23,8 +18,12 @@ const getAll = async (user_id: string): Promise<Movie[] | undefined> => {
     .leftJoinAndSelect("movie.platforms", "platforms")
     .leftJoinAndSelect("movie.movie_cast", "movie_cast")
     .leftJoinAndSelect("movie_cast.actor", "actors")
-    .leftJoinAndSelect("movie.moviesTags", "movieTag", "movieTag.super = true")
-    .leftJoinAndSelect("movieTag.tag", "tag")
+    .leftJoinAndSelect(
+      "movie.movies_tags",
+      "movie_tag",
+      "movie_tag.super = true"
+    )
+    .leftJoinAndSelect("movie_tag.tag", "tag")
     .getMany();
 
   return moviesNotInUserList;
@@ -48,11 +47,11 @@ const getMoviesNotInUserLists = async (
     .leftJoinAndSelect("movie.movie_cast", "movie_cast")
     .leftJoinAndSelect("movie_cast.actor", "actors")
     .leftJoinAndSelect(
-      "movie.moviesTags",
-      "movieTag",
-      superTags ? "movieTag.super = true" : ""
+      "movie.movies_tags",
+      "movie_tag",
+      superTags ? "movie_tag.super = true" : ""
     )
-    .leftJoinAndSelect("movieTag.tag", "tag")
+    .leftJoinAndSelect("movie_tag.tag", "tag")
     .where(`movie.id NOT IN (${userMovieList})`)
     .getMany();
 
@@ -71,11 +70,11 @@ const getMovieListByIds = async (
     .leftJoinAndSelect("movie.movie_cast", "movie_cast")
     .leftJoinAndSelect("movie_cast.actor", "actors")
     .leftJoinAndSelect(
-      "movie.moviesTags",
-      "movieTag",
-      superTags ? "movieTag.super = true" : ""
+      "movie.movies_tags",
+      "movie_tag",
+      superTags ? "movie_tag.super = true" : ""
     )
-    .leftJoinAndSelect("movieTag.tag", "tag")
+    .leftJoinAndSelect("movie_tag.tag", "tag")
     .where(`movie.id IN (${movie_ids})`)
     .getMany();
 
@@ -104,8 +103,8 @@ const getRecommendedList = async (
       if (tags) movies = filterMoviesByTags(tags, movies);
 
       const filteredMovies = movies.map((movie) => {
-        movie.moviesTags = movie.moviesTags.filter(
-          (movieTag) => movieTag.super
+        movie.movies_tags = movie.movies_tags.filter(
+          (movie_tag) => movie_tag.super
         );
         return movie;
       });
@@ -116,9 +115,9 @@ const getRecommendedList = async (
   }
 
   // Geração de lista com apenas os valores das ids de tag
-  const tagIdList = user_tagRepository
+  const tag_idList = user_tagRepository
     .createQueryBuilder("user_tag")
-    .select("user_tag.tagId", "tagId")
+    .select("user_tag.tag_id", "tag_id")
     .where(`user_tag.user_id = "${user_id}"`)
     .getSql();
 
@@ -132,16 +131,16 @@ const getRecommendedList = async (
   //Select de todos os filmes que possuem alguma tag gerada na query acima
   const movies = await movieRepository
     .createQueryBuilder("movie")
-    .innerJoinAndSelect("movie.moviesTags", "movieTag")
+    .innerJoinAndSelect("movie.movies_tags", "movie_tag")
     .where(
-      `movieTag.tagId in (${tagIdList}) AND movieTag.movie_id NOT IN (${userMovieList})`
+      `movie_tag.tag_id in (${tag_idList}) AND movie_tag.movie_id NOT IN (${userMovieList})`
     )
     .getMany();
 
   //Mapeamento de pontuação da tag para a id da tag
-  const mapuser_tagTotalPoint: { [tagId: number]: number } = {};
-  user_tagList.map((tagId) => {
-    mapuser_tagTotalPoint[tagId.tagId] = tagId.totalPoint;
+  const mapuser_tagTotalPoint: { [tag_id: number]: number } = {};
+  user_tagList.map((tag_id) => {
+    mapuser_tagTotalPoint[tag_id.tag_id] = tag_id.total_point;
   });
 
   const scoreMovies: { [movie_id: number]: MovieScore } = {};
@@ -153,9 +152,9 @@ const getRecommendedList = async (
       score: 0,
       movie,
     };
-    movie.moviesTags.forEach((movieTag) => {
+    movie.movies_tags.forEach((movie_tag) => {
       scoreMovies[movie.id].score +=
-        mapuser_tagTotalPoint[movieTag.tagId] * movieTag.weight;
+        mapuser_tagTotalPoint[movie_tag.tag_id] * movie_tag.weight;
     });
   });
 
@@ -180,7 +179,9 @@ const getRecommendedList = async (
     if (tags) movies = filterMoviesByTags(tags, movies);
 
     const filteredMovies = movies.map((movie) => {
-      movie.moviesTags = movie.moviesTags.filter((movieTag) => movieTag.super);
+      movie.movies_tags = movie.movies_tags.filter(
+        (movie_tag) => movie_tag.super
+      );
       return movie;
     });
 
@@ -194,8 +195,8 @@ const filterMoviesByTags = (tags: number[], movieList: Movie[]) => {
   }
 
   const filteredMovies = movieList?.filter((movie) => {
-    const movieFilteredTags = movie.moviesTags.find((movieTag) => {
-      return tags.indexOf(movieTag.tagId) >= 0;
+    const movieFilteredTags = movie.movies_tags.find((movie_tag) => {
+      return tags.indexOf(movie_tag.tag_id) >= 0;
     });
     return movieFilteredTags;
   });

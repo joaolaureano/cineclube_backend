@@ -11,7 +11,7 @@ import { Movie, Tag } from ".";
 @Entity({ name: "movie_tag" })
 export class MovieTag {
   @PrimaryColumn()
-  tagId: number;
+  tag_id: number;
 
   @PrimaryColumn()
   movie_id: number;
@@ -22,15 +22,15 @@ export class MovieTag {
   @Column()
   weight: number;
 
-  @ManyToOne(() => Tag, (tag) => tag.moviesTags)
+  @ManyToOne(() => Tag, (tag) => tag.movies_tags)
   tag: Tag;
 
-  @ManyToOne(() => Movie, (movie) => movie.moviesTags)
+  @ManyToOne(() => Movie, (movie) => movie.movies_tags)
   movie: Movie;
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updatedAt: Date;
+  updated_at: Date;
 }

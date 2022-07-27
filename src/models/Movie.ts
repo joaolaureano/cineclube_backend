@@ -63,7 +63,7 @@ export class Movie {
   @JoinColumn({
     name: "movie_id",
   })
-  moviesTags: MovieTag[];
+  movies_tags: MovieTag[];
 
   @OneToMany(() => Cast, (cast) => cast.movie)
   @JoinColumn({
@@ -72,8 +72,8 @@ export class Movie {
   cast: Cast[];
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updatedAt: Date;
+  updated_at: Date;
 }

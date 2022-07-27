@@ -15,10 +15,10 @@ export class UserTag {
   user_id: string;
 
   @PrimaryColumn()
-  tagId: number;
+  tag_id: number;
 
   @Column()
-  totalPoint: number;
+  total_point: number;
 
   @ManyToOne(() => User, (user) => user.user_tags)
   user: User;
@@ -27,8 +27,8 @@ export class UserTag {
   tag: Tag;
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updatedAt: Date;
+  updated_at: Date;
 }

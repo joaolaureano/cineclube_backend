@@ -196,10 +196,10 @@ const connect = async () => {
 
     achievements.forEach((achievement) => {
       const achievementModel = new Models.Achievement();
-      achievementModel.pathImage = achievement.path_image;
+      achievementModel.path_image = achievement.path_image;
       achievementModel.title = achievement.title;
       achievementModel.description = achievement.description;
-      achievementModel.targetScore = achievement.targetScore;
+      achievementModel.target_score = achievement.targetScore;
 
       const tagModel = tagMap[achievement.tagName];
       achievementModel.tag = tagModel;

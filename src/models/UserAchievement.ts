@@ -15,10 +15,10 @@ export class UserAchievement {
   user_id: string;
 
   @PrimaryColumn()
-  achievementId: number;
+  achievement_id: number;
 
   @Column()
-  currentScore: number;
+  current_score: number;
 
   @ManyToOne(() => User, (user) => user.achievements)
   user: User;
@@ -27,8 +27,8 @@ export class UserAchievement {
   achievement: Achievement;
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updatedAt: Date;
+  updated_at: Date;
 }

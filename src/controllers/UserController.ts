@@ -228,19 +228,19 @@ export class UserController extends Controller {
   @SuccessResponse("200")
   @Security("firebase")
   async setUserPreferences(
-    @Body() requestBody: { tagIds: number[] },
+    @Body() requestBody: { tag_ids: number[] },
     @Request() request: express.Request
   ): Promise<HttpResponse> {
-    const { tagIds } = requestBody;
+    const { tag_ids } = requestBody;
     const { user } = request;
-    if (!tagIds) {
+    if (!tag_ids) {
       this.setStatus(400);
       throw new Error("Could not find tags");
     }
     try {
       if (user) {
         const { id } = user;
-        const response = await UserService.setSignUpPreferences(id, tagIds);
+        const response = await UserService.setSignUpPreferences(id, tag_ids);
         if (response) {
           this.setStatus(200);
           return {

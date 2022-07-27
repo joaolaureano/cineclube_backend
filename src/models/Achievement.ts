@@ -23,10 +23,10 @@ export class Achievement {
   description: string;
 
   @Column()
-  pathImage: string;
+  path_image: string;
 
   @Column()
-  targetScore: number;
+  target_score: number;
 
   @OneToMany(
     () => UserAchievement,
@@ -54,8 +54,8 @@ export class Achievement {
   tag: Tag;
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updatedAt: Date;
+  updated_at: Date;
 }
