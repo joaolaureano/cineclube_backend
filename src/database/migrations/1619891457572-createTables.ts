@@ -20,10 +20,10 @@ export class createTables1619891457572 implements MigrationInterface {
       "CREATE TABLE app_user_movie (app_userId varchar(255) NOT NULL, movieId int NOT NULL, status varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie_tag (tagId int NOT NULL, movieId int NOT NULL, super tinyint NOT NULL, weight int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (tagId, movieId))"
+      "CREATE TABLE movie_tag (tagId int NOT NULL, movieId int NOT NULL, super smallint NOT NULL, weight int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (tagId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE cast (actorId int NOT NULL, movieId int NOT NULL, director tinyint NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (actorId, movieId))"
+      "CREATE TABLE cast (actorId int NOT NULL, movieId int NOT NULL, director smallint NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (actorId, movieId))"
     );
     await queryRunner.query(
       "CREATE TABLE app_user_tag (app_userId varchar(255) NOT NULL, tagId int NOT NULL, totalPoint int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, tagId))"
