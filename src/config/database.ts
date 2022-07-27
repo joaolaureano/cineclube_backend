@@ -4,7 +4,7 @@ import variables from "./enviromentVariables";
 const { DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT } = variables;
 
 export default {
-  type: "mysql",
+  type: "postgres",
   database: DB_DATABASE,
   host: DB_HOST,
   port: Number(DB_PORT),
