@@ -196,7 +196,7 @@ const connect = async () => {
 
     achievements.forEach((achievement) => {
       const achievementModel = new Models.Achievement();
-      achievementModel.path_image = achievement.path_image;
+      achievementModel.pathImage = achievement.path_image;
       achievementModel.title = achievement.title;
       achievementModel.description = achievement.description;
       achievementModel.targetScore = achievement.targetScore;
@@ -308,7 +308,7 @@ const readMovies = (movieIds: string[]) => {
 
     const movieModel = new Models.Movie();
     movieModel.title = movie.brazilian_title;
-    movieModel.original_title = movie.original_title;
+    movieModel.originalTitle = movie.original_title;
     movieModel.synopsis = movie.synopsis;
     movieModel.year = movie.year;
     movieModel.curator = movie.curator;
