@@ -23,7 +23,7 @@ export class Achievement {
   description: string;
 
   @Column()
-  pathImage: string;
+  paage: string;
 
   @Column()
   targetScore: number;
