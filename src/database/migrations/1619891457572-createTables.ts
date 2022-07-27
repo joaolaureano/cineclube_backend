@@ -32,7 +32,7 @@ export class createTables1619891457572 implements MigrationInterface {
       "CREATE TABLE actor (id serial, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie_platform (platform int NOT NULL, movie int NOT NULL"
+      "CREATE TABLE movie_platform (platform int NOT NULL, movie int NOT NULL)"
     );
     await queryRunner.query(
       "ALTER TABLE app_user_movie ADD CONSTRAINT FK_13836cd6ae56580075e1bd33967 FOREIGN KEY (app_userId) REFERENCES app_user(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
