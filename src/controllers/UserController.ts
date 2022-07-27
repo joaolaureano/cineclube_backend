@@ -83,13 +83,13 @@ export class UserController extends Controller {
   @SuccessResponse("200")
   @Security("firebase")
   async setUserMovieStatus(
-    @Body() requestBody: { movieId: string; status: MovieUserStatus },
+    @Body() requestBody: { movie_id: string; status: MovieUserStatus },
     @Request() request: express.Request
   ): Promise<MovieStatusResponse> {
     //Retorno -> Se tiver um body é porque alguma conquista foi atingida
-    const { movieId, status } = requestBody;
+    const { movie_id, status } = requestBody;
     const { user } = request;
-    if (!(movieId || status)) {
+    if (!(movie_id || status)) {
       this.setStatus(400);
       throw new Error("Não foi possivel associar esse filme e usuário");
     }
@@ -100,7 +100,7 @@ export class UserController extends Controller {
         switch (status) {
           case MovieUserStatus.WATCHED_AND_LIKED:
             achievements = await UserService.setMovieStatusWatchedLiked(
-              movieId,
+              movie_id,
               user_id,
               status
             );
@@ -120,7 +120,7 @@ export class UserController extends Controller {
               };
           case MovieUserStatus.WATCHED_AND_DISLIKED:
             achievements = await UserService.setMovieStatusWatchedDisliked(
-              movieId,
+              movie_id,
               user_id,
               status
             );
@@ -140,7 +140,7 @@ export class UserController extends Controller {
               };
           case MovieUserStatus.DONT_WANT_TO_WATCH:
             await UserService.setMovieStatusDontWantWatch(
-              movieId,
+              movie_id,
               user_id,
               status
             );
@@ -150,7 +150,7 @@ export class UserController extends Controller {
               success: true,
             };
           case MovieUserStatus.NONE:
-            await UserService.deleteUserMovie(movieId, user_id);
+            await UserService.deleteUserMovie(movie_id, user_id);
             this.setStatus(200);
             return {
               message: "Status reset successfully",
@@ -158,7 +158,7 @@ export class UserController extends Controller {
             };
           case MovieUserStatus.WANT_TO_WATCH:
             await UserService.setMovieStatusWantToWatch(
-              movieId,
+              movie_id,
               user_id,
               status
             );

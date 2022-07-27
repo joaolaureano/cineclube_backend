@@ -38,7 +38,7 @@ const getMoviesNotInUserLists = async (
 
   const userMovieList = getCustomRepository(UserMovieRepository)
     .createQueryBuilder("userMovie")
-    .select("userMovie.movieId", "movieId")
+    .select("userMovie.movie_id", "movie_id")
     .where(`userMovie.user_id = "${user_id}"`)
     .getSql();
 
@@ -60,7 +60,7 @@ const getMoviesNotInUserLists = async (
 };
 
 const getMovieListByIds = async (
-  movieIds: number[],
+  movie_ids: number[],
   superTags?: boolean
 ): Promise<Movie[] | undefined> => {
   const movieRepository = getCustomRepository(MovieRepository);
@@ -76,7 +76,7 @@ const getMovieListByIds = async (
       superTags ? "movieTag.super = true" : ""
     )
     .leftJoinAndSelect("movieTag.tag", "tag")
-    .where(`movie.id IN (${movieIds})`)
+    .where(`movie.id IN (${movie_ids})`)
     .getMany();
 
   return movies;
@@ -125,7 +125,7 @@ const getRecommendedList = async (
   //Select com os ids de filmes em listas do usuário
   const userMovieList = getCustomRepository(UserMovieRepository)
     .createQueryBuilder("userMovie")
-    .select("userMovie.movieId", "movieId")
+    .select("userMovie.movie_id", "movie_id")
     .where(`userMovie.user_id = "${user_id}"`)
     .getSql();
 
@@ -134,7 +134,7 @@ const getRecommendedList = async (
     .createQueryBuilder("movie")
     .innerJoinAndSelect("movie.moviesTags", "movieTag")
     .where(
-      `movieTag.tagId in (${tagIdList}) AND movieTag.movieId NOT IN (${userMovieList})`
+      `movieTag.tagId in (${tagIdList}) AND movieTag.movie_id NOT IN (${userMovieList})`
     )
     .getMany();
 
@@ -144,7 +144,7 @@ const getRecommendedList = async (
     mapUserTagTotalPoint[tagId.tagId] = tagId.totalPoint;
   });
 
-  const scoreMovies: { [movieId: number]: MovieScore } = {};
+  const scoreMovies: { [movie_id: number]: MovieScore } = {};
 
   // Inicialização de score em 0 e dos filmes e
   // cálculo do score para determinado filme
@@ -160,11 +160,11 @@ const getRecommendedList = async (
   });
 
   // Busca dos filmes com todas informações necessárias junto (movie_cast, platforms, tags, etc)
-  const sortedMovieIds = movies.map((movie) => movie.id);
-  if (sortedMovieIds.length === 0) {
+  const sortedmovie_ids = movies.map((movie) => movie.id);
+  if (sortedmovie_ids.length === 0) {
     return [];
   }
-  const sortedMovieModels = await getMovieListByIds(sortedMovieIds);
+  const sortedMovieModels = await getMovieListByIds(sortedmovie_ids);
 
   // Ordenar os filmes por score
   const sortedMovies = sortedMovieModels?.sort((movie, nextMovie) => {
