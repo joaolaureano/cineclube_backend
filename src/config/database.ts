@@ -11,9 +11,16 @@ export default {
   username: DB_USERNAME,
   password: DB_PASSWORD,
   logging: false,
+  synchronize: false,
   entities: ["src/models/*.ts"],
   migrations: ["src/database/migrations/*.ts"],
   cli: {
     migrationsDir: "src/database/migrations",
+  },
+  extra: {
+    ssl: {
+      require: false,
+      rejectUnauthorized: false,
+    },
   },
 } as ConnectionOptions;
