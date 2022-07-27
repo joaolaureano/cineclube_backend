@@ -5,31 +5,31 @@ export class createTables1619891457572 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      "CREATE TABLE app_user (id varchar(255) NOT NULL, name varchar(255) NOT NULL, photoPath varchar(255) NOT NULL, randomness int NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), PRIMARY KEY (id))"
+      "CREATE TABLE app_user (id varchar(255) NOT NULL, name varchar(255) NOT NULL, photoPath varchar(255) NOT NULL, randomness int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW(), PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie (id int NOT NULL AUTO_INCREMENT, title varchar(255) NOT NULL, originalTitle varchar(255) NOT NULL, synopsis text NOT NULL, critic text NOT NULL, curator varchar(255) NOT NULL, year char(4) NOT NULL, pathBanner text NOT NULL, duration int NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (id))"
+      "CREATE TABLE movie (id int NOT NULL AUTO_INCREMENT, title varchar(255) NOT NULL, originalTitle varchar(255) NOT NULL, synopsis text NOT NULL, critic text NOT NULL, curator varchar(255) NOT NULL, year char(4) NOT NULL, pathBanner text NOT NULL, duration int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE platform (id int NOT NULL AUTO_INCREMENT, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (id))"
+      "CREATE TABLE platform (id int NOT NULL AUTO_INCREMENT, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE tag (id int NOT NULL AUTO_INCREMENT, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (id))"
+      "CREATE TABLE tag (id int NOT NULL AUTO_INCREMENT, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE app_user_movie (app_userId varchar(255) NOT NULL, movieId int NOT NULL, status varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (app_userId, movieId))"
+      "CREATE TABLE app_user_movie (app_userId varchar(255) NOT NULL, movieId int NOT NULL, status varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie_tag (tagId int NOT NULL, movieId int NOT NULL, super tinyint NOT NULL, weight int NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (tagId, movieId))"
+      "CREATE TABLE movie_tag (tagId int NOT NULL, movieId int NOT NULL, super tinyint NOT NULL, weight int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (tagId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE cast (actorId int NOT NULL, movieId int NOT NULL, director tinyint NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (actorId, movieId))"
+      "CREATE TABLE cast (actorId int NOT NULL, movieId int NOT NULL, director tinyint NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (actorId, movieId))"
     );
     await queryRunner.query(
-      "CREATE TABLE app_user_tag (app_userId varchar(255) NOT NULL, tagId int NOT NULL, totalPoint int NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (app_userId, tagId))"
+      "CREATE TABLE app_user_tag (app_userId varchar(255) NOT NULL, tagId int NOT NULL, totalPoint int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (app_userId, tagId))"
     );
     await queryRunner.query(
-      "CREATE TABLE actor (id int NOT NULL AUTO_INCREMENT, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(), updated_At timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP() , PRIMARY KEY (id))"
+      "CREATE TABLE actor (id int NOT NULL AUTO_INCREMENT, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
       "CREATE TABLE movie_platform (platform int NOT NULL, movie int NOT NULL, INDEX IDX_3cbb19e5cd833475a475fe41c3 (platform), INDEX IDX_4d3c4c6ee96613bc4ef3673e77 (movie), PRIMARY KEY (platform, movie))"
