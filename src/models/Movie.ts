@@ -36,7 +36,7 @@ export class Movie {
 
   @Column({
     length: 4,
-    type: "nchar",
+    type: "text",
   })
   year: number;
 
