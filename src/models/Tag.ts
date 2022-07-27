@@ -19,13 +19,13 @@ export class Tag {
 
   @OneToMany(() => MovieTag, (movieTag) => movieTag.tag)
   @JoinColumn({
-    name: "tag_id",
+    name: "tagId",
   })
   moviesTags: MovieTag[];
 
   @OneToMany(() => UserTag, (userTag) => userTag.tag)
   @JoinColumn({
-    name: "tag_id",
+    name: "tagId",
   })
   userTags: UserTag[];
 

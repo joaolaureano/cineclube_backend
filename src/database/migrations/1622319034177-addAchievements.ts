@@ -5,7 +5,7 @@ export class addAchievements1622319034177 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      "CREATE TABLE appUser_achievement (user_id varchar NOT NULL, achievement_id int NOT NULL, currentScore int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY user_id, achievement_id))"
+      "CREATE TABLE appUser_achievement (user_id varchar NOT NULL, achievement_id int NOT NULL, currentScore int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (user_id, achievement_id))"
     );
     await queryRunner.query(
       "CREATE TABLE achievement (id serial, title varchar NOT NULL, description varchar NOT NULL, path_image varchar NOT NULL, targetScore int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , tag_id int NULL, PRIMARY KEY (id))"

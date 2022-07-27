@@ -69,25 +69,25 @@ const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
 
   const movieTagSql = movieTagRepository
     .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
+    .select("movieTag.tagId", "tagId")
     .where(`movieTag.movieId = "${idMovie}"`)
     .getSql();
 
   const existingUserTags = await userTagRepository
     .createQueryBuilder("userTag")
-    .where(`userTag.tag_id IN (${movieTagSql})`)
+    .where(`userTag.tagId IN (${movieTagSql})`)
     .andWhere(`userTag.user_id = "${idUser}"`)
     .getMany();
 
   const leftTags = movieTagList.filter((tag) => {
-    return existingUserTags.find((usertag) => usertag.tag_id == tag.tag_id)
+    return existingUserTags.find((usertag) => usertag.tagId == tag.tagId)
       ? false
       : true;
   });
 
   existingUserTags.forEach((tag) => {
     const actualMovieTag = movieTagList.find(
-      (movietag) => movietag.tag_id == tag.tag_id
+      (movietag) => movietag.tagId == tag.tagId
     );
     if (actualMovieTag) {
       tag.totalPoint += actualMovieTag.weight;
@@ -96,7 +96,7 @@ const setUserTags = async (idMovie: string, idUser: string): Promise<void> => {
 
   leftTags.forEach((movietag) => {
     const newUserTag = new UserTag();
-    newUserTag.tag_id = movietag.tag_id;
+    newUserTag.tagId = movietag.tagId;
     newUserTag.user_id = idUser;
     newUserTag.totalPoint = movietag.weight;
     existingUserTags.push(newUserTag);
@@ -215,13 +215,13 @@ const decreaseUserTagPoints = async (userMovie: UserMovie): Promise<void> => {
 
   const movieTagSql = movieTagRepository
     .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
+    .select("movieTag.tagId", "tagId")
     .where(`movieTag.movieId = "${userMovie.movieId}"`)
     .getSql();
 
   const existingUserTags = await userTagRepository
     .createQueryBuilder("userTag")
-    .where(`userTag.tag_id IN (${movieTagSql})`)
+    .where(`userTag.tagId IN (${movieTagSql})`)
     .andWhere(`userTag.user_id = "${userMovie.user_id}"`)
     .getMany();
 
@@ -230,7 +230,7 @@ const decreaseUserTagPoints = async (userMovie: UserMovie): Promise<void> => {
 
   existingUserTags.forEach((userTag) => {
     const actualMovieTag = movieTagList.find(
-      (movietag) => movietag.tag_id == userTag.tag_id
+      (movietag) => movietag.tagId == userTag.tagId
     );
     if (actualMovieTag) {
       userTag.totalPoint -= actualMovieTag.weight;
@@ -256,14 +256,14 @@ const decreaseUserAchievementsPoint = async (
   // Faz uma query para pegar as tags do filme
   const movieTagSql = movieTagRepository
     .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
+    .select("movieTag.tagId", "tagId")
     .where(`movieTag.movieId = "${movieId}"`)
     .getSql();
 
   // Faz uma busca para pegar os achievements relacionados com as tags
   const achievementsByMovie = await achievementRepository
     .createQueryBuilder("userAchievement")
-    .where(`userAchievement.tag_id IN (${movieTagSql})`)
+    .where(`userAchievement.tagId IN (${movieTagSql})`)
     .getMany();
 
   const achievementsByMovieMap = Object.assign(
@@ -350,12 +350,12 @@ const setMovieStatusWantToWatch = async (
 
 const setSignUpPreferences = async (
   user_id: string,
-  tag_ids: number[]
+  tagIds: number[]
 ): Promise<UserTag[]> => {
   const userTagRespoitory = getRepository(UserTag);
-  const userTags = tag_ids.map((id) => {
+  const userTags = tagIds.map((id) => {
     const userTag = new UserTag();
-    userTag.tag_id = id;
+    userTag.tagId = id;
     userTag.user_id = user_id;
     userTag.totalPoint = 50;
     return userTag;
@@ -374,14 +374,14 @@ const setAchievementProgress = async (
   // Faz uma query para pegar as tags do filme
   const movieTagSql = movieTagRepository
     .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
+    .select("movieTag.tagId", "tagId")
     .where(`movieTag.movieId = "${movieId}"`)
     .getSql();
 
   // Faz uma busca para pegar os achievements relacionados com as tags
   const achievementsByMovie = await achievementRepository
     .createQueryBuilder("userAchievement")
-    .where(`userAchievement.tag_id IN (${movieTagSql})`)
+    .where(`userAchievement.tagId IN (${movieTagSql})`)
     .getMany();
 
   const achievementsByMovieMap = Object.assign(

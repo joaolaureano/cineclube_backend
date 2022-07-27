@@ -11,7 +11,7 @@ import { Movie, Tag } from ".";
 @Entity({ name: "movie_tag" })
 export class MovieTag {
   @PrimaryColumn()
-  tag_id: number;
+  tagId: number;
 
   @PrimaryColumn()
   movieId: number;

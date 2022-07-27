@@ -15,7 +15,7 @@ export class UserTag {
   user_id: string;
 
   @PrimaryColumn()
-  tag_id: number;
+  tagId: number;
 
   @Column()
   totalPoint: number;

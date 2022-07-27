@@ -116,9 +116,9 @@ const getRecommendedList = async (
   }
 
   // Geração de lista com apenas os valores das ids de tag
-  const tag_idList = userTagRepository
+  const tagIdList = userTagRepository
     .createQueryBuilder("userTag")
-    .select("userTag.tag_id", "tag_id")
+    .select("userTag.tagId", "tagId")
     .where(`userTag.user_id = "${user_id}"`)
     .getSql();
 
@@ -134,14 +134,14 @@ const getRecommendedList = async (
     .createQueryBuilder("movie")
     .innerJoinAndSelect("movie.moviesTags", "movieTag")
     .where(
-      `movieTag.tag_id in (${tag_idList}) AND movieTag.movieId NOT IN (${userMovieList})`
+      `movieTag.tagId in (${tagIdList}) AND movieTag.movieId NOT IN (${userMovieList})`
     )
     .getMany();
 
   //Mapeamento de pontuação da tag para a id da tag
-  const mapUserTagTotalPoint: { [tag_id: number]: number } = {};
-  userTagList.map((tag_id) => {
-    mapUserTagTotalPoint[tag_id.tag_id] = tag_id.totalPoint;
+  const mapUserTagTotalPoint: { [tagId: number]: number } = {};
+  userTagList.map((tagId) => {
+    mapUserTagTotalPoint[tagId.tagId] = tagId.totalPoint;
   });
 
   const scoreMovies: { [movieId: number]: MovieScore } = {};
@@ -155,7 +155,7 @@ const getRecommendedList = async (
     };
     movie.moviesTags.forEach((movieTag) => {
       scoreMovies[movie.id].score +=
-        mapUserTagTotalPoint[movieTag.tag_id] * movieTag.weight;
+        mapUserTagTotalPoint[movieTag.tagId] * movieTag.weight;
     });
   });
 
@@ -195,7 +195,7 @@ const filterMoviesByTags = (tags: number[], movieList: Movie[]) => {
 
   const filteredMovies = movieList?.filter((movie) => {
     const movieFilteredTags = movie.moviesTags.find((movieTag) => {
-      return tags.indexOf(movieTag.tag_id) >= 0;
+      return tags.indexOf(movieTag.tagId) >= 0;
     });
     return movieFilteredTags;
   });
