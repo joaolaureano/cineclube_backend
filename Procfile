@@ -1,1 +1,1 @@
-web: npm run typeorm -- migration:run && npm run db:seed && npm run tsoa:gen && npm run dev
+web: npm run typeorm -- migration:run && npm run db:seed && npm run tsoa:gen && 

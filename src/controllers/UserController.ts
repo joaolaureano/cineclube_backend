@@ -68,9 +68,9 @@ export class UserController extends Controller {
       }
 
       throw new Error();
-    } catch (error) {
+    } catch (err) {
       this.setStatus(500);
-
+      const error = err as Error;
       return {
         success: false,
         message: "Internal server error.",
@@ -175,9 +175,9 @@ export class UserController extends Controller {
         }
       }
       throw new Error();
-    } catch (error) {
+    } catch (err) {
       this.setStatus(500);
-
+      const error = err as Error;
       return {
         success: false,
         message: "Internal server error.",
@@ -213,9 +213,9 @@ export class UserController extends Controller {
         };
       }
       throw new Error("User not found;");
-    } catch (error) {
+    } catch (err) {
       this.setStatus(500);
-
+      const error = err as Error;
       return {
         success: false,
         message: "Internal server error.",
@@ -250,9 +250,9 @@ export class UserController extends Controller {
         }
       }
       throw new Error();
-    } catch (error) {
+    } catch (err) {
       this.setStatus(500);
-
+      const error = err as Error;
       return {
         success: false,
         message: "Internal server error.",

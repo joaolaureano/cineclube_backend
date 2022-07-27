@@ -26,9 +26,9 @@ export class TagController extends Controller {
       }
 
       throw new Error();
-    } catch (error) {
+    } catch (err) {
       this.setStatus(500);
-
+      const error = err as Error;
       return {
         success: false,
         message: "Internal server error.",

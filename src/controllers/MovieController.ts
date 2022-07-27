@@ -65,10 +65,9 @@ export class MovieController extends Controller {
       }
 
       throw new Error();
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
       this.setStatus(500);
-
+      const error = err as Error;
       return {
         success: false,
         message: "Internal server error.",
@@ -99,9 +98,9 @@ export class MovieController extends Controller {
         success: false,
         message: `Movie not found`,
       };
-    } catch (error) {
+    } catch (err) {
       this.setStatus(500);
-
+      const error = err as Error;
       return {
         success: false,
         message: "Internal server error.",
