@@ -5,19 +5,19 @@ export class addAchievements1622319034177 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      "CREATE TABLE appUser_achievement (userId varchar(255) NOT NULL, achievementId int NOT NULL, currentScore int NOT NULL, created_At datetime(6) NOT NULL DEFAULT NOW(), updated_At datetime(6) NOT NULL DEFAULT NOW() , PRIMARY KEY (userId, achievementId))"
+      "CREATE TABLE appUser_achievement (userId varchar(255) NOT NULL, achievementId int NOT NULL, currentScore int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (userId, achievementId))"
     );
     await queryRunner.query(
-      "CREATE TABLE achievement (id serial, title varchar(255) NOT NULL, description varchar(255) NOT NULL, pathImage varchar(255) NOT NULL, targetScore int NOT NULL, created_At datetime(6) NOT NULL DEFAULT NOW(), updated_At datetime(6) NOT NULL DEFAULT NOW() , tagId int NULL, PRIMARY KEY (id))"
+      "CREATE TABLE achievement (id serial, title varchar(255) NOT NULL, description varchar(255) NOT NULL, pathImage varchar(255) NOT NULL, targetScore int NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , tagId int NULL, PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_2a418515c335cab7c5ba70c28b3 FOREIGN KEY (userId) REFERENCES user(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+      "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_2a418515c335cab7c5ba70c28b3 FOREIGN KEY (userId) REFERENCES user(id) "
     );
     await queryRunner.query(
-      "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_843ecd1965f1aac694875674a18 FOREIGN KEY (achievementId) REFERENCES achievement(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+      "ALTER TABLE appUser_achievement ADD CONSTRAINT FK_843ecd1965f1aac694875674a18 FOREIGN KEY (achievementId) REFERENCES achievement(id) "
     );
     await queryRunner.query(
-      "ALTER TABLE achievement ADD CONSTRAINT FK_7efd7420481a4d3cc3ee6649223 FOREIGN KEY (tagId) REFERENCES tag(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+      "ALTER TABLE achievement ADD CONSTRAINT FK_7efd7420481a4d3cc3ee6649223 FOREIGN KEY (tagId) REFERENCES tag(id) "
     );
   }
 
