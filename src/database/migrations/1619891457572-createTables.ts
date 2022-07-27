@@ -32,7 +32,7 @@ export class createTables1619891457572 implements MigrationInterface {
       "CREATE TABLE actor (id serial, name varchar(255) NOT NULL, created_At timestamp NOT NULL DEFAULT NOW(), updated_At timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie_platform (platform int NOT NULL, movie int NOT NULL, INDEX IDX_3cbb19e5cd833475a475fe41c3 (platform), INDEX IDX_4d3c4c6ee96613bc4ef3673e77 (movie), PRIMARY KEY (platform, movie))"
+      "CREATE TABLE movie_platform (platform int NOT NULL, movie int NOT NULL"
     );
     await queryRunner.query(
       "ALTER TABLE app_user_movie ADD CONSTRAINT FK_13836cd6ae56580075e1bd33967 FOREIGN KEY (app_userId) REFERENCES app_user(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
@@ -97,12 +97,12 @@ export class createTables1619891457572 implements MigrationInterface {
     await queryRunner.query(
       "ALTER TABLE app_user_movie DROP FOREIGN KEY FK_13836cd6ae56580075e1bd33967"
     );
-    await queryRunner.query(
-      "DROP INDEX IDX_4d3c4c6ee96613bc4ef3673e77 ON movie_platform"
-    );
-    await queryRunner.query(
-      "DROP INDEX IDX_3cbb19e5cd833475a475fe41c3 ON movie_platform"
-    );
+    // await queryRunner.query(
+    //   "DROP INDEX IDX_4d3c4c6ee96613bc4ef3673e77 ON movie_platform"
+    // );
+    // await queryRunner.query(
+    //   "DROP INDEX IDX_3cbb19e5cd833475a475fe41c3 ON movie_platform"
+    // );
     await queryRunner.query("DROP TABLE movie_platform");
     await queryRunner.query("DROP TABLE actor");
     await queryRunner.query("DROP TABLE app_user_tag");
