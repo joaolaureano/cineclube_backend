@@ -8,7 +8,7 @@ export class createTables1619891457572 implements MigrationInterface {
       "CREATE TABLE app_user (id varchar NOT NULL, name varchar NOT NULL, photoPath varchar NOT NULL, randomness int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW(), PRIMARY KEY (id))"
     );
     await queryRunner.query(
-      "CREATE TABLE movie (id serial, title varchar NOT NULL, original_title varchar NOT NULL, synopsis text NOT NULL, critic text NOT NULL, curator varchar NOT NULL, year char(4) NOT NULL, pathBanner text NOT NULL, duration int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
+      "CREATE TABLE movie (id serial, title varchar NOT NULL, original_title varchar NOT NULL, synopsis text NOT NULL, critic text NOT NULL, curator varchar NOT NULL, year char(4) NOT NULL, path_banner text NOT NULL, duration int NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"
     );
     await queryRunner.query(
       "CREATE TABLE platform (id serial, name varchar NOT NULL, created_at timestamp NOT NULL DEFAULT NOW(), updated_at timestamp NOT NULL DEFAULT NOW() , PRIMARY KEY (id))"

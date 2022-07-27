@@ -43,7 +43,7 @@ export class Movie {
   @Column({
     type: "text",
   })
-  pathBanner: string;
+  path_banner: string;
 
   @Column()
   duration: number;

@@ -313,7 +313,7 @@ const readMovies = (movieIds: string[]) => {
     movieModel.year = movie.year;
     movieModel.curator = movie.curator;
     movieModel.critic = movie.custom_description;
-    movieModel.pathBanner = movie.cover_url;
+    movieModel.path_banner = movie.cover_url;
     movieModel.duration = movie.runtime;
     movieModel.platforms = [];
     movies[id] = movieModel;
