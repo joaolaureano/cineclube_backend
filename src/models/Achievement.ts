@@ -56,6 +56,6 @@ export class Achievement {
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: "updated_At" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }
