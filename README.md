@@ -2,6 +2,9 @@
 
 > Descrição do projeto
 
+# Deploy
+Você pode ver a documentação da API nesse <a href="https://cineclube-backend.herokuapp.com/doc/"> link </a>
+
 ## **Links**
 
 - Documentação do TypeORM: [Link](https://github.com/typeorm/typeorm/tree/master/docs)
