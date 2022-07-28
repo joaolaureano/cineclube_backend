@@ -59,7 +59,7 @@ export class Movie {
   })
   users: UserMovie[];
 
-  @OneToMany(() => MovieTag, (movieTag) => movieTag.movie)
+  @OneToMany(() => MovieTag, (movie_tag) => movie_tag.movie)
   @JoinColumn({
     name: "movie_id",
   })

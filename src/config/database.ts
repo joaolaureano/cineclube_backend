@@ -1,10 +1,12 @@
 import { ConnectionOptions } from "typeorm";
 import variables from "./enviromentVariables";
+import { SnakeNamingStrategy } from "typeorm-snake-naming-strategy";
 
 const { DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT } = variables;
 
 export default {
   type: "postgres",
+  namingStrategy: new SnakeNamingStrategy(),
   database: DB_DATABASE,
   host: DB_HOST,
   port: Number(DB_PORT),

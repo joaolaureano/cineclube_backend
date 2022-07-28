@@ -20,7 +20,7 @@ const getMainTags = async (): Promise<Tag[]> => {
 
   const tags = await tagRepository
     .createQueryBuilder("tag")
-    .where(`tag.name IN (:...tags)`, { tags: mainTags })
+    .where(`"tag"."name" IN (:...tags)`, { tags: mainTags })
     .getMany();
 
   return tags;

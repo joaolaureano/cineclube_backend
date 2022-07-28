@@ -60,45 +60,45 @@ const getUserMoviesByStatus = async (
 
 const setuser_tags = async (idMovie: string, idUser: string): Promise<void> => {
   const user_tagRepository = getCustomRepository(UserTagRepository);
-  const movieTagRepository = getCustomRepository(MovieTagRepository);
+  const movie_tagRepository = getCustomRepository(MovieTagRepository);
 
-  const movieTagList = await movieTagRepository
-    .createQueryBuilder("movieTag")
-    .where(`movieTag.movie_id = "${idMovie}"`)
+  const movie_tagList = await movie_tagRepository
+    .createQueryBuilder("movie_tag")
+    .where(`"movie_tag"."movie_id" = '${idMovie}'`)
     .getMany();
 
-  const movieTagSql = movieTagRepository
-    .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
-    .where(`movieTag.movie_id = "${idMovie}"`)
+  const movie_tagSql = movie_tagRepository
+    .createQueryBuilder("movie_tag")
+    .select("movie_tag.tag_id", "tag_id")
+    .where(`"movie_tag"."movie_id" = '${idMovie}'`)
     .getSql();
 
   const existinguser_tags = await user_tagRepository
     .createQueryBuilder("user_tag")
-    .where(`user_tag.tag_id IN (${movieTagSql})`)
-    .andWhere(`user_tag.user_id = "${idUser}"`)
+    .where(`"user_tag"."tag_id" IN (${movie_tagSql})`)
+    .andWhere(`"user_tag"."user_id" = '${idUser}'`)
     .getMany();
 
-  const leftTags = movieTagList.filter((tag) => {
+  const leftTags = movie_tagList.filter((tag) => {
     return existinguser_tags.find((user_tag) => user_tag.tag_id == tag.tag_id)
       ? false
       : true;
   });
 
   existinguser_tags.forEach((tag) => {
-    const actualMovieTag = movieTagList.find(
-      (movietag) => movietag.tag_id == tag.tag_id
+    const actualmovie_tag = movie_tagList.find(
+      (movie_tag) => movie_tag.tag_id == tag.tag_id
     );
-    if (actualMovieTag) {
-      tag.total_point += actualMovieTag.weight;
+    if (actualmovie_tag) {
+      tag.total_point += actualmovie_tag.weight;
     }
   });
 
-  leftTags.forEach((movietag) => {
+  leftTags.forEach((movie_tag) => {
     const newuser_tag = new UserTag();
-    newuser_tag.tag_id = movietag.tag_id;
+    newuser_tag.tag_id = movie_tag.tag_id;
     newuser_tag.user_id = idUser;
-    newuser_tag.total_point = movietag.weight;
+    newuser_tag.total_point = movie_tag.weight;
     existinguser_tags.push(newuser_tag);
   });
 
@@ -206,34 +206,34 @@ const setMovieStatusDontWantWatch = async (
 
 const decreaseuser_tagPoints = async (userMovie: UserMovie): Promise<void> => {
   const user_tagRepository = getCustomRepository(UserTagRepository);
-  const movieTagRepository = getCustomRepository(MovieTagRepository);
+  const movie_tagRepository = getCustomRepository(MovieTagRepository);
 
-  const movieTagList = await movieTagRepository
-    .createQueryBuilder("movieTag")
-    .where(`movieTag.movie_id = "${userMovie.movie_id}"`)
+  const movie_tagList = await movie_tagRepository
+    .createQueryBuilder("movie_tag")
+    .where(`"movie_tag"."movie_id" = '${userMovie.movie_id}'`)
     .getMany();
 
-  const movieTagSql = movieTagRepository
-    .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
-    .where(`movieTag.movie_id = "${userMovie.movie_id}"`)
+  const movie_tagSql = movie_tagRepository
+    .createQueryBuilder("movie_tag")
+    .select("movie_tag.tag_id", "tag_id")
+    .where(`"movie_tag"."movie_id" = '${userMovie.movie_id}'`)
     .getSql();
 
   const existinguser_tags = await user_tagRepository
     .createQueryBuilder("user_tag")
-    .where(`user_tag.tag_id IN (${movieTagSql})`)
-    .andWhere(`user_tag.user_id = "${userMovie.user_id}"`)
+    .where(`"user_tag"."tag_id" IN (${movie_tagSql})`)
+    .andWhere(`"user_tag"."user_id" = '${userMovie.user_id}'`)
     .getMany();
 
   const removeList: UserTag[] = [];
   const updateList: UserTag[] = [];
 
   existinguser_tags.forEach((user_tag: UserTag) => {
-    const actualMovieTag = movieTagList.find(
-      (movietag) => movietag.tag_id == user_tag.tag_id
+    const actualmovie_tag = movie_tagList.find(
+      (movie_tag) => movie_tag.tag_id == user_tag.tag_id
     );
-    if (actualMovieTag) {
-      user_tag.total_point -= actualMovieTag.weight;
+    if (actualmovie_tag) {
+      user_tag.total_point -= actualmovie_tag.weight;
       if (user_tag.total_point <= 0) {
         removeList.push(user_tag);
       } else {
@@ -250,20 +250,20 @@ const decreaseUserAchievementsPoint = async (
   user_id: string,
   movie_id: string
 ) => {
-  const movieTagRepository = getCustomRepository(MovieTagRepository);
-  const userAchievementRepo = getCustomRepository(UserAchievementRepository);
+  const movie_tagRepository = getCustomRepository(MovieTagRepository);
+  const user_achievementRepo = getCustomRepository(UserAchievementRepository);
   const achievementRepository = getCustomRepository(AchievementRepository);
   // Faz uma query para pegar as tags do filme
-  const movieTagSql = movieTagRepository
-    .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
-    .where(`movieTag.movie_id = "${movie_id}"`)
+  const movie_tagSql = movie_tagRepository
+    .createQueryBuilder("movie_tag")
+    .select("movie_tag.tag_id", "tag_id")
+    .where(`"movie_tag"."movie_id" = '${movie_id}'`)
     .getSql();
 
   // Faz uma busca para pegar os achievements relacionados com as tags
   const achievementsByMovie = await achievementRepository
-    .createQueryBuilder("userAchievement")
-    .where(`userAchievement.tag_id IN (${movieTagSql})`)
+    .createQueryBuilder("user_achievement")
+    .where(`"user_achievement"."tag_id" IN (${movie_tagSql})`)
     .getMany();
 
   const achievementsByMovieMap = Object.assign(
@@ -272,28 +272,28 @@ const decreaseUserAchievementsPoint = async (
   );
 
   // Faz uma busca dos achievements que o usuário já conquistou
-  const existingUserAchivements = await userAchievementRepo
-    .createQueryBuilder("userAchievement")
+  const existingUserAchivements = await user_achievementRepo
+    .createQueryBuilder("user_achievement")
     .where(
-      `userAchievement.achievementId IN (${Object.keys(
+      `"user_achievement"."achievement_id" IN (${Object.keys(
         achievementsByMovieMap
       )})`
     )
-    .andWhere(`userAchievement.user_id = "${user_id}"`)
+    .andWhere(`"user_achievement"."user_id" = '${user_id}'`)
     .getMany();
 
   const toRemoveAchievement: UserAchievement[] = [];
   const toReduceAchievement: UserAchievement[] = [];
 
-  existingUserAchivements.forEach((userAchievement) => {
-    userAchievement.current_score -= 1;
-    if (userAchievement.current_score === 0)
-      toRemoveAchievement.push(userAchievement);
-    else toReduceAchievement.push(userAchievement);
+  existingUserAchivements.forEach((user_achievement) => {
+    user_achievement.current_score -= 1;
+    if (user_achievement.current_score === 0)
+      toRemoveAchievement.push(user_achievement);
+    else toReduceAchievement.push(user_achievement);
   });
 
-  await userAchievementRepo.save(toReduceAchievement);
-  await userAchievementRepo.remove(toRemoveAchievement);
+  await user_achievementRepo.save(toReduceAchievement);
+  await user_achievementRepo.remove(toRemoveAchievement);
 };
 
 const deleteUserMovie = async (
@@ -368,40 +368,43 @@ const setAchievementProgress = async (
   movie_id: string,
   user_id: string
 ): Promise<Achievement[] | undefined> => {
-  const movieTagRepository = getCustomRepository(MovieTagRepository);
-  const userAchievementRepo = getCustomRepository(UserAchievementRepository);
+  const movie_tagRepository = getCustomRepository(MovieTagRepository);
+  const user_achievementRepo = getCustomRepository(UserAchievementRepository);
   const achievementRepository = getCustomRepository(AchievementRepository);
   // Faz uma query para pegar as tags do filme
-  const movieTagSql = movieTagRepository
-    .createQueryBuilder("movieTag")
-    .select("movieTag.tag_id", "tag_id")
-    .where(`movieTag.movie_id = "${movie_id}"`)
+  const movie_tagSql = movie_tagRepository
+    .createQueryBuilder("movie_tag")
+    .select("movie_tag.tag_id", "tag_id")
+    .where(`"movie_tag"."movie_id" = '${movie_id}'`)
     .getSql();
 
   // Faz uma busca para pegar os achievements relacionados com as tags
   const achievementsByMovie = await achievementRepository
-    .createQueryBuilder("userAchievement")
-    .where(`userAchievement.tag_id IN (${movieTagSql})`)
+    .createQueryBuilder("user_achievement")
+    .where(`"user_achievement"."tag_id" IN (${movie_tagSql})`)
     .getMany();
-
+  if (achievementsByMovie.length === 0) return;
   const achievementsByMovieMap = Object.assign(
     {},
     ...achievementsByMovie.map((x) => ({ [x.id]: x }))
   );
-
+  console.log(achievementsByMovieMap);
   // Faz uma busca dos achievements que o usuário já conquistou
-  const existingUserAchivements = await userAchievementRepo
-    .createQueryBuilder("userAchievement")
+
+  const existingUserAchivements = await user_achievementRepo
+    .createQueryBuilder("user_achievement")
     .where(
-      `userAchievement.achievement_id IN (${Object.keys(
-        achievementsByMovieMap
-      )})`
+      `"user_achievement"."achievement_id" IN (${
+        Object.keys(achievementsByMovieMap).length > 0
+          ? Object.keys(achievementsByMovieMap)
+          : -1
+      })`
     )
-    .andWhere(`userAchievement.user_id = "${user_id}"`)
+    .andWhere(`"user_achievement"."user_id" = '${user_id}'`)
     .getMany();
 
-  const userAchievementMap: {
-    [achievementId: string]: UserAchievement;
+  const user_achievementMap: {
+    [achievement_id: string]: UserAchievement;
   } = Object.assign(
     {},
     ...existingUserAchivements.map((x) => ({ [x.achievement_id]: x }))
@@ -409,44 +412,44 @@ const setAchievementProgress = async (
 
   const allAchievementsIds = new Set([
     ...Object.keys(achievementsByMovieMap),
-    ...Object.keys(userAchievementMap),
+    ...Object.keys(user_achievementMap),
   ]);
 
-  const retAchievementIds: string[] = [];
+  const retAchievement_ids: string[] = [];
 
   allAchievementsIds.forEach((id) => {
-    if (userAchievementMap[id]) {
+    if (user_achievementMap[id]) {
       let changed = false;
       if (
-        achievementsByMovieMap[id].targetScore >
-        userAchievementMap[id].current_score
+        achievementsByMovieMap[id].target_score >
+        user_achievementMap[id].current_score
       ) {
         changed = true;
       }
-      userAchievementMap[id].current_score += 1;
+      user_achievementMap[id].current_score += 1;
       //com as pontuações iguais e ocorrendo uma mudança, quer dizer que este deve ser retornado para ser exibido na tela
       if (
         changed &&
-        achievementsByMovieMap[id].targetScore ===
-          userAchievementMap[id].current_score
+        achievementsByMovieMap[id].target_score ===
+          user_achievementMap[id].current_score
       )
-        retAchievementIds.push(id);
+        retAchievement_ids.push(id);
     } else {
-      const userAchievementObj = new UserAchievement();
-      userAchievementObj.achievement_id = Number(id);
-      userAchievementObj.current_score = 1;
-      userAchievementObj.user_id = user_id;
-      userAchievementMap[id] = userAchievementObj;
+      const user_achievementObj = new UserAchievement();
+      user_achievementObj.achievement_id = Number(id);
+      user_achievementObj.current_score = 1;
+      user_achievementObj.user_id = user_id;
+      user_achievementMap[id] = user_achievementObj;
     }
   });
 
-  await userAchievementRepo.save(Object.values(userAchievementMap));
+  await user_achievementRepo.save(Object.values(user_achievementMap));
 
   //se existir algum achievement para retornar
-  if (retAchievementIds.length !== 0) {
+  if (retAchievement_ids.length !== 0) {
     const achievementsById = await achievementRepository
       .createQueryBuilder("achievements")
-      .where(`achievements.id IN (${retAchievementIds})`)
+      .where(`"achievements"."id" IN (${retAchievement_ids})`)
       .getMany();
 
     return achievementsById;

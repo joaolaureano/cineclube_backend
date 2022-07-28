@@ -33,28 +33,26 @@ const getMoviesNotInUserLists = async (
   user_id: string,
   superTags?: boolean
 ): Promise<Movie[] | undefined> => {
-  const movieRepository = getCustomRepository(MovieRepository);
-
-  const userMovieList = getCustomRepository(UserMovieRepository)
-    .createQueryBuilder("userMovie")
-    .select("userMovie.movie_id", "movie_id")
-    .where(`userMovie.user_id = "${user_id}"`)
+  const user_movieList = getCustomRepository(UserMovieRepository)
+    .createQueryBuilder("user_movie")
+    .select("user_movie.movie_id", "movie_id")
+    .where(`user_movie.user_id = '${user_id}'`)
     .getSql();
 
-  const moviesNotInUserList = movieRepository
+  const moviesNotInUserList = getCustomRepository(MovieRepository)
     .createQueryBuilder("movie")
     .leftJoinAndSelect("movie.platforms", "platforms")
-    .leftJoinAndSelect("movie.movie_cast", "movie_cast")
-    .leftJoinAndSelect("movie_cast.actor", "actors")
+    .leftJoinAndSelect("movie.cast", "cast")
+    .leftJoinAndSelect("cast.actor", "actors")
     .leftJoinAndSelect(
       "movie.movies_tags",
       "movie_tag",
       superTags ? "movie_tag.super = true" : ""
     )
     .leftJoinAndSelect("movie_tag.tag", "tag")
-    .where(`movie.id NOT IN (${userMovieList})`)
+    .where(`"movie"."id" NOT IN (${user_movieList})`)
     .getMany();
-
+  console.log();
   return moviesNotInUserList;
 };
 
@@ -75,7 +73,7 @@ const getMovieListByIds = async (
       superTags ? "movie_tag.super = true" : ""
     )
     .leftJoinAndSelect("movie_tag.tag", "tag")
-    .where(`movie.id IN (${movie_ids})`)
+    .where(`"movie"."id" IN (${movie_ids})`)
     .getMany();
 
   return movies;
@@ -92,7 +90,7 @@ const getRecommendedList = async (
   // Select de todas as tags que o usuário se interessa
   const user_tagList = await user_tagRepository
     .createQueryBuilder("user_tag")
-    .where(`user_tag.user_id = "${user_id}"`)
+    .where(`"user_tag"."user_id" = :uid`, { uid: user_id })
     .getMany();
 
   if (user_tagList.length === 0) {
@@ -118,14 +116,14 @@ const getRecommendedList = async (
   const tag_idList = user_tagRepository
     .createQueryBuilder("user_tag")
     .select("user_tag.tag_id", "tag_id")
-    .where(`user_tag.user_id = "${user_id}"`)
+    .where(`"user_tag"."user_id" = '${user_id}'`)
     .getSql();
 
   //Select com os ids de filmes em listas do usuário
-  const userMovieList = getCustomRepository(UserMovieRepository)
-    .createQueryBuilder("userMovie")
-    .select("userMovie.movie_id", "movie_id")
-    .where(`userMovie.user_id = "${user_id}"`)
+  const user_movieList = getCustomRepository(UserMovieRepository)
+    .createQueryBuilder("user_movie")
+    .select("user_movie.movie_id", "movie_id")
+    .where(`"user_movie"."user_id" = '${user_id}'`)
     .getSql();
 
   //Select de todos os filmes que possuem alguma tag gerada na query acima
@@ -133,7 +131,7 @@ const getRecommendedList = async (
     .createQueryBuilder("movie")
     .innerJoinAndSelect("movie.movies_tags", "movie_tag")
     .where(
-      `movie_tag.tag_id in (${tag_idList}) AND movie_tag.movie_id NOT IN (${userMovieList})`
+      `"movie_tag"."tag_id" in (${tag_idList}) AND "movie_tag"."movie_id" NOT IN (${user_movieList})`
     )
     .getMany();
 

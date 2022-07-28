@@ -17,7 +17,7 @@ export class Tag {
   @Column()
   name: string;
 
-  @OneToMany(() => MovieTag, (movieTag) => movieTag.tag)
+  @OneToMany(() => MovieTag, (movie_tag) => movie_tag.tag)
   @JoinColumn({
     name: "tag_id",
   })

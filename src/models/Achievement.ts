@@ -33,7 +33,7 @@ export class Achievement {
     (userAchievemnt) => userAchievemnt.achievement
   )
   @JoinColumn({
-    name: "achievementId",
+    name: "achievement_id",
   })
   users: UserAchievement[];
 

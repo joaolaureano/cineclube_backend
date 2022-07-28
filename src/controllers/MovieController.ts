@@ -34,7 +34,7 @@ export class MovieController extends Controller {
 
         if (tags) {
           const tagsSplit = tags.split(",");
-          const tagsListNumber = tagsSplit.map((tag_id) => parseInt(tag_id));
+          const tagsListNumber = tagsSplit.map((tagId) => parseInt(tagId));
           filters.tags = tagsListNumber;
         }
 

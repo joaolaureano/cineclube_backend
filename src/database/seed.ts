@@ -18,7 +18,7 @@ const connect = async () => {
 
     // Read JSON
     const movie_ids = Object.keys(movieData);
-    const tags = readMovieTags(movie_ids);
+    const tags = readmovie_tags(movie_ids);
     const platforms = readMoviePlatforms(movie_ids);
     const movies = readMovies(movie_ids);
     const actors = readMovieActors(movie_ids);
@@ -60,7 +60,7 @@ const connect = async () => {
     const platformMap = toObject("name", insertedPlatforms);
     const movieMap = toObject("title", insertedMovies);
 
-    const movieTags: Models.MovieTag[] = [];
+    const movie_tags: Models.MovieTag[] = [];
 
     movie_ids.forEach((id: string) => {
       const movie = movieData[id];
@@ -77,12 +77,12 @@ const connect = async () => {
       tagList.forEach(([tagName, weight]) => {
         const tagModel = tagMap[tagName];
 
-        const movieTagModel = new Models.MovieTag();
-        movieTagModel.tag = tagModel;
-        movieTagModel.movie = movieModel;
-        movieTagModel.super = !!superTagMap[tagName];
-        movieTagModel.weight = parseInt(weight);
-        movieTags.push(movieTagModel);
+        const movie_tagModel = new Models.MovieTag();
+        movie_tagModel.tag = tagModel;
+        movie_tagModel.movie = movieModel;
+        movie_tagModel.super = !!superTagMap[tagName];
+        movie_tagModel.weight = parseInt(weight);
+        movie_tags.push(movie_tagModel);
       });
 
       const platformNames: string[] = movie.platforms;
@@ -141,35 +141,35 @@ const connect = async () => {
     const achievementImage = "https://i.imgur.com/kuZNoUt.png";
     achievements.push({
       tagName: "Drama",
-      targetScore: 5,
+      target_score: 5,
       path_image: achievementImage,
       title: "Que drama!",
       description: "Parabéns! Você assistiu 5 filmes de drama.",
     });
     achievements.push({
       tagName: "Drama",
-      targetScore: 10,
+      target_score: 10,
       path_image: achievementImage,
       title: "A vida é um drama!!!!",
       description: "Incrível! Você assitiu 10 filmes de drama.",
     });
     achievements.push({
       tagName: "Mystery",
-      targetScore: 3,
+      target_score: 3,
       path_image: achievementImage,
       title: "Cuidado, algo está acontecendo!",
       description: "Secretamente você assistiu 3 filmes de mistério.",
     });
     achievements.push({
       tagName: "Thriller",
-      targetScore: 3,
+      target_score: 3,
       path_image: achievementImage,
       title: "Plot Twist!",
       description: "Do nada você assistiu 3 filmes tríler.",
     });
     achievements.push({
       tagName: "Comedy",
-      targetScore: 3,
+      target_score: 3,
       path_image: achievementImage,
       title: "Respira que tem mais piada!",
       description:
@@ -177,7 +177,7 @@ const connect = async () => {
     });
     achievements.push({
       tagName: "Horror",
-      targetScore: 3,
+      target_score: 3,
       path_image: achievementImage,
       title: "Não tenha medo!",
       description:
@@ -185,7 +185,7 @@ const connect = async () => {
     });
     achievements.push({
       tagName: "Romance",
-      targetScore: 3,
+      target_score: 3,
       path_image: achievementImage,
       title: "Awnn que amor!",
       description: "Com muito amor você assistiu 3 filmes de romance.",
@@ -199,7 +199,7 @@ const connect = async () => {
       achievementModel.path_image = achievement.path_image;
       achievementModel.title = achievement.title;
       achievementModel.description = achievement.description;
-      achievementModel.target_score = achievement.targetScore;
+      achievementModel.target_score = achievement.target_score;
 
       const tagModel = tagMap[achievement.tagName];
       achievementModel.tag = tagModel;
@@ -218,7 +218,7 @@ const connect = async () => {
   }
 };
 
-const readMovieTags = (movie_ids: string[]) => {
+const readmovie_tags = (movie_ids: string[]) => {
   const tags: { [tagName: string]: Models.Tag } = {};
 
   movie_ids.forEach((id: string) => {
@@ -325,7 +325,7 @@ interface AchievementData {
   title: string;
   description: string;
   path_image: string;
-  targetScore: number;
+  target_score: number;
   tagName: string;
 }
 
