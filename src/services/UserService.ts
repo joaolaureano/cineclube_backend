@@ -75,7 +75,9 @@ const setuser_tags = async (idMovie: string, idUser: string): Promise<void> => {
 
   const existinguser_tags = await user_tagRepository
     .createQueryBuilder("user_tag")
-    .where(`"user_tag"."tag_id" IN (${movie_tagSql})`)
+    .where(
+      `"user_tag"."tag_id" IN (${movie_tagSql.length ? movie_tagSql : -1})`
+    )
     .andWhere(`"user_tag"."user_id" = '${idUser}'`)
     .getMany();
 
@@ -221,7 +223,9 @@ const decreaseuser_tagPoints = async (userMovie: UserMovie): Promise<void> => {
 
   const existinguser_tags = await user_tagRepository
     .createQueryBuilder("user_tag")
-    .where(`"user_tag"."tag_id" IN (${movie_tagSql})`)
+    .where(
+      `"user_tag"."tag_id" IN (${movie_tagSql.length ? movie_tagSql : -1} )`
+    )
     .andWhere(`"user_tag"."user_id" = '${userMovie.user_id}'`)
     .getMany();
 
@@ -263,7 +267,11 @@ const decreaseUserAchievementsPoint = async (
   // Faz uma busca para pegar os achievements relacionados com as tags
   const achievementsByMovie = await achievementRepository
     .createQueryBuilder("user_achievement")
-    .where(`"user_achievement"."tag_id" IN (${movie_tagSql})`)
+    .where(
+      `"user_achievement"."tag_id" IN (${
+        movie_tagSql.length ? movie_tagSql : -1
+      })`
+    )
     .getMany();
 
   const achievementsByMovieMap = Object.assign(
@@ -275,9 +283,11 @@ const decreaseUserAchievementsPoint = async (
   const existingUserAchivements = await user_achievementRepo
     .createQueryBuilder("user_achievement")
     .where(
-      `"user_achievement"."achievement_id" IN (${Object.keys(
-        achievementsByMovieMap
-      )})`
+      `"user_achievement"."achievement_id" IN (${
+        Object.keys(achievementsByMovieMap).length
+          ? Object.keys(achievementsByMovieMap)
+          : -1
+      })`
     )
     .andWhere(`"user_achievement"."user_id" = '${user_id}'`)
     .getMany();
@@ -381,7 +391,11 @@ const setAchievementProgress = async (
   // Faz uma busca para pegar os achievements relacionados com as tags
   const achievementsByMovie = await achievementRepository
     .createQueryBuilder("user_achievement")
-    .where(`"user_achievement"."tag_id" IN (${movie_tagSql})`)
+    .where(
+      `"user_achievement"."tag_id" IN (${
+        movie_tagSql.length ? movie_tagSql : -1
+      })`
+    )
     .getMany();
   if (achievementsByMovie.length === 0) return;
   const achievementsByMovieMap = Object.assign(
@@ -449,7 +463,11 @@ const setAchievementProgress = async (
   if (retAchievement_ids.length !== 0) {
     const achievementsById = await achievementRepository
       .createQueryBuilder("achievements")
-      .where(`"achievements"."id" IN (${retAchievement_ids})`)
+      .where(
+        `"achievements"."id" IN (${
+          retAchievement_ids.length ? retAchievement_ids : -1
+        })`
+      )
       .getMany();
 
     return achievementsById;
