@@ -99,7 +99,7 @@ const connect = async () => {
     await movieRepository.save(Object.values(movieMap));
     console.log("DONE");
     console.log("Linking Tags to Movies...");
-    const insertedMovieTags = await movieTagRepository.save(movieTags);
+    const insertedMovieTags = await movieTagRepository.save(movie_tags);
     console.log("DONE");
 
     // Link actors to movies
