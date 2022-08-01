@@ -16,7 +16,7 @@ const getAll = async (user_id: string): Promise<Movie[] | undefined> => {
   const moviesNotInUserList = movieRepository
     .createQueryBuilder("movie")
     .leftJoinAndSelect("movie.platforms", "platforms")
-    .leftJoinAndSelect("movie.movie_cast", "movie_cast")
+    .leftJoinAndSelect("movie.cast", "movie_cast")
     .leftJoinAndSelect("movie_cast.actor", "actors")
     .leftJoinAndSelect(
       "movie.movies_tags",
@@ -65,7 +65,7 @@ const getMovieListByIds = async (
   const movies = await movieRepository
     .createQueryBuilder("movie")
     .leftJoinAndSelect("movie.platforms", "platforms")
-    .leftJoinAndSelect("movie.movie_cast", "movie_cast")
+    .leftJoinAndSelect("movie.cast", "movie_cast")
     .leftJoinAndSelect("movie_cast.actor", "actors")
     .leftJoinAndSelect(
       "movie.movies_tags",
