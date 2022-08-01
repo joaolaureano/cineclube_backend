@@ -30,6 +30,8 @@ const connect = async () => {
       Repositories.PlatformRepository
     );
     const movieRepository = getCustomRepository(Repositories.MovieRepository);
+    const movieTagRepository = getCustomRepository(Repositories.MovieTagRepository    );
+
     const actorRepository = getCustomRepository(Repositories.ActorRepository);
     const castRepository = getCustomRepository(Repositories.CastRepository);
     const achievementRepository = getCustomRepository(
@@ -97,6 +99,7 @@ const connect = async () => {
     await movieRepository.save(Object.values(movieMap));
     console.log("DONE");
     console.log("Linking Tags to Movies...");
+    const insertedMovieTags = await movieTagRepository.save(movieTags);
     console.log("DONE");
 
     // Link actors to movies
